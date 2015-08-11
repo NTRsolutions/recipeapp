@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">SwipeTabExample</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_my_adapter">MyAdapter</string>
+    <string name="title_activity_recipe">RecipeActivity</string>
+    <string name="title_activity_search">search</string>
+    <string name="title_activity_searchable">SearchableActivity</string>
+</resources>

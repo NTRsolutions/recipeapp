@@ -1,0 +1,24 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="280dp"
+    android:layout_height="match_parent">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_first_fragment"
+            android:icon="@drawable/ic_action"
+            android:title="Home" />
+        <item
+            android:id="@+id/nav_second_fragment"
+            android:icon="@drawable/ic_music"
+            android:title="Music" />
+        <item
+            android:id="@+id/nav_third_fragment"
+            android:icon="@drawable/ic_shop"
+            android:title="Third" />
+        <item
+            android:id="@+id/nav_fourth_fragment"
+            android:icon="@drawable/ic_travel"
+            android:title="Third" />
+    </group>
+</menu>
