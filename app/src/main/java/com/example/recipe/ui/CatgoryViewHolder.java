@@ -3,31 +3,39 @@ package com.example.recipe.ui;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.recipe.R;
+import com.example.recipe.utility.Config;
 
 /**
  * Created by rajnish on 6/8/15.
  */
-public class MyViewHolder extends RecyclerView.ViewHolder {
+public class CatgoryViewHolder extends RecyclerView.ViewHolder {
 
     public interface  ViewHolderListener{
         String onViewHolderClicked(String s);
     }
 
-    protected ImageView icon;
-    protected TextView firstLine;
-    protected TextView secondLine;
+    protected ImageView mIcon;
+    protected TextView mTitle;
+    protected TextView mDescription;
     ViewHolderListener listener;
 
-    public MyViewHolder(View view, final ViewHolderListener lstr) {
+    public CatgoryViewHolder(View view, final ViewHolderListener lstr) {
         super(view);
-        this.icon = (ImageView) view.findViewById(R.id.icon);
-        this.firstLine = (TextView) view.findViewById(R.id.firstLine);
-        this.secondLine =   (TextView) view.findViewById(R.id.secondLine);
+        this.mIcon = (ImageView) view.findViewById(R.id.icon);
+        this.mTitle = (TextView) view.findViewById(R.id.firstLine);
+        this.mDescription =   (TextView) view.findViewById(R.id.secondLine);
         this.listener = lstr;
+
+        ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+        layoutParams.height = (int) (Config.SCREEN_SIZE.y
+                * Config.MAX_CATEGORY_CARD_HEIGHT_PECENTAGE);
+        view.setLayoutParams(layoutParams);
+        view.requestLayout();
 
         view.setOnClickListener(new View.OnClickListener() {
             @Override

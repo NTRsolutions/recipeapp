@@ -27,7 +27,7 @@ public class BaseFragment extends Fragment {
         }
     }
 
-    public class AdapterClickResolver implements MyAdapter.AdapterListener {
+    public class AdapterClickResolver implements CategoryAdapter.AdapterListener {
         public String onAdapterClickListener(String s) {
             activityListener.showDetailView(s);
             Log.d("TAG", "in fragment click"+s);

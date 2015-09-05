@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by rajnish on 6/8/15.
  */
-public class DataStore {
+public class CategoryDataStore {
 
     String[] CUPCAKES = new String[] { "Strawberry", "Chocolate", "Orange",
             "Vanilla"};
@@ -19,20 +19,20 @@ public class DataStore {
     Integer[] IMAGES = new Integer[]{R.drawable.strawberry, R.drawable.chocolate, R.drawable.orange, R.drawable.vanilla};
 
 
-    public List<DataItem> getAllData() {
-        List<DataItem> list = new ArrayList<>();
+    public List<CategoryDataItem> getAllData() {
+        List<CategoryDataItem> list = new ArrayList<>();
         int position =CUPCAKES.length;
         for(int i=0;i<position;i++){
             String item = CUPCAKES[i];
             String des = MIN_DESCRIPTION[i];
             Integer images = IMAGES[i];
-            DataItem dataItem = new DataItem(item, des, images);
+            CategoryDataItem dataItem = new CategoryDataItem(item, des, images);
             list.add(dataItem);
         }
         return list;
     }
 
-    public static class DataItem {
+    public static class CategoryDataItem {
         public String getItem() {
             return item;
         }
@@ -61,7 +61,7 @@ public class DataStore {
         String itemDescription;
         Integer imageResource;
 
-        DataItem(String itm, String dsc, Integer rsc){
+        CategoryDataItem(String itm, String dsc, Integer rsc){
             item = itm;
             itemDescription = dsc;
             imageResource = rsc;

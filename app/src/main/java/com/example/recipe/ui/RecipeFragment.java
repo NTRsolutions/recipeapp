@@ -39,14 +39,5 @@ public class RecipeFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
-        String path = Environment.getExternalStorageDirectory() + Config.SEPERATOR +
-                Config.APP_NAME + Config.SEPERATOR + "recipe_detail_1.txt";
-
-        String data = Util.readDataFromFile(path);
-        TextView recipe = (TextView)rootView.findViewById(R.id.recipeId);
-        recipe.setText(data);
-
-
     }
 }

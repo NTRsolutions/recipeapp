@@ -10,7 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.recipe.data.DataStore;
+import com.example.recipe.data.CategoryDataStore;
 import com.example.recipe.MainActivityListener;
 import com.example.recipe.R;
 
@@ -26,7 +26,7 @@ public class FavouriteFragment extends BaseFragment {
     private RecyclerView.Adapter MyAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    List<DataStore.DataItem> cupCakes;
+    List<CategoryDataStore.CategoryDataItem> cupCakes;
 
     public FavouriteFragment(){}
 
@@ -42,14 +42,14 @@ public class FavouriteFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_c, container,
+        View rootView = inflater.inflate(R.layout.fragment_favorite, container,
                 false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.my_recycler_view);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(layoutManager);
 
-        com.example.recipe.ui.MyAdapter mAdapter = new MyAdapter(getActivity(),cupCakes, new AdapterClickResolver());
+        CategoryAdapter mAdapter = new CategoryAdapter(getActivity(),cupCakes, new AdapterClickResolver());
         mRecyclerView.setAdapter(mAdapter);
         return rootView;
     }

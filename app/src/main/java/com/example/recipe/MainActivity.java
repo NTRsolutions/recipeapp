@@ -15,7 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.example.recipe.data.DataStore;
+import com.example.recipe.data.CategoryDataStore;
 import com.example.recipe.ui.FeedsFragment;
 import com.example.recipe.ui.CategoryFragment;
 import com.example.recipe.ui.FavouriteFragment;
@@ -29,13 +29,13 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
 
     ViewPager mviewPager;
     TabLayout mTabLayout;
-    DataStore mDataStore;
+    CategoryDataStore mDataStore;
 
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
 
     @Override
-    public List<DataStore.DataItem> getData() {
+    public List<CategoryDataStore.CategoryDataItem> getData() {
         return   mDataStore.getAllData();
     }
 
@@ -48,9 +48,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Config.initializeApp();
-
         setContentView(R.layout.activity_main);
         mviewPager = (ViewPager) findViewById(R.id.pager);
         mTabLayout = (TabLayout) findViewById(R.id.tablayout);
@@ -59,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         mviewPager.setAdapter(pagerAdapter);
         mTabLayout.setupWithViewPager(mviewPager);
 
-        mDataStore = new DataStore();
+        mDataStore = new CategoryDataStore();
 
         // Set a Toolbar to replace the ActionBar.
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -68,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         // Find our drawer view
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        // Set the menu icon instead of the launcher icon.
+        // Set the menu mIcon instead of the launcher mIcon.
         final ActionBar actionBar = getSupportActionBar();
         //ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         actionBar.setDisplayHomeAsUpEnabled(true);
