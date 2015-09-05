@@ -5,6 +5,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
     ViewPager mviewPager;
     TabLayout mTabLayout;
     DataStore mDataStore;
+    SearchFragment mSearchFragment;
 
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
@@ -63,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
 
         // Set the menu icon instead of the launcher icon.
         final ActionBar ab = getSupportActionBar();
-        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+        //ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         ab.setDisplayHomeAsUpEnabled(true);
 
     }
@@ -91,6 +93,10 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         switch (item.getItemId()) {
             case android.R.id.home:
                 mDrawer.openDrawer(GravityCompat.START);
+                return true;
+
+            case R.id.action_search:
+                handleSearchClick();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -153,6 +159,23 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
+    }
+
+    private void handleSearchClick() {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        if (mSearchFragment == null) {
+            mSearchFragment = new SearchFragment();
+        }
+
+        if (mSearchFragment.isAdded()){
+            transaction.show(mSearchFragment);
+        } else {
+            transaction.add(R.id.full_screen_view, mSearchFragment, "TAG").
+                    addToBackStack("TAG");;
+        }
+
+        transaction.commit();
     }
 
 

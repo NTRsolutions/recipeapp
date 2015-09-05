@@ -19,14 +19,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".search"
-            android:label="@string/title_activity_search" >
-        </activity>
-        <activity
-            android:name="com.example.recipe.SearchableActivity"
-            android:label="@string/title_activity_searchable" >
-        </activity>
+
     </application>
 
 </manifest>
