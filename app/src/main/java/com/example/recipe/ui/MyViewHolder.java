@@ -1,10 +1,12 @@
-package com.example.recipe;
+package com.example.recipe.ui;
 
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.recipe.R;
 
 /**
  * Created by rajnish on 6/8/15.

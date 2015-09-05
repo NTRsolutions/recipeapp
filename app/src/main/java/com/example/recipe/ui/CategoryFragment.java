@@ -1,4 +1,4 @@
-package com.example.recipe;
+package com.example.recipe.ui;
 
 
 import android.app.Activity;
@@ -10,13 +10,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.recipe.data.DataStore;
+import com.example.recipe.MainActivityListener;
+import com.example.recipe.R;
+
 import java.util.List;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FragmentB extends BaseFragment {
+public class CategoryFragment extends BaseFragment {
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter MyAdapter;
@@ -24,7 +28,7 @@ public class FragmentB extends BaseFragment {
 
     List<DataStore.DataItem> cupCakes;
 
-    public FragmentB() {}
+    public CategoryFragment() {}
 
     @Override
     public void onAttach(Activity activity) {
@@ -45,7 +49,7 @@ public class FragmentB extends BaseFragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(layoutManager);
 
-        MyAdapter mAdapter = new MyAdapter(getActivity(),cupCakes,  new AdapterClickResolver());
+        com.example.recipe.ui.MyAdapter mAdapter = new MyAdapter(getActivity(),cupCakes,  new AdapterClickResolver());
         mRecyclerView.setAdapter(mAdapter);
 
         return rootView;

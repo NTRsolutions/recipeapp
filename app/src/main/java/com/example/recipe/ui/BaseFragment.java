@@ -1,9 +1,11 @@
-package com.example.recipe;
+package com.example.recipe.ui;
 
 
 import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+
+import com.example.recipe.MainActivityListener;
 
 
 /**

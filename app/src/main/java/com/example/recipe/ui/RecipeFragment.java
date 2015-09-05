@@ -1,4 +1,4 @@
-package com.example.recipe;
+package com.example.recipe.ui;
 
 
 import android.os.Bundle;
@@ -8,6 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.example.recipe.utility.Config;
+import com.example.recipe.R;
+import com.example.recipe.utility.Util;
 
 
 /**

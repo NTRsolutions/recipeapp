@@ -1,4 +1,4 @@
-package com.example.recipe;
+package com.example.recipe.ui;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -6,6 +6,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.recipe.data.DataStore;
+import com.example.recipe.R;
 
 import java.util.List;
 
@@ -43,9 +46,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
     public void onBindViewHolder(MyViewHolder myViewHolder, int i) {
 
         DataStore.DataItem dataItem = dataItems.get(i);
-        myViewHolder.firstLine.setText(dataItem.item);
-        myViewHolder.secondLine.setText(dataItem.itemDescription);
-        myViewHolder.icon.setImageResource(dataItem.imageResource);
+        myViewHolder.firstLine.setText(dataItem.getItem());
+        myViewHolder.secondLine.setText(dataItem.getItemDescription());
+        myViewHolder.icon.setImageResource(dataItem.getImageResource());
     }
 
     @Override

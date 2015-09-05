@@ -15,6 +15,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.recipe.data.DataStore;
+import com.example.recipe.ui.FeedsFragment;
+import com.example.recipe.ui.CategoryFragment;
+import com.example.recipe.ui.FavouriteFragment;
+import com.example.recipe.ui.RecipeFragment;
+import com.example.recipe.utility.Config;
+
 import java.util.List;
 
 
@@ -117,15 +124,15 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
             Fragment fragment = null;
             switch (page){
                 case FEED:{
-                    fragment =  new FragmentA();
+                    fragment =  new FeedsFragment();
                     break;
                 }
                 case CATEGORIES:{
-                    fragment =  new FragmentB();
+                    fragment =  new CategoryFragment();
                     break;
                 }
                 case FAVOURITE:{
-                    fragment =  new FragmentC();
+                    fragment =  new FavouriteFragment();
                     break;
                 }
             }

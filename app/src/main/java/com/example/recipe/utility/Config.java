@@ -1,4 +1,4 @@
-package com.example.recipe;
+package com.example.recipe.utility;
 
 import java.io.BufferedReader;
 import java.io.File;
