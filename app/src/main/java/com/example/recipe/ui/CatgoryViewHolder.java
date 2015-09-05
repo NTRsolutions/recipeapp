@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.recipe.R;
@@ -19,23 +20,23 @@ public class CatgoryViewHolder extends RecyclerView.ViewHolder {
         String onViewHolderClicked(String s);
     }
 
+    private View mContent;
     protected ImageView mIcon;
     protected TextView mTitle;
-    protected TextView mDescription;
     ViewHolderListener listener;
 
     public CatgoryViewHolder(View view, final ViewHolderListener lstr) {
         super(view);
-        this.mIcon = (ImageView) view.findViewById(R.id.icon);
-        this.mTitle = (TextView) view.findViewById(R.id.firstLine);
-        this.mDescription =   (TextView) view.findViewById(R.id.secondLine);
-        this.listener = lstr;
+        mIcon = (ImageView) view.findViewById(R.id.icon);
+        mTitle = (TextView) view.findViewById(R.id.firstLine);
+        mContent = (RelativeLayout) view.findViewById(R.id.content);
+        listener = lstr;
 
-        ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+        ViewGroup.LayoutParams layoutParams = mContent.getLayoutParams();
         layoutParams.height = (int) (Config.SCREEN_SIZE.y
                 * Config.MAX_CATEGORY_CARD_HEIGHT_PECENTAGE);
-        view.setLayoutParams(layoutParams);
-        view.requestLayout();
+        mContent.setLayoutParams(layoutParams);
+        mContent.requestLayout();
 
         view.setOnClickListener(new View.OnClickListener() {
             @Override

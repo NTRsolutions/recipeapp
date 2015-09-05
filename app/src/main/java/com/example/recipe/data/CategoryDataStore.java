@@ -10,13 +10,17 @@ import java.util.List;
  */
 public class CategoryDataStore {
 
-    String[] CUPCAKES = new String[] { "Strawberry", "Chocolate", "Orange",
-            "Vanilla"};
+    String[] CUPCAKES = new String[] { "Italian", "French", "Greek",
+            "Indian"};
 
     String[] MIN_DESCRIPTION = new String[] { "strawberry with fresh cream topping", "chocolate muffin with choco chips", "delicious and healthy orange cake",
             "All time favourite"};
 
-    Integer[] IMAGES = new Integer[]{R.drawable.strawberry, R.drawable.chocolate, R.drawable.orange, R.drawable.vanilla};
+    String[] IMAGES = new String[]{
+            "http://blog.mydala.com/wp-content/uploads/2015/07/88.jpg",
+            "http://www.birminghamrestaurantsandbars.com/wp-content/uploads/2015/06/873b077b15bbec54aea9e0105b84879d.jpg",
+            "http://cf2.foodista.com/sites/default/files/styles/featured/public/field/image/tz.jpg",
+            "http://youqueen.com/wp-content/uploads/2015/03/Traditional-Indian-Food.jpg"};
 
 
     public List<CategoryDataItem> getAllData() {
@@ -25,7 +29,7 @@ public class CategoryDataStore {
         for(int i=0;i<position;i++){
             String item = CUPCAKES[i];
             String des = MIN_DESCRIPTION[i];
-            Integer images = IMAGES[i];
+            String images = IMAGES[i];
             CategoryDataItem dataItem = new CategoryDataItem(item, des, images);
             list.add(dataItem);
         }
@@ -49,19 +53,19 @@ public class CategoryDataStore {
             this.itemDescription = itemDescription;
         }
 
-        public Integer getImageResource() {
+        public String getImageResource() {
             return imageResource;
         }
 
-        public void setImageResource(Integer imageResource) {
+        public void setImageResource(String imageResource) {
             this.imageResource = imageResource;
         }
 
         String item;
         String itemDescription;
-        Integer imageResource;
+        String imageResource;
 
-        CategoryDataItem(String itm, String dsc, Integer rsc){
+        CategoryDataItem(String itm, String dsc, String rsc){
             item = itm;
             itemDescription = dsc;
             imageResource = rsc;

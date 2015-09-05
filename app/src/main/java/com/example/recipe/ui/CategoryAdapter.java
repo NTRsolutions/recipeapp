@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 
 import com.example.recipe.data.CategoryDataStore;
 import com.example.recipe.R;
+import com.example.recipe.utility.Config;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -47,8 +49,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CatgoryViewHolder> {
 
         CategoryDataStore.CategoryDataItem dataItem = dataItems.get(i);
         myViewHolder.mTitle.setText(dataItem.getItem());
-        myViewHolder.mDescription.setText(dataItem.getItemDescription());
-        myViewHolder.mIcon.setImageResource(dataItem.getImageResource());
+        Picasso.with(context).load(dataItem.getImageResource()).resize(Config.SCREEN_SIZE.x/2, Config.SCREEN_SIZE.x/2).centerCrop().into(myViewHolder.mIcon);
     }
 
     @Override
