@@ -33,9 +33,9 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
     }
 
     enum Pages {
-        TAB1,
-        TAB2,
-        TAB3
+        FEED,
+        CATEGORIES,
+        FAVOURITE
     }
 
     @Override
@@ -62,9 +62,11 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         // Set the menu icon instead of the launcher icon.
-        final ActionBar ab = getSupportActionBar();
-        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
-        ab.setDisplayHomeAsUpEnabled(true);
+        final ActionBar actionBar = getSupportActionBar();
+        //ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowTitleEnabled(true);
+
 
     }
 
@@ -114,19 +116,18 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
             Pages page = Pages.values()[position];
             Fragment fragment = null;
             switch (page){
-                case TAB1:{
+                case FEED:{
                     fragment =  new FragmentA();
                     break;
                 }
-                case TAB2:{
+                case CATEGORIES:{
                     fragment =  new FragmentB();
                     break;
                 }
-                case TAB3:{
+                case FAVOURITE:{
                     fragment =  new FragmentC();
                     break;
                 }
-
             }
             return fragment;
         }
