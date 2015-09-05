@@ -30,7 +30,7 @@ public class FeedsFragment extends BaseFragment {
     FragmentManager fragmentManager;
     List<CategoryDataStore.CategoryDataItem> cupCakes;
     OnItemClickListener onItemClickListener;
-    RecipeFragment recipeFragment;
+    RecipeDetailFragment recipeFragment;
 
     public FeedsFragment() {}
 

@@ -49,7 +49,10 @@ public class CategoryAdapter extends RecyclerView.Adapter<CatgoryViewHolder> {
 
         CategoryDataStore.CategoryDataItem dataItem = dataItems.get(i);
         myViewHolder.mTitle.setText(dataItem.getItem());
-        Picasso.with(context).load(dataItem.getImageResource()).resize(Config.SCREEN_SIZE.x/2, Config.SCREEN_SIZE.x/2).centerCrop().into(myViewHolder.mIcon);
+        myViewHolder.mIcon.setImageResource(R.drawable.strawberry);
+        Picasso.with(context).load(dataItem.getImageResource())
+                .resize(Config.SCREEN_SIZE.x/2, Config.SCREEN_SIZE.x/2)
+                .centerCrop().into(myViewHolder.mIcon);
     }
 
     @Override

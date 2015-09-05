@@ -20,8 +20,7 @@ import com.example.recipe.data.CategoryDataStore;
 import com.example.recipe.ui.FeedsFragment;
 import com.example.recipe.ui.CategoryFragment;
 import com.example.recipe.ui.FavouriteFragment;
-import com.example.recipe.ui.RecipeFragment;
-import com.example.recipe.utility.Config;
+import com.example.recipe.ui.RecipeDetailFragment;
 
 import java.util.List;
 
@@ -150,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         Log.d("TAG", "showDetailView" + s);
         Bundle bundle = new Bundle();
         bundle.putString("Recipe", s);
-        RecipeFragment rFrag = new RecipeFragment();
+        RecipeDetailFragment rFrag = new RecipeDetailFragment();
         rFrag.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().add(
                 R.id.full_screen_view, rFrag, "Detail Fragment").commit();

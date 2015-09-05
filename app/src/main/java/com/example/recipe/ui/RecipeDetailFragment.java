@@ -17,10 +17,10 @@ import com.example.recipe.utility.Util;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RecipeFragment extends Fragment {
+public class RecipeDetailFragment extends Fragment {
     View rootView;
 
-    public RecipeFragment() {
+    public RecipeDetailFragment() {
         // Required empty public constructor
     }
 
