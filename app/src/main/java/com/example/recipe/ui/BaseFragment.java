@@ -1,9 +1,11 @@
-package com.example.recipe;
+package com.example.recipe.ui;
 
 
 import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+
+import com.example.recipe.MainActivityListener;
 
 
 /**
@@ -25,7 +27,7 @@ public class BaseFragment extends Fragment {
         }
     }
 
-    public class AdapterClickResolver implements MyAdapter.AdapterListener {
+    public class AdapterClickResolver implements CategoryAdapter.AdapterListener {
         public String onAdapterClickListener(String s) {
             activityListener.showDetailView(s);
             Log.d("TAG", "in fragment click"+s);

@@ -1,4 +1,4 @@
-package com.example.recipe;
+package com.example.recipe.utility;
 
 import android.util.Log;
 

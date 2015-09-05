@@ -1,4 +1,4 @@
-package com.example.recipe;
+package com.example.recipe.ui;
 
 
 import android.app.Activity;
@@ -10,21 +10,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.recipe.data.CategoryDataStore;
+import com.example.recipe.MainActivityListener;
+import com.example.recipe.R;
+
 import java.util.List;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FragmentB extends BaseFragment {
+public class FavouriteFragment extends BaseFragment {
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter MyAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    List<DataStore.DataItem> cupCakes;
+    List<CategoryDataStore.CategoryDataItem> cupCakes;
 
-    public FragmentB() {}
+    public FavouriteFragment(){}
 
     @Override
     public void onAttach(Activity activity) {
@@ -38,16 +42,15 @@ public class FragmentB extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_b, container,
+        View rootView = inflater.inflate(R.layout.fragment_favorite, container,
                 false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.my_recycler_view);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(layoutManager);
 
-        MyAdapter mAdapter = new MyAdapter(getActivity(),cupCakes,  new AdapterClickResolver());
+        CategoryAdapter mAdapter = new CategoryAdapter(getActivity(),cupCakes, new AdapterClickResolver());
         mRecyclerView.setAdapter(mAdapter);
-
         return rootView;
     }
 

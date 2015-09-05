@@ -16,6 +16,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.recipe.data.CategoryDataStore;
+import com.example.recipe.ui.FeedsFragment;
+import com.example.recipe.ui.CategoryFragment;
+import com.example.recipe.ui.FavouriteFragment;
+import com.example.recipe.ui.RecipeFragment;
+import com.example.recipe.utility.Config;
+
 import java.util.List;
 
 
@@ -23,29 +30,26 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
 
     ViewPager mviewPager;
     TabLayout mTabLayout;
-    DataStore mDataStore;
     SearchFragment mSearchFragment;
+    CategoryDataStore mDataStore;
 
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
 
     @Override
-    public List<DataStore.DataItem> getData() {
+    public List<CategoryDataStore.CategoryDataItem> getData() {
         return   mDataStore.getAllData();
     }
 
     enum Pages {
-        TAB1,
-        TAB2,
-        TAB3
+        FEED,
+        CATEGORIES,
+        FAVOURITE
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Config.initializeApp();
-
         setContentView(R.layout.activity_main);
         mviewPager = (ViewPager) findViewById(R.id.pager);
         mTabLayout = (TabLayout) findViewById(R.id.tablayout);
@@ -54,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         mviewPager.setAdapter(pagerAdapter);
         mTabLayout.setupWithViewPager(mviewPager);
 
-        mDataStore = new DataStore();
+        mDataStore = new CategoryDataStore();
 
         // Set a Toolbar to replace the ActionBar.
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -67,7 +71,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         final ActionBar ab = getSupportActionBar();
         //ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         ab.setDisplayHomeAsUpEnabled(true);
-
     }
 
     @Override
@@ -120,19 +123,18 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
             Pages page = Pages.values()[position];
             Fragment fragment = null;
             switch (page){
-                case TAB1:{
-                    fragment =  new FragmentA();
+                case FEED:{
+                    fragment =  new FeedsFragment();
                     break;
                 }
-                case TAB2:{
-                    fragment =  new FragmentB();
+                case CATEGORIES:{
+                    fragment =  new CategoryFragment();
                     break;
                 }
-                case TAB3:{
-                    fragment =  new FragmentC();
+                case FAVOURITE:{
+                    fragment =  new FavouriteFragment();
                     break;
                 }
-
             }
             return fragment;
         }

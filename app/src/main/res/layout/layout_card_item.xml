@@ -1,41 +1,36 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_view"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
-    android:layout_margin="2dp"
-    card_view:cardCornerRadius="2dp"
-    app:cardElevation="4dp">
+    android:layout_height="wrap_content"
+    card_view:cardCornerRadius="3dp"
+    card_view:cardElevation="4dp"
+    card_view:cardUseCompatPadding="true">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout
+        android:id="@+id/content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:layout_height="match_parent">
+
         <ImageView
             android:id="@+id/icon"
-            android:scaleType="fitCenter"
-            android:layout_width="100dp"
+            android:scaleType="centerCrop"
+            android:layout_width="match_parent"
             android:layout_height="match_parent" />
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+
         <TextView
             android:id="@+id/firstLine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:padding="10dp"
             android:text="Example application"
-            android:textSize="16sp" />
-        <TextView
-            android:id="@+id/secondLine"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/firstLine"
-            android:text="Example application"
-            android:textSize="10sp" />
-        </RelativeLayout>>
+            android:typeface="normal"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textSize="20sp" />
 
-    </LinearLayout>
+        </RelativeLayout>>
 
 </android.support.v7.widget.CardView>
