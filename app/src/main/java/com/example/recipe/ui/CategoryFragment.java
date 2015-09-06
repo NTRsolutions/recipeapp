@@ -26,17 +26,12 @@ public class CategoryFragment extends BaseFragment {
     private RecyclerView.Adapter MyAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    List<CategoryDataStore.CategoryDataItem> mCategoryList;
 
     public CategoryFragment() {}
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if (activity instanceof MainActivityListener) {
-            MainActivityListener dataProvider = (MainActivityListener) activity;
-            mCategoryList = dataProvider.getData();
-        }
     }
 
     @Override
@@ -49,7 +44,7 @@ public class CategoryFragment extends BaseFragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(layoutManager);
 
-        CategoryAdapter mAdapter = new CategoryAdapter(getActivity(), mCategoryList,  new AdapterClickResolver());
+        CategoryAdapter mAdapter = new CategoryAdapter(getActivity(), new AdapterClickResolver());
         mRecyclerView.setAdapter(mAdapter);
 
         return rootView;

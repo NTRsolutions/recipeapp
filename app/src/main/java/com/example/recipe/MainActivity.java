@@ -16,29 +16,28 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.recipe.data.Category;
 import com.example.recipe.data.CategoryDataStore;
 import com.example.recipe.ui.FeedsFragment;
 import com.example.recipe.ui.CategoryFragment;
 import com.example.recipe.ui.FavouriteFragment;
 import com.example.recipe.ui.RecipeDetailFragment;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements MainActivityListener {
-
+    public static final String TAG = "MainActivity";
     ViewPager mviewPager;
     TabLayout mTabLayout;
     SearchFragment mSearchFragment;
-    CategoryDataStore mDataStore;
-
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
-
-    @Override
-    public List<CategoryDataStore.CategoryDataItem> getData() {
-        return   mDataStore.getAllData();
-    }
 
     enum Pages {
         FEED,
@@ -56,8 +55,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         MyPagerAdapter pagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
         mviewPager.setAdapter(pagerAdapter);
         mTabLayout.setupWithViewPager(mviewPager);
-
-        mDataStore = new CategoryDataStore();
 
         // Set a Toolbar to replace the ActionBar.
         toolbar = (Toolbar) findViewById(R.id.toolbar);

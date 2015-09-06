@@ -28,7 +28,6 @@ public class FeedsFragment extends BaseFragment {
     private RecyclerView.Adapter MyAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     FragmentManager fragmentManager;
-    List<CategoryDataStore.CategoryDataItem> cupCakes;
     OnItemClickListener onItemClickListener;
     RecipeDetailFragment recipeFragment;
 
@@ -37,9 +36,6 @@ public class FeedsFragment extends BaseFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if (activity instanceof MainActivityListener) {
-            cupCakes = activityListener.getData();
-        }
     }
 
     @Override
@@ -52,7 +48,7 @@ public class FeedsFragment extends BaseFragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(layoutManager);
 
-        final CategoryAdapter mAdapter = new CategoryAdapter(getActivity(),cupCakes, new AdapterClickResolver());
+        final CategoryAdapter mAdapter = new CategoryAdapter(getActivity(), new AdapterClickResolver());
         mRecyclerView.setAdapter(mAdapter);
         return rootView;
     }

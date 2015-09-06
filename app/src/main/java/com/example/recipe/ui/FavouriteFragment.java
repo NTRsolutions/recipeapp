@@ -26,17 +26,12 @@ public class FavouriteFragment extends BaseFragment {
     private RecyclerView.Adapter MyAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    List<CategoryDataStore.CategoryDataItem> cupCakes;
 
     public FavouriteFragment(){}
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if (activity instanceof MainActivityListener) {
-            MainActivityListener dataProvider = (MainActivityListener) activity;
-            cupCakes = dataProvider.getData();
-        }
     }
 
     @Override
@@ -49,7 +44,7 @@ public class FavouriteFragment extends BaseFragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(layoutManager);
 
-        CategoryAdapter mAdapter = new CategoryAdapter(getActivity(),cupCakes, new AdapterClickResolver());
+        CategoryAdapter mAdapter = new CategoryAdapter(getActivity(), new AdapterClickResolver());
         mRecyclerView.setAdapter(mAdapter);
         return rootView;
     }

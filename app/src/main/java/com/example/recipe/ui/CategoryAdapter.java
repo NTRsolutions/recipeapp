@@ -7,11 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.recipe.data.Category;
 import com.example.recipe.data.CategoryDataStore;
 import com.example.recipe.R;
 import com.example.recipe.utility.Config;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,16 +25,23 @@ public class CategoryAdapter extends RecyclerView.Adapter<CatgoryViewHolder> {
         String onAdapterClickListener(String s);
     }
 
-    private List<CategoryDataStore.CategoryDataItem> dataItems;
+    private List<Category> dataItems = new ArrayList<>();
 
     private Context context;
 
     final private AdapterListener adapterListener;
 
-    public CategoryAdapter(Context context, List<CategoryDataStore.CategoryDataItem> dataItems, AdapterListener listener){
+    public CategoryAdapter(Context context, AdapterListener listener){
         this.context = context;
-        this.dataItems =  dataItems;
         this.adapterListener = listener;
+
+        CategoryDataStore.fetchAllCategoryData(new CategoryDataStore.CategoryDataStoreListener() {
+            @Override
+            public void onDataFetchComplete(List<Category> list) {
+                dataItems = list;
+                notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
@@ -47,10 +56,10 @@ public class CategoryAdapter extends RecyclerView.Adapter<CatgoryViewHolder> {
     @Override
     public void onBindViewHolder(CatgoryViewHolder myViewHolder, int i) {
 
-        CategoryDataStore.CategoryDataItem dataItem = dataItems.get(i);
-        myViewHolder.mTitle.setText(dataItem.getItem());
+        Category dataItem = dataItems.get(i);
+        myViewHolder.mTitle.setText(dataItem.getCategory());
         myViewHolder.mIcon.setImageResource(R.drawable.strawberry);
-        Picasso.with(context).load(dataItem.getImageResource())
+        Picasso.with(context).load(dataItem.getUrl())
                 .resize(Config.SCREEN_SIZE.x/2, Config.SCREEN_SIZE.x/2)
                 .centerCrop().into(myViewHolder.mIcon);
     }
