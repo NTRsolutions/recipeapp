@@ -34,14 +34,17 @@ public class CategoryAdapter extends RecyclerView.Adapter<CatgoryViewHolder> {
     public CategoryAdapter(Context context, AdapterListener listener){
         this.context = context;
         this.adapterListener = listener;
+        CategoryDataStore.fetchAllCategoryData(new CategoryDataStoreListenerImpl());
+    }
 
-        CategoryDataStore.fetchAllCategoryData(new CategoryDataStore.CategoryDataStoreListener() {
-            @Override
-            public void onDataFetchComplete(List<Category> list) {
-                dataItems = list;
-                notifyDataSetChanged();
-            }
-        });
+    private class CategoryDataStoreListenerImpl implements
+            CategoryDataStore.CategoryDataStoreListener {
+
+        @Override
+        public void onDataFetchComplete(List<Category> list) {
+            dataItems = list;
+            notifyDataSetChanged();
+        }
     }
 
     @Override

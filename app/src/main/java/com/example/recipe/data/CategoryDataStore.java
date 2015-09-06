@@ -16,12 +16,23 @@ import java.util.List;
  */
 public class CategoryDataStore {
     public static final String TAG = "CategoryDataStore";
+    static List<Category> sCategoryList;
 
     public interface CategoryDataStoreListener {
        void onDataFetchComplete(List<Category> list);
     }
 
     public static void fetchAllCategoryData(final CategoryDataStoreListener listener) {
+
+        if (sCategoryList == null) {
+            sCategoryList = new ArrayList<>();
+        }
+
+        if (listener != null && sCategoryList.size() >0) {
+            listener.onDataFetchComplete(sCategoryList);
+            return;
+        }
+
         ParseQuery<ParseObject> category = ParseQuery.getQuery(Category.class.getSimpleName());
         category.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> results, ParseException e) {
@@ -32,6 +43,7 @@ public class CategoryDataStore {
                     list.add(category);
                 }
                 if (listener != null) {
+                    sCategoryList = list;
                     listener.onDataFetchComplete(list);
                 }
             }
