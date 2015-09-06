@@ -1,5 +1,8 @@
 package com.example.recipe.data;
 
+import com.example.recipe.utility.Config;
+import com.parse.ParseObject;
+
 import java.util.List;
 
 /**
@@ -11,7 +14,8 @@ public class RecipeInfo {
     String mTitle;
     String mDescription;
     List<String> mIngredients;
-    int mCookingTime;
+    String mCookingTime;
+    String mServing;
     String mCategory;
     List<String> mTags;
 
@@ -55,11 +59,11 @@ public class RecipeInfo {
         this.mIngredients = mIngredients;
     }
 
-    public int getCookingTime() {
+    public String getCookingTime() {
         return mCookingTime;
     }
 
-    public void setCookingTime(int mCookingTime) {
+    public void setCookingTime(String mCookingTime) {
         this.mCookingTime = mCookingTime;
     }
 
@@ -77,5 +81,15 @@ public class RecipeInfo {
 
     public void setmTags(List<String> mTags) {
         this.mTags = mTags;
+    }
+
+    public static RecipeInfo getRecipeInfo(ParseObject parseObject) {
+        RecipeInfo recipeInfo = new RecipeInfo();
+        recipeInfo.id = parseObject.getInt("recipeinfo_id");
+        recipeInfo.setTitle(parseObject.getString("title"));
+        recipeInfo.setDescription(parseObject.getString("description"));
+        recipeInfo.setCookingTime(parseObject.getString("cooking_time"));
+        recipeInfo.setImageUrl(Config.sRecipeInfoBaseUrl + "/" + recipeInfo.id + ".jpg");
+        return recipeInfo;
     }
 }

@@ -7,9 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.recipe.data.Category;
-import com.example.recipe.data.CategoryDataStore;
 import com.example.recipe.R;
+import com.example.recipe.data.RecipeDataStore;
+import com.example.recipe.data.RecipeInfo;
 import com.example.recipe.utility.Config;
 import com.squareup.picasso.Picasso;
 
@@ -19,45 +19,40 @@ import java.util.List;
 /**
  * Created by rajnish on 6/8/15.
  */
-public class CategoryAdapter extends RecyclerView.Adapter<CatgoryViewHolder> {
-    private List<Category> dataItems = new ArrayList<>();
+public class FeedAdapter extends RecyclerView.Adapter<FeedViewHolder> {
 
+    private List<RecipeInfo> dataItems = new ArrayList<>();
     private Context context;
-
     final private BaseFragment.AdapterListener adapterListener;
 
-    public CategoryAdapter(Context context, BaseFragment.AdapterListener listener){
+    public FeedAdapter(Context context, BaseFragment.AdapterListener listener){
         this.context = context;
         this.adapterListener = listener;
-        CategoryDataStore.fetchAllCategoryData(new CategoryDataStoreListenerImpl());
+        RecipeDataStore.fetchAllInfoData(new RecipeDataStore.RecipeDataStoreListener() {
+            @Override
+            public void onDataFetchComplete(List<RecipeInfo> list) {
+                dataItems = list;
+                notifyDataSetChanged();
+            }
+        });
     }
 
-    private class CategoryDataStoreListenerImpl implements
-            CategoryDataStore.CategoryDataStoreListener {
-
-        @Override
-        public void onDataFetchComplete(List<Category> list) {
-            dataItems = list;
-            notifyDataSetChanged();
-        }
-    }
 
     @Override
-    public CatgoryViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public FeedViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(
-                R.layout.layout_card_item,viewGroup, false);
-        CatgoryViewHolder mh = new CatgoryViewHolder(v, new ClickResolver(adapterListener));
+                R.layout.recipe_card_item,viewGroup, false);
+        FeedViewHolder mh = new FeedViewHolder(v, new ClickResolver(adapterListener));
         return mh;
 
     }
 
     @Override
-    public void onBindViewHolder(CatgoryViewHolder myViewHolder, int i) {
+    public void onBindViewHolder(FeedViewHolder myViewHolder, int i) {
 
-        Category dataItem = dataItems.get(i);
-        myViewHolder.mTitle.setText(dataItem.getCategory());
-        myViewHolder.mIcon.setImageResource(R.drawable.strawberry);
-        Picasso.with(context).load(dataItem.getUrl())
+        RecipeInfo dataItem = dataItems.get(i);
+        myViewHolder.mTitle.setText(dataItem.getTitle());
+        Picasso.with(context).load(dataItem.getImageUrl())
                 .resize(Config.SCREEN_SIZE.x, Config.SCREEN_SIZE.x)
                 .centerCrop().into(myViewHolder.mIcon);
     }
@@ -67,7 +62,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CatgoryViewHolder> {
         return dataItems.size();
     }
 
-    public static class ClickResolver implements CatgoryViewHolder.ViewHolderListener {
+    public static class ClickResolver implements FeedViewHolder.ViewHolderListener {
         BaseFragment.AdapterListener mListener;
 
         public ClickResolver( BaseFragment.AdapterListener listener){

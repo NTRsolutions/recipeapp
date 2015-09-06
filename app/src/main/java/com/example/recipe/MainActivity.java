@@ -149,7 +149,9 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         RecipeDetailFragment rFrag = new RecipeDetailFragment();
         rFrag.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().add(
-                R.id.full_screen_view, rFrag, "Detail Fragment").commit();
+                R.id.full_screen_view, rFrag, "Detail Fragment")
+                .addToBackStack(RecipeDetailFragment.class.getSimpleName())
+                .commit();
     }
 
 

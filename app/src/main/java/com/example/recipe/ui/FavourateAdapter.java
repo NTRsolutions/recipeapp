@@ -7,9 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.recipe.R;
 import com.example.recipe.data.Category;
 import com.example.recipe.data.CategoryDataStore;
-import com.example.recipe.R;
 import com.example.recipe.utility.Config;
 import com.squareup.picasso.Picasso;
 
@@ -19,27 +19,16 @@ import java.util.List;
 /**
  * Created by rajnish on 6/8/15.
  */
-public class CategoryAdapter extends RecyclerView.Adapter<CatgoryViewHolder> {
+public class FavourateAdapter extends RecyclerView.Adapter<CatgoryViewHolder> {
     private List<Category> dataItems = new ArrayList<>();
 
     private Context context;
 
     final private BaseFragment.AdapterListener adapterListener;
 
-    public CategoryAdapter(Context context, BaseFragment.AdapterListener listener){
+    public FavourateAdapter(Context context, BaseFragment.AdapterListener listener){
         this.context = context;
         this.adapterListener = listener;
-        CategoryDataStore.fetchAllCategoryData(new CategoryDataStoreListenerImpl());
-    }
-
-    private class CategoryDataStoreListenerImpl implements
-            CategoryDataStore.CategoryDataStoreListener {
-
-        @Override
-        public void onDataFetchComplete(List<Category> list) {
-            dataItems = list;
-            notifyDataSetChanged();
-        }
     }
 
     @Override
@@ -54,12 +43,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CatgoryViewHolder> {
     @Override
     public void onBindViewHolder(CatgoryViewHolder myViewHolder, int i) {
 
-        Category dataItem = dataItems.get(i);
-        myViewHolder.mTitle.setText(dataItem.getCategory());
-        myViewHolder.mIcon.setImageResource(R.drawable.strawberry);
-        Picasso.with(context).load(dataItem.getUrl())
-                .resize(Config.SCREEN_SIZE.x, Config.SCREEN_SIZE.x)
-                .centerCrop().into(myViewHolder.mIcon);
     }
 
     @Override

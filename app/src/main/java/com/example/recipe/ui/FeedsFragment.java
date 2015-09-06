@@ -11,8 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.recipe.data.CategoryDataStore;
-import com.example.recipe.MainActivityListener;
 import com.example.recipe.OnItemClickListener;
 import com.example.recipe.R;
 
@@ -48,7 +46,7 @@ public class FeedsFragment extends BaseFragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(layoutManager);
 
-        final CategoryAdapter mAdapter = new CategoryAdapter(getActivity(), new AdapterClickResolver());
+        final FeedAdapter mAdapter = new FeedAdapter(getActivity(), new AdapterClickResolver());
         mRecyclerView.setAdapter(mAdapter);
         return rootView;
     }

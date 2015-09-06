@@ -1,5 +1,6 @@
 package com.example.recipe.data;
 
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 
 import java.security.SecureRandom;

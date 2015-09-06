@@ -23,10 +23,6 @@ import java.util.List;
 public class FavouriteFragment extends BaseFragment {
 
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter MyAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-
-
     public FavouriteFragment(){}
 
     @Override
@@ -44,7 +40,7 @@ public class FavouriteFragment extends BaseFragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(layoutManager);
 
-        CategoryAdapter mAdapter = new CategoryAdapter(getActivity(), new AdapterClickResolver());
+        FavourateAdapter mAdapter = new FavourateAdapter(getActivity(), new AdapterClickResolver());
         mRecyclerView.setAdapter(mAdapter);
         return rootView;
     }

@@ -12,8 +12,11 @@ import com.example.recipe.MainActivityListener;
  * A simple {@link Fragment} subclass.
  */
 public class BaseFragment extends Fragment {
-
     MainActivityListener activityListener;
+
+    public interface AdapterListener {
+        String onAdapterClickListener(String s);
+    }
 
     public BaseFragment() {
         // Required empty public constructor
@@ -27,7 +30,7 @@ public class BaseFragment extends Fragment {
         }
     }
 
-    public class AdapterClickResolver implements CategoryAdapter.AdapterListener {
+    public class AdapterClickResolver implements AdapterListener {
         public String onAdapterClickListener(String s) {
             activityListener.showDetailView(s);
             Log.d("TAG", "in fragment click"+s);
