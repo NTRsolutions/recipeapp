@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class CategoryAdapter extends RecyclerView.Adapter<CatgoryViewHolder> {
 
-    public interface AdapterListener{
+    public interface AdapterListener {
         String onAdapterClickListener(String s);
     }
 
@@ -60,7 +60,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CatgoryViewHolder> {
         myViewHolder.mTitle.setText(dataItem.getCategory());
         myViewHolder.mIcon.setImageResource(R.drawable.strawberry);
         Picasso.with(context).load(dataItem.getUrl())
-                .resize(Config.SCREEN_SIZE.x/2, Config.SCREEN_SIZE.x/2)
+                .resize(Config.SCREEN_SIZE.x, Config.SCREEN_SIZE.x)
                 .centerCrop().into(myViewHolder.mIcon);
     }
 
