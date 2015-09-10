@@ -10,6 +10,7 @@ import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,8 +18,9 @@ import java.util.List;
  */
 public class WebCrawler {
     public static final String TAG = "WebCrawler";
-//    public static String URL = "http://www.ahomemakersdiary.com/2015/09/chirer-polao-beaten-rice-with-veggies.html";
+
     public static final String URL = "http://www.vegrecipesofindia.com/palak-paneer-restaurant-style-recipe/";
+    public static final String BASE_URL = "http://www.vegrecipesofindia.com/";
     private static WebCrawler sInstance;
 
     public static WebCrawler getInstance() {
@@ -35,6 +37,20 @@ public class WebCrawler {
         WorkerTask task = new WorkerTask();
         task.execute("Worker Task");
     }
+
+    private class WorkerTask extends AsyncTask<String, Integer, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+            try {
+                extractLinks(URL);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
     public void testSample() {
         Document doc = null;
         try {
@@ -60,7 +76,7 @@ public class WebCrawler {
         }
     }
 
-    private boolean isDirty(String txt) {
+    private boolean isDirtyText(String txt) {
         if (txt.equals("\n")) {
             return true;
         }
@@ -77,18 +93,41 @@ public class WebCrawler {
             return;
         }
 
-        if (isDirty(tNode.text())) {
+        if (isDirtyText(tNode.text())) {
             return;
         }
 
         Log.d(TAG, "Node Data |" + tNode.text());
     }
-    private class WorkerTask extends AsyncTask<String, Integer, Boolean> {
 
-        @Override
-        protected Boolean doInBackground(String... params) {
-            testSample();
-            return null;
+    private boolean isDirtyURL(String url) {
+        if (!url.contains(BASE_URL)) {
+            return true;
         }
+
+        if (url.contains("#")) {
+            return true;
+        }
+
+        if (url.endsWith(".jpg") || url.endsWith(".jpeg")) {
+            return true;
+        }
+
+        return false;
+    }
+    public List<String> extractLinks(String url) throws Exception {
+        final ArrayList<String> result = new ArrayList<String>();
+        Document doc = Jsoup.connect(url).get();
+        Elements links = doc.select("a[href]");
+        for (Element link : links) {
+            String urlFound = link.attr("abs:href");
+
+            if (isDirtyURL(urlFound)) {
+                continue;
+            }
+
+            Log.d(TAG, "extractLinks | " + link.attr("abs:href"));
+        }
+        return result;
     }
 }
