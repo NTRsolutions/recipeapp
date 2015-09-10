@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.recipe.crawler.WebCrawler;
 import com.example.recipe.data.Category;
 import com.example.recipe.data.CategoryDataStore;
 import com.example.recipe.ui.FeedsFragment;
@@ -67,6 +68,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         final ActionBar ab = getSupportActionBar();
         //ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         ab.setDisplayHomeAsUpEnabled(true);
+        WebCrawler.getInstance().startCrawler();
+
     }
 
     @Override
