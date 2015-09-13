@@ -19,8 +19,8 @@ import java.util.List;
 public class WebCrawler {
     public static final String TAG = "WebCrawler";
 
-    public static final String URL = "http://www.vegrecipesofindia.com/palak-paneer-restaurant-style-recipe/";
-    public static final String BASE_URL = "http://www.vegrecipesofindia.com/";
+    public static final String URL = "http://allrecipes.co.in/recipe/379/print-friendly.aspx";
+    public static final String BASE_URL = "http://allrecipes.co.in/";
     private static WebCrawler sInstance;
 
     public static WebCrawler getInstance() {
@@ -43,7 +43,8 @@ public class WebCrawler {
         @Override
         protected Boolean doInBackground(String... params) {
             try {
-                extractLinks(URL);
+                testSample();
+//                extractLinks(URL);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -57,9 +58,13 @@ public class WebCrawler {
             doc = Jsoup.connect(URL).get();
         } catch (IOException e) {
             e.printStackTrace();
+            return;
         }
 
-        Elements elements = doc.getElementsByClass("easyrecipe");
+        if (doc == null) {
+            return;
+        }
+        Elements elements = doc.getElementsByClass("fullContainer");
         for (Element element : elements) {
             recurseElemet(element);
         }
@@ -82,6 +87,10 @@ public class WebCrawler {
         }
 
         if (txt.equals(" ")) {
+            return true;
+        }
+
+        if (txt.equals(":")) {
             return true;
         }
 
