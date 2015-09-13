@@ -30,4 +30,23 @@ public class Util {
         }
         return text.toString();
     }
+
+    public static String jsonData = "{\n" +
+            "  \"title\": \"Chicken Hariyali Tikka\",\n" +
+            "  \"imageUrl\": \"http://allrecipes.co.in/recipe/634/print-friendly.aspx\",\n" +
+            "  \"ingredients\": [\n" +
+            "    \"half a bunch fresh coriander\",\n" +
+            "    \"10 mint leaves\",\n" +
+            "    \"Garlic Cloves\"\n" +
+            "  ],\n" +
+            "  \"directions\": [\n" +
+            "    \"d  alf a bunch fresh coriander\",\n" +
+            "    \"d 10 mint leaves\",\n" +
+            "    \"d Garlic Cloves\"\n" +
+            "  ],\n" +
+            "  \"serves\": \"3-4\",\n" +
+            "  \"preparationTime\": \"30-40 min\"\n" +
+            "} ";
+
+
 }

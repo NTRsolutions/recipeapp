@@ -14,8 +14,6 @@ import android.view.ViewGroup;
 import com.example.recipe.OnItemClickListener;
 import com.example.recipe.R;
 
-import java.util.List;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -46,7 +44,7 @@ public class FeedsFragment extends BaseFragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(layoutManager);
 
-        final FeedAdapter mAdapter = new FeedAdapter(getActivity(), new AdapterClickResolver());
+        final RecipeAdapter mAdapter = new RecipeAdapter(getActivity(), new AdapterClickResolver());
         mRecyclerView.setAdapter(mAdapter);
         return rootView;
     }

@@ -19,13 +19,13 @@ import java.util.List;
 /**
  * Created by rajnish on 6/8/15.
  */
-public class FeedAdapter extends RecyclerView.Adapter<FeedViewHolder> {
+public class RecipeAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
 
     private List<RecipeInfo> dataItems = new ArrayList<>();
     private Context context;
     final private BaseFragment.AdapterListener adapterListener;
 
-    public FeedAdapter(Context context, BaseFragment.AdapterListener listener){
+    public RecipeAdapter(Context context, BaseFragment.AdapterListener listener){
         this.context = context;
         this.adapterListener = listener;
         RecipeDataStore.fetchAllInfoData(new RecipeDataStore.RecipeDataStoreListener() {
@@ -39,16 +39,16 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedViewHolder> {
 
 
     @Override
-    public FeedViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public RecipeViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(
                 R.layout.recipe_card_item,viewGroup, false);
-        FeedViewHolder mh = new FeedViewHolder(v, new ClickResolver(adapterListener));
+        RecipeViewHolder mh = new RecipeViewHolder(v, new ClickResolver(adapterListener));
         return mh;
 
     }
 
     @Override
-    public void onBindViewHolder(FeedViewHolder myViewHolder, int i) {
+    public void onBindViewHolder(RecipeViewHolder myViewHolder, int i) {
 
         RecipeInfo dataItem = dataItems.get(i);
         myViewHolder.mTitle.setText(dataItem.getTitle());
@@ -62,7 +62,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedViewHolder> {
         return dataItems.size();
     }
 
-    public static class ClickResolver implements FeedViewHolder.ViewHolderListener {
+    public static class ClickResolver implements RecipeViewHolder.ViewHolderListener {
         BaseFragment.AdapterListener mListener;
 
         public ClickResolver( BaseFragment.AdapterListener listener){

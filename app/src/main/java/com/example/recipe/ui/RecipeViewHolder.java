@@ -1,5 +1,6 @@
 package com.example.recipe.ui;
 
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -14,7 +15,7 @@ import com.example.recipe.utility.Config;
 /**
  * Created by rajnish on 6/8/15.
  */
-public class FeedViewHolder extends RecyclerView.ViewHolder {
+public class RecipeViewHolder extends RecyclerView.ViewHolder {
 
     public interface  ViewHolderListener{
         String onViewHolderClicked(String s);
@@ -25,7 +26,7 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
     protected TextView mTitle;
     ViewHolderListener listener;
 
-    public FeedViewHolder(View view, final ViewHolderListener lstr) {
+    public RecipeViewHolder(View view, final ViewHolderListener lstr) {
         super(view);
         mIcon = (ImageView) view.findViewById(R.id.icon);
         mTitle = (TextView) view.findViewById(R.id.firstLine);
@@ -49,7 +50,6 @@ public class FeedViewHolder extends RecyclerView.ViewHolder {
                 }
             }
         });
-
     }
 
 }

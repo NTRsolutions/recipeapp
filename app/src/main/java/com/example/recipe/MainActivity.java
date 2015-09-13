@@ -13,12 +13,16 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 
 import com.example.recipe.crawler.WebCrawler;
 import com.example.recipe.data.Category;
 import com.example.recipe.data.CategoryDataStore;
+import com.example.recipe.data.RecipeDescription;
+import com.example.recipe.ui.BaseFragment;
 import com.example.recipe.ui.FeedsFragment;
 import com.example.recipe.ui.CategoryFragment;
 import com.example.recipe.ui.FavouriteFragment;
@@ -39,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
     SearchFragment mSearchFragment;
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
+    ScreenSlidePagerAdapter mPagerAdapter;
 
     enum Pages {
         FEED,
@@ -51,10 +56,11 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mviewPager = (ViewPager) findViewById(R.id.pager);
-        mTabLayout = (TabLayout) findViewById(R.id.tablayout);
+        mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
+        mviewPager.setAdapter(mPagerAdapter);
 
-        MyPagerAdapter pagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
-        mviewPager.setAdapter(pagerAdapter);
+
+        mTabLayout = (TabLayout) findViewById(R.id.tablayout);
         mTabLayout.setupWithViewPager(mviewPager);
 
         // Set a Toolbar to replace the ActionBar.
@@ -69,6 +75,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         //ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         ab.setDisplayHomeAsUpEnabled(true);
         WebCrawler.getInstance().startCrawler();
+        RecipeDescription recipeDescription = RecipeDescription.getRecipeDescription();
+        Log.d(TAG, "onCreate ");
 
     }
 
@@ -102,46 +110,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private class MyPagerAdapter extends FragmentStatePagerAdapter {
-
-        public MyPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            Pages page = Pages.values()[position];
-            return page.name().toString();
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            Pages page = Pages.values()[position];
-            Fragment fragment = null;
-            switch (page){
-                case FEED:{
-                    fragment =  new FeedsFragment();
-                    break;
-                }
-                case CATEGORIES:{
-                    fragment =  new CategoryFragment();
-                    break;
-                }
-                case FAVOURITE:{
-                    fragment =  new FavouriteFragment();
-                    break;
-                }
-            }
-            return fragment;
-        }
-
-        @Override
-        public int getCount() {
-            return Pages.values().length;
-        }
     }
 
     @Override
@@ -181,5 +149,75 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         transaction.commit();
     }
 
+    @Override
+    public void onBackPressed() {
+        boolean handled = false;
+        BaseFragment fragment = mPagerAdapter.getRegisteredFragment(mviewPager.getCurrentItem());
+        if (fragment instanceof CategoryFragment) {
+            CategoryFragment cFragment = (CategoryFragment)fragment;
+            handled = cFragment.onBackPressed();
+        }
 
+        if (!handled) {
+            super.onBackPressed();
+        }
+
+    }
+
+    private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
+        SparseArray<BaseFragment> registeredFragments = new SparseArray<>();
+
+        public ScreenSlidePagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public int getCount() {
+            return Pages.values().length;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            Pages page = Pages.values()[position];
+            BaseFragment fragment = null;
+            switch (page) {
+                case FAVOURITE:
+                    fragment = new FavouriteFragment();
+                    break;
+                case CATEGORIES:
+                    fragment = new CategoryFragment();
+                    break;
+
+
+                case FEED:
+                    fragment = new FeedsFragment();
+                    break;
+            }
+            return fragment;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            Pages tabItemType = Pages.values()[position];
+            return tabItemType.toString();
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            BaseFragment fragment =
+                    (BaseFragment) super.instantiateItem(container, position);
+            registeredFragments.put(position, fragment);
+            return fragment;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            registeredFragments.remove(position);
+            super.destroyItem(container, position, object);
+        }
+
+        public BaseFragment getRegisteredFragment(int position) {
+            return registeredFragments.get(position);
+        }
+    }
 }

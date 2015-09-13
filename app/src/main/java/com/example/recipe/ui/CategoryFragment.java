@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +26,7 @@ public class CategoryFragment extends BaseFragment {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter MyAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-
+    private boolean isCategoryList = true;
 
     public CategoryFragment() {}
 
@@ -50,5 +51,23 @@ public class CategoryFragment extends BaseFragment {
         return rootView;
     }
 
+    public class AdapterClickResolver implements AdapterListener {
+        public String onAdapterClickListener(String s) {
+            final RecipeAdapter adapter = new RecipeAdapter(
+                    getActivity(), new BaseFragment.AdapterClickResolver());
+            mRecyclerView.setAdapter(adapter);
+            isCategoryList = false;
+            return null;
+        }
+    }
 
+    public boolean onBackPressed() {
+        if (!isCategoryList) {
+            CategoryAdapter mAdapter = new CategoryAdapter(getActivity(), new AdapterClickResolver());
+            mRecyclerView.setAdapter(mAdapter);
+            isCategoryList = true;
+            return true;
+        }
+        return false;
+    }
 }
