@@ -112,11 +112,10 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void showDetailView(String s) {
-        Log.d("TAG", "showDetailView" + s);
+    public void showDetailView(RecipeDescription recipeDescription) {
+        Log.d("TAG", "showDetailView");
         Bundle bundle = new Bundle();
-        bundle.putString("Recipe", s);
+        bundle.putSerializable(RecipeDetailFragment.RECIPE_DETAIL_KEY, recipeDescription);
         RecipeDetailFragment rFrag = new RecipeDetailFragment();
         rFrag.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().add(

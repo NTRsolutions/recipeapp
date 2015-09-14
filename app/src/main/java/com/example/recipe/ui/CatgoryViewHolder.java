@@ -16,16 +16,16 @@ import com.example.recipe.utility.Config;
  */
 public class CatgoryViewHolder extends RecyclerView.ViewHolder {
 
-    public interface  ViewHolderListener{
+    public interface CategoryViewHolderListener {
         String onViewHolderClicked(String s);
     }
 
     private View mContent;
     protected ImageView mIcon;
     protected TextView mTitle;
-    ViewHolderListener listener;
+    CategoryViewHolderListener listener;
 
-    public CatgoryViewHolder(View view, final ViewHolderListener lstr) {
+    public CatgoryViewHolder(View view, final CategoryViewHolderListener lstr) {
         super(view);
         mIcon = (ImageView) view.findViewById(R.id.icon);
         mTitle = (TextView) view.findViewById(R.id.firstLine);
@@ -42,9 +42,8 @@ public class CatgoryViewHolder extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View v) {
                 if (listener != null) {
-                    String description = "this is the most yummlicious recipe";
-                    listener.onViewHolderClicked(description);
-                    Log.d("TAG","in view holder click" +description);
+                    listener.onViewHolderClicked("category clicked");
+                    Log.d("TAG","in view holder click");
 
                 }
             }

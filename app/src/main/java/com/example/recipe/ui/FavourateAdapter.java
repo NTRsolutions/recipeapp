@@ -9,9 +9,6 @@ import android.view.ViewGroup;
 
 import com.example.recipe.R;
 import com.example.recipe.data.Category;
-import com.example.recipe.data.CategoryDataStore;
-import com.example.recipe.utility.Config;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,18 +21,16 @@ public class FavourateAdapter extends RecyclerView.Adapter<CatgoryViewHolder> {
 
     private Context context;
 
-    final private BaseFragment.AdapterListener adapterListener;
 
-    public FavourateAdapter(Context context, BaseFragment.AdapterListener listener){
+    public FavourateAdapter(Context context){
         this.context = context;
-        this.adapterListener = listener;
     }
 
     @Override
     public CatgoryViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(
                 R.layout.layout_card_item,viewGroup, false);
-        CatgoryViewHolder mh = new CatgoryViewHolder(v, new ClickResolver(adapterListener));
+        CatgoryViewHolder mh = new CatgoryViewHolder(v, new ClickResolver());
         return mh;
 
     }
@@ -50,19 +45,13 @@ public class FavourateAdapter extends RecyclerView.Adapter<CatgoryViewHolder> {
         return dataItems.size();
     }
 
-    public static class ClickResolver implements CatgoryViewHolder.ViewHolderListener {
-        BaseFragment.AdapterListener mListener;
+    public static class ClickResolver implements CatgoryViewHolder.CategoryViewHolderListener {
 
-        public ClickResolver( BaseFragment.AdapterListener listener){
-            mListener = listener;
+        public ClickResolver(){
         }
 
         @Override
         public String onViewHolderClicked(String s) {
-            if(mListener != null) {
-                mListener.onAdapterClickListener(s);
-                Log.d("TAG", "in adapter click" + s);
-            }
             return s;
         }
     }

@@ -1,15 +1,14 @@
 package com.example.recipe.ui;
 
-import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.recipe.R;
+import com.example.recipe.data.RecipeDescription;
 import com.example.recipe.utility.Config;
 
 /**
@@ -17,16 +16,16 @@ import com.example.recipe.utility.Config;
  */
 public class RecipeViewHolder extends RecyclerView.ViewHolder {
 
-    public interface  ViewHolderListener{
-        String onViewHolderClicked(String s);
+    public interface RecipeViewHolderListener {
+        void onViewHolderClicked(RecipeDescription recipeDescription);
     }
 
     private View mContent;
     protected ImageView mIcon;
     protected TextView mTitle;
-    ViewHolderListener listener;
+    RecipeViewHolderListener listener;
 
-    public RecipeViewHolder(View view, final ViewHolderListener lstr) {
+    public RecipeViewHolder(View view, final RecipeViewHolderListener lstr) {
         super(view);
         mIcon = (ImageView) view.findViewById(R.id.icon);
         mTitle = (TextView) view.findViewById(R.id.firstLine);
@@ -44,7 +43,8 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
             public void onClick(View v) {
                 if (listener != null) {
                     String description = "this is the most yummlicious recipe";
-                    listener.onViewHolderClicked(description);
+                    RecipeDescription recipeDescription = RecipeDescription.getRecipeDescription();
+                    listener.onViewHolderClicked(recipeDescription);
                     Log.d("TAG","in view holder click" +description);
 
                 }
