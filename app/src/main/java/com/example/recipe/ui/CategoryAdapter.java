@@ -2,7 +2,6 @@ package com.example.recipe.ui;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,15 +19,18 @@ import java.util.List;
  * Created by rajnish on 6/8/15.
  */
 public class CategoryAdapter extends RecyclerView.Adapter<CatgoryViewHolder> {
-    private List<Category> dataItems = new ArrayList<>();
 
-    private Context context;
+    public interface CategoryAdapterListener {
+        void onCategoryAdapterListener();
+    }
 
-    final private BaseFragment.AdapterListener adapterListener;
+    private List<Category> mDataItems = new ArrayList<>();
+    private Context mContext;
+    private CategoryAdapterListener mCategoryAdapterListener;
 
-    public CategoryAdapter(Context context, BaseFragment.AdapterListener listener){
-        this.context = context;
-        this.adapterListener = listener;
+    public CategoryAdapter(Context context, CategoryAdapterListener categoryAdapterListener){
+        this.mContext = context;
+        this.mCategoryAdapterListener = categoryAdapterListener;
         CategoryDataStore.fetchAllCategoryData(new CategoryDataStoreListenerImpl());
     }
 
@@ -37,7 +39,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CatgoryViewHolder> {
 
         @Override
         public void onDataFetchComplete(List<Category> list) {
-            dataItems = list;
+            mDataItems = list;
             notifyDataSetChanged();
         }
     }
@@ -46,7 +48,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CatgoryViewHolder> {
     public CatgoryViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(
                 R.layout.layout_card_item,viewGroup, false);
-        CatgoryViewHolder mh = new CatgoryViewHolder(v, new ClickResolver(adapterListener));
+        CatgoryViewHolder mh = new CatgoryViewHolder(v, new ClickResolver(this));
         return mh;
 
     }
@@ -54,33 +56,32 @@ public class CategoryAdapter extends RecyclerView.Adapter<CatgoryViewHolder> {
     @Override
     public void onBindViewHolder(CatgoryViewHolder myViewHolder, int i) {
 
-        Category dataItem = dataItems.get(i);
+        Category dataItem = mDataItems.get(i);
         myViewHolder.mTitle.setText(dataItem.getCategory());
         myViewHolder.mIcon.setImageResource(R.drawable.strawberry);
-        Picasso.with(context).load(dataItem.getUrl())
+        Picasso.with(mContext).load(dataItem.getUrl())
                 .resize(Config.SCREEN_SIZE.x, Config.SCREEN_SIZE.x)
                 .centerCrop().into(myViewHolder.mIcon);
     }
 
     @Override
     public int getItemCount() {
-        return dataItems.size();
+        return mDataItems.size();
     }
 
-    public static class ClickResolver implements CatgoryViewHolder.ViewHolderListener {
-        BaseFragment.AdapterListener mListener;
+    public static class ClickResolver implements CatgoryViewHolder.CategoryViewHolderListener {
+        CategoryAdapter adapter;
 
-        public ClickResolver( BaseFragment.AdapterListener listener){
-            mListener = listener;
+        ClickResolver(CategoryAdapter categoryAdapter) {
+            adapter = categoryAdapter;
         }
 
         @Override
         public String onViewHolderClicked(String s) {
-            if(mListener != null) {
-                mListener.onAdapterClickListener(s);
-                Log.d("TAG", "in adapter click" + s);
+            if (adapter != null && adapter.mCategoryAdapterListener != null) {
+                adapter.mCategoryAdapterListener.onCategoryAdapterListener();
             }
-            return s;
+            return null;
         }
     }
 

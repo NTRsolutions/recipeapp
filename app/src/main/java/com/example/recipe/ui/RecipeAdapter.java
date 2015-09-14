@@ -2,13 +2,13 @@ package com.example.recipe.ui;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.recipe.R;
 import com.example.recipe.data.RecipeDataStore;
+import com.example.recipe.data.RecipeDescription;
 import com.example.recipe.data.RecipeInfo;
 import com.example.recipe.utility.Config;
 import com.squareup.picasso.Picasso;
@@ -21,17 +21,21 @@ import java.util.List;
  */
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
 
-    private List<RecipeInfo> dataItems = new ArrayList<>();
-    private Context context;
-    final private BaseFragment.AdapterListener adapterListener;
+    public interface RecipeAdapterListener {
+        void onRecipeAdapterListener(RecipeDescription recipeDescription);
+    }
 
-    public RecipeAdapter(Context context, BaseFragment.AdapterListener listener){
-        this.context = context;
-        this.adapterListener = listener;
+    private List<RecipeInfo> mDataItems = new ArrayList<>();
+    private Context mContext;
+    private RecipeAdapterListener mRecipeAdapterListener;
+
+    public RecipeAdapter(Context context, RecipeAdapterListener recipeAdapterListener){
+        this.mContext = context;
+        this.mRecipeAdapterListener = recipeAdapterListener;
         RecipeDataStore.fetchAllInfoData(new RecipeDataStore.RecipeDataStoreListener() {
             @Override
             public void onDataFetchComplete(List<RecipeInfo> list) {
-                dataItems = list;
+                mDataItems = list;
                 notifyDataSetChanged();
             }
         });
@@ -42,7 +46,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
     public RecipeViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(
                 R.layout.recipe_card_item,viewGroup, false);
-        RecipeViewHolder mh = new RecipeViewHolder(v, new ClickResolver(adapterListener));
+        RecipeViewHolder mh = new RecipeViewHolder(v, new ClickResolver(this));
         return mh;
 
     }
@@ -50,32 +54,31 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
     @Override
     public void onBindViewHolder(RecipeViewHolder myViewHolder, int i) {
 
-        RecipeInfo dataItem = dataItems.get(i);
+        RecipeInfo dataItem = mDataItems.get(i);
         myViewHolder.mTitle.setText(dataItem.getTitle());
-        Picasso.with(context).load(dataItem.getImageUrl())
+        Picasso.with(mContext).load(dataItem.getImageUrl())
                 .resize(Config.SCREEN_SIZE.x, Config.SCREEN_SIZE.x)
                 .centerCrop().into(myViewHolder.mIcon);
     }
 
     @Override
     public int getItemCount() {
-        return dataItems.size();
+        return mDataItems.size();
     }
 
-    public static class ClickResolver implements RecipeViewHolder.ViewHolderListener {
-        BaseFragment.AdapterListener mListener;
+    public static class ClickResolver implements RecipeViewHolder.RecipeViewHolderListener {
+        RecipeAdapter recipeAdapter;
 
-        public ClickResolver( BaseFragment.AdapterListener listener){
-            mListener = listener;
+        public ClickResolver(RecipeAdapter adapter) {
+            recipeAdapter = adapter;
         }
 
         @Override
-        public String onViewHolderClicked(String s) {
-            if(mListener != null) {
-                mListener.onAdapterClickListener(s);
-                Log.d("TAG", "in adapter click" + s);
+        public void onViewHolderClicked(RecipeDescription recipeDescription) {
+            if (recipeAdapter != null && recipeAdapter.mRecipeAdapterListener != null) {
+                recipeAdapter.mRecipeAdapterListener.onRecipeAdapterListener(recipeDescription);
             }
-            return s;
+            return ;
         }
     }
 

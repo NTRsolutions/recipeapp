@@ -11,8 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.recipe.MainActivity;
 import com.example.recipe.OnItemClickListener;
 import com.example.recipe.R;
+import com.example.recipe.data.RecipeDescription;
 
 
 /**
@@ -21,17 +23,16 @@ import com.example.recipe.R;
 public class FeedsFragment extends BaseFragment {
 
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter MyAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-    FragmentManager fragmentManager;
-    OnItemClickListener onItemClickListener;
-    RecipeDetailFragment recipeFragment;
+    private MainActivity mMainActivity;
 
     public FeedsFragment() {}
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        if (activity instanceof MainActivity) {
+            mMainActivity = (MainActivity) activity;
+        }
     }
 
     @Override
@@ -44,9 +45,19 @@ public class FeedsFragment extends BaseFragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(layoutManager);
 
-        final RecipeAdapter mAdapter = new RecipeAdapter(getActivity(), new AdapterClickResolver());
+        final RecipeAdapter mAdapter = new RecipeAdapter(getActivity(), new RecipeAdapterListenerImpl());
         mRecyclerView.setAdapter(mAdapter);
         return rootView;
+    }
+
+    private class RecipeAdapterListenerImpl implements RecipeAdapter.RecipeAdapterListener {
+
+        @Override
+        public void onRecipeAdapterListener(RecipeDescription recipeDescription) {
+            if (mMainActivity != null) {
+                mMainActivity.showDetailView(recipeDescription);
+            }
+        }
     }
 
 }

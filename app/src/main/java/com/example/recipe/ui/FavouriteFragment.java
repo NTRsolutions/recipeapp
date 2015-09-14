@@ -40,7 +40,7 @@ public class FavouriteFragment extends BaseFragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(layoutManager);
 
-        FavourateAdapter mAdapter = new FavourateAdapter(getActivity(), new AdapterClickResolver());
+        FavourateAdapter mAdapter = new FavourateAdapter(getActivity());
         mRecyclerView.setAdapter(mAdapter);
         return rootView;
     }
