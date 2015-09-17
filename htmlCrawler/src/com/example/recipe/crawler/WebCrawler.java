@@ -1,0 +1,494 @@
+package com.example.recipe.crawler;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.TextNode;
+import org.jsoup.select.Elements;
+
+import com.mrp.testSuite.MappingMenuRating;
+
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+/**
+ * Created by root on 10/9/15.
+ */
+/**
+ * @author rajnish
+ * 
+ */
+public class WebCrawler {
+	HashMap<Integer, String> touchedUrl = new HashMap<>(10000);
+	public static final String TAG = "WebCrawler";
+	Logger mLogger = Logger.getLogger(this.getClass().getSimpleName());
+	// public static final String URL =
+	// "http://allrecipes.co.in/recipe/379/print-friendly.aspx";
+	public static final String URL = "http://allrecipes.co.in";
+	public static final String BASE_URL = "http://allrecipes.co.in/";
+	public static final String PROBABLE_RECEPIE_ITEM_URL_PREFIX = "http://allrecipes.co.in/recipe/";
+	private static WebCrawler sInstance;
+	MySQLAccess mDatabaseManager;
+
+	public static WebCrawler getInstance() {
+		if (sInstance == null) {
+			sInstance = new WebCrawler();
+		}
+
+		return sInstance;
+	}
+
+	private WebCrawler() {
+		mDatabaseManager = new MySQLAccess();
+	};
+
+	public static void main(String args[]) {
+		WebCrawler webcrawler = WebCrawler.getInstance();
+		webcrawler.startCrawler();
+	}
+
+	public void startCrawler() {
+		try {
+			parseListUrl();
+			// extractLinks(URL);
+			// dumpDataLinearly();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	// ***************************************************** URL Parsing
+	// **************************************/
+
+	public void parseListUrl() throws Exception {
+		ArrayList<String> list = mDatabaseManager.readDataBase(1, true);
+		for (int i = 0; i < list.size(); i++) {
+//			testSample(list.get(i));
+			testSample("http://allrecipes.co.in/recipe/559/print-friendly.aspx");
+		}
+
+	}
+
+	/**
+	 * @param url
+	 */
+	public void testSample(String url) {
+		Document doc = null;
+		try {
+			doc = Jsoup.connect(url).timeout(10 * 1000).get();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
+
+		if (doc == null) {
+			return;
+		}
+		Elements elements = doc.getElementsByClass("fullContainer");
+		ArrayList<String> parsedList = new ArrayList<String>();
+		for (Element element : elements) {
+			recurseElemet(element, parsedList);
+		}
+
+		ArrayList<String> toCleanList = new ArrayList<String>();
+		for (int i = 0; i < parsedList.size(); i++) {
+			int jump = mergeParts(parsedList, i, toCleanList);
+			i += jump;
+		}
+
+//		for (int i = 0; i < toCleanList.size(); i++) {
+//			System.out.println(toCleanList.get(i));
+//		}
+		
+			
+		Element titleElement = doc.getElementById("lblTitle");
+		ArrayList<String> titleList = new ArrayList<String>();
+		List<TextNode> tNodes = titleElement.textNodes();
+		for (TextNode tNode : tNodes) {
+			printTextNode(tNode, titleList);
+		}
+		
+		if (titleList.size() > 0 ) {
+			System.out.println("*********************  Title found *********************");
+			System.out.println(titleList.get(0));
+		}
+		
+		String desc = extractDescription(toCleanList);
+		if (desc != null) {
+			System.out
+					.println("\n *********************  Desc Found ******************** \n");
+			System.out.println(desc);
+		}
+
+		ArrayList<String> ingredientList = extractIngredientList(doc);
+		if (ingredientList != null && ingredientList.size() > 0) {
+			System.out
+					.println("\n *********************  Ingredient Found ******************** \n");
+			for (int i = 0; i < ingredientList.size(); i++) {
+				System.out.println(ingredientList.get(i));
+			}
+		}
+
+		ArrayList<String> prepList = extractPreperationListList(toCleanList);
+		if (prepList != null && prepList.size() > 0) {
+			System.out
+					.println("\n *********************  Prep List Found ******************** \n");
+			for (int i = 0; i < prepList.size(); i++) {
+				System.out.println(prepList.get(i));
+			}
+		}
+		
+		ArrayList<String> nutritionList = extractNutrition(toCleanList);
+		if (nutritionList != null && nutritionList.size() > 0) {
+			System.out
+					.println("\n *********************  Nutrition Found ******************** \n");
+			for (int i = 0; i < nutritionList.size(); i++) {
+				System.out.println(nutritionList.get(i));
+			}
+		}
+
+	}
+
+	public ArrayList<String> extractPreperationListList(
+			ArrayList<String> originalList) {
+		ArrayList<String> list = new ArrayList<>();
+		for (int i = 0; i < originalList.size(); i++) {
+			if (originalList.get(i).trim().equalsIgnoreCase("Preparation method")) {
+				int count = i + 1;
+				String temp = originalList.get(count).trim();
+				while (temp.length() > 50 && count < originalList.size()) {
+					list.add(temp);
+					if ((count + 1) == originalList.size()) {
+						 break;
+					}
+					
+					count++;
+					temp = originalList.get(count).trim();
+				}
+			}
+		}
+		return list;
+	}
+
+	public ArrayList<String> extractIngredientList(Document doc) {
+		ArrayList<String> list = new ArrayList<>();
+		Elements ingredienElements = doc.getElementsByClass("ingredient");
+		for (Element element : ingredienElements) {
+			list.add(element.text());
+		}
+		return list;
+	}
+
+	public ArrayList<String> extractNutrition(ArrayList<String> originalList) {
+		ArrayList<String> list = new ArrayList<>();
+		for (int i = 0; i < originalList.size(); i++) {
+			String temp = originalList.get(i).trim();
+			if (temp.equalsIgnoreCase("Nutrition")) {
+				int count = i + 1;
+				while (count < originalList.size()) {
+					list.add(originalList.get(count).trim());
+					count++;
+				}
+			}
+		}
+
+		return list;
+	}
+
+	public String extractDescription(ArrayList<String> list) {
+		for (int i = 0; i < list.size(); i++) {
+			int count = i;
+			if (list.get(i).trim().equalsIgnoreCase("Ingredients")) {
+				String temp = "";
+				while (temp.length() < 100 && count > 0) {
+					temp = list.get(count);
+					count--;
+				}
+
+				if (!temp.equalsIgnoreCase("")) {
+					return temp;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	public int mergeParts(ArrayList<String> originalList, int index,
+			ArrayList<String> condensedList) {
+		if (originalList.get(index).trim().equals("Recipe by:")) {
+			String currentStr = originalList.get(index);
+			currentStr += (" " + originalList.get(index + 1));
+			currentStr += (" " + originalList.get(index + 2));
+			currentStr.replace("\n", "");
+			// condensedList.add(currentStr);
+			return 3;
+		}
+
+		if (originalList.get(index).trim().endsWith("Prep:")) {
+			return 0;
+		}
+
+		if (originalList.get(index).trim().endsWith("Cook:")) {
+			return 0;
+		}
+
+		if (originalList.get(index).trim().equals("Ready in")) {
+			String currentStr = originalList.get(index);
+			currentStr += (" " + originalList.get(index + 1));
+			currentStr.replace("\n", "");
+			condensedList.add(currentStr);
+			return 1;
+		}
+
+		if (originalList.get(index).trim().equals("Preparation method")) {
+			String currentStr = originalList.get(index);
+			String tmp = originalList.get(index + 1);
+
+			int skipCount = 0;
+			while (!tmp.trim().startsWith("1.")) {
+				skipCount++;
+				tmp = originalList.get(index + skipCount);
+			}
+
+			currentStr.replace("\n", "");
+			condensedList.add(currentStr);
+			return skipCount > 0 ? skipCount - 1 : 0;
+		}
+
+		if (originalList.get(index).trim().equals("Serves")) {
+			String currentStr = originalList.get(index);
+			int retIndex = 0;
+			if (originalList.get(index + 1).trim().length() < 4) {
+				currentStr += (" " + originalList.get(index + 1));
+				retIndex++;
+			}
+
+			currentStr.replace("\n", "");
+			condensedList.add(currentStr);
+			return retIndex;
+		}
+
+		if (originalList.get(index).trim().equals("Allrecipes")) {
+			String currentStr = "Description";
+			condensedList.add(currentStr);
+			return 0;
+		}
+
+		if (originalList.get(index).trim().length() == 2
+				&& originalList.get(index).trim().substring(0, 1)
+						.matches("[-+]?\\d*\\.?\\d+")
+				&& originalList.get(index).trim().substring(1, 2).equals(".")) {
+			String currentStr = originalList.get(index);
+			currentStr += (" " + originalList.get(index + 1));
+			currentStr.replace("\n", "");
+			condensedList.add(currentStr);
+			return 1;
+		}
+
+		condensedList.add(originalList.get(index));
+		return 0;
+	}
+
+	public void recurseElemet(Element element, ArrayList<String> parsedList) {
+		Elements elements = element.children();
+		for (Element el : elements) {
+			List<TextNode> tNodes = el.textNodes();
+			for (TextNode tNode : tNodes) {
+				printTextNode(tNode, parsedList);
+			}
+			recurseElemet(el, parsedList);
+		}
+	}
+
+	private boolean isDirtyText(String txt) {
+		if (txt.equals("\n")) {
+			return true;
+		}
+
+		if (txt.replace(" ", "").length() == 1) {
+			return true;
+		}
+
+		if (txt.equals(" ")) {
+			return true;
+		}
+
+		if (txt.equals(":")) {
+			return true;
+		}
+
+		if (txt.contains("ALL RIGHTS RESERVED")) {
+			return true;
+		}
+
+		if (txt.contains("Last updated")) {
+			return true;
+		}
+
+		if (txt.contains("Back to:")) {
+			return true;
+		}
+
+		if (txt.contains("Print")) {
+			return true;
+		}
+
+		if (txt.contains("Back to:")) {
+			return true;
+		}
+
+		if (txt.contains("Provided by:")) {
+			return true;
+		}
+
+		if (txt.contains("Photo by:")) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private void printTextNode(TextNode tNode, ArrayList<String> parsedList) {
+		if (tNode == null) {
+			return;
+		}
+
+		if (isDirtyText(tNode.text())) {
+			return;
+		}
+
+		parsedList.add(tNode.text());
+//		System.out.println("\n Node Data |" + tNode.text());
+	}
+
+	// ***************************************************** URL Crawling
+	// **************************************/
+	private boolean isDirtyURL(String url) {
+		if (!url.contains(BASE_URL)) {
+			return true;
+		}
+
+		if (url.contains("#")) {
+			return true;
+		}
+
+		if (url.endsWith(".jpg") || url.endsWith(".jpeg")) {
+			return true;
+		}
+
+		if (!url.startsWith(PROBABLE_RECEPIE_ITEM_URL_PREFIX)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	ArrayList<String> getUrlList(String url) {
+		ArrayList<String> list = new ArrayList<>();
+		Document doc = null;
+		try {
+			doc = Jsoup.connect(url).timeout(10 * 1000).get();
+		} catch (Exception e) {
+			return list;
+		}
+
+		Elements links = doc.select("a[href]");
+		for (Element link : links) {
+			String urlFound = link.attr("abs:href");
+			list.add(urlFound);
+		}
+
+		return list;
+	}
+
+	public void extractLinks(String url) throws Exception {
+		int hashCode = url.hashCode();
+		if (touchedUrl.get(hashCode) != null) {
+			return;
+		}
+
+		touchedUrl.put(hashCode, url);
+		mLogger.info("Touched Url Count " + touchedUrl.size()
+				+ "\n processing : " + url);
+
+		final ArrayList<String> result = new ArrayList<String>();
+
+		ArrayList<String> urlList = getUrlList(url);
+		for (int i = 0; i < urlList.size(); i++) {
+			String urlFound = urlList.get(i);
+			int hashCodeInternal = urlFound.hashCode();
+
+			if (!urlFound.startsWith(BASE_URL)) {
+				continue;
+			}
+
+			if (urlFound.contains("searchresults")
+					|| urlFound.contains("search-results")
+					|| urlFound.contains("cooks")) {
+				continue;
+			}
+
+			if (touchedUrl.get(hashCodeInternal) != null) {
+				continue;
+			} else {
+				// processing
+				if (!isDirtyURL(urlFound)) {
+					mLogger.info("extractLinks | " + urlFound);
+					try {
+						mDatabaseManager.insertInDb(hashCodeInternal, urlFound);
+					} catch (Exception e) {
+						// TODO: handle exception
+					}
+
+				}
+				// recursion
+				extractLinks(urlFound);
+			}
+		}
+
+		return;
+	}
+
+	public void dumpDataLinearly() {
+		int lowerLimit = 50;
+		int upperLimit = 13000;
+		for (int i = lowerLimit; i < upperLimit; i++) {
+			String url = String.format(
+					"http://allrecipes.co.in/recipe/%d/print-friendly.aspx", i);
+			try {
+				extractLinksLinear(url);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+	}
+
+	public void extractLinksLinear(String urlFound) throws Exception {
+		mLogger.info("\n processing : " + urlFound);
+		int hashCodeInternal = urlFound.hashCode();
+		if (!urlFound.startsWith(BASE_URL)) {
+			return;
+		}
+
+		// processing
+		if (!isDirtyURL(urlFound)) {
+			mLogger.info("extractLinks | " + urlFound);
+			try {
+				mDatabaseManager.insertInDb(hashCodeInternal, urlFound);
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+		}
+
+		return;
+	}
+}
