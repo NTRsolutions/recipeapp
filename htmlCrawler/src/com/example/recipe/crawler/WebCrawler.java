@@ -6,6 +6,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 
+import com.google.gson.Gson;
 import com.mrp.testSuite.MappingMenuRating;
 
 import java.io.IOException;
@@ -70,7 +71,7 @@ public class WebCrawler {
 		ArrayList<String> list = mDatabaseManager.readDataBase(1, true);
 		for (int i = 0; i < list.size(); i++) {
 //			testSample(list.get(i));
-			testSample("http://allrecipes.co.in/recipe/559/print-friendly.aspx");
+			testSample("http://allrecipes.co.in/recipe/5856/print-friendly.aspx");
 		}
 
 	}
@@ -79,6 +80,7 @@ public class WebCrawler {
 	 * @param url
 	 */
 	public void testSample(String url) {
+		RecipeDescription recipeDescription = new RecipeDescription();
 		Document doc = null;
 		try {
 			doc = Jsoup.connect(url).timeout(10 * 1000).get();
@@ -117,6 +119,7 @@ public class WebCrawler {
 		if (titleList.size() > 0 ) {
 			System.out.println("*********************  Title found *********************");
 			System.out.println(titleList.get(0));
+			recipeDescription.title = titleList.get(0);
 		}
 		
 		String desc = extractDescription(toCleanList);
@@ -124,8 +127,25 @@ public class WebCrawler {
 			System.out
 					.println("\n *********************  Desc Found ******************** \n");
 			System.out.println(desc);
+			recipeDescription.description = desc;
 		}
 
+		String readyIn = extractReadyIn(toCleanList);
+		if (readyIn != null) {
+			System.out
+					.println("\n *********************  Ready In******************** \n");
+			System.out.println(readyIn);
+			recipeDescription.preparationTime = readyIn;
+		}
+		
+		String serves = extractServes(doc);
+		if (serves != null) {
+			System.out
+					.println("\n *********************  serves******************** \n");
+			System.out.println(serves);
+			recipeDescription.serves = serves;
+		}
+		
 		ArrayList<String> ingredientList = extractIngredientList(doc);
 		if (ingredientList != null && ingredientList.size() > 0) {
 			System.out
@@ -133,6 +153,8 @@ public class WebCrawler {
 			for (int i = 0; i < ingredientList.size(); i++) {
 				System.out.println(ingredientList.get(i));
 			}
+			
+			recipeDescription.ingredients = ingredientList;
 		}
 
 		ArrayList<String> prepList = extractPreperationListList(toCleanList);
@@ -142,6 +164,8 @@ public class WebCrawler {
 			for (int i = 0; i < prepList.size(); i++) {
 				System.out.println(prepList.get(i));
 			}
+			
+			recipeDescription.directions = prepList;
 		}
 		
 		ArrayList<String> nutritionList = extractNutrition(toCleanList);
@@ -151,10 +175,43 @@ public class WebCrawler {
 			for (int i = 0; i < nutritionList.size(); i++) {
 				System.out.println(nutritionList.get(i));
 			}
+			
+			recipeDescription.nutritionList = nutritionList;
 		}
+		
+		Gson gson = new Gson();
+		String json = gson.toJson(recipeDescription, RecipeDescription.class);
+		System.out.println("**************************  json  *****************************");
+		System.out.println(json);
 
 	}
 
+	public String extractReadyIn(ArrayList<String> originalList) {
+		String readyin = null;
+		for (int i = 0; i < originalList.size(); i++) {
+			if (originalList.get(i).trim().startsWith("Ready in")) {
+				readyin = originalList.get(i).trim();
+				break;
+			}
+		}
+		return readyin;
+	}
+	
+	public String extractServes(Document doc) {
+		String serves = null;
+		Elements elements = doc.getAllElements();
+		for (Element element : elements) {
+			String str = element.text().trim().toLowerCase();
+			if (!isDirtyText(str)) {
+				if(str.startsWith("serves") && str.length() < 2 * "serves".length()) {
+					serves = str;
+					break;
+				}
+			}
+		}
+		return serves;
+	}
+	
 	public ArrayList<String> extractPreperationListList(
 			ArrayList<String> originalList) {
 		ArrayList<String> list = new ArrayList<>();
@@ -300,6 +357,9 @@ public class WebCrawler {
 		Elements elements = element.children();
 		for (Element el : elements) {
 			List<TextNode> tNodes = el.textNodes();
+			
+
+
 			for (TextNode tNode : tNodes) {
 				printTextNode(tNode, parsedList);
 			}
@@ -351,7 +411,11 @@ public class WebCrawler {
 		if (txt.contains("Photo by:")) {
 			return true;
 		}
-
+		
+		if (txt.contains("Found in:")) {
+			return true;
+		}
+		
 		return false;
 	}
 
@@ -365,11 +429,10 @@ public class WebCrawler {
 		}
 
 		parsedList.add(tNode.text());
-//		System.out.println("\n Node Data |" + tNode.text());
+		System.out.println("\n Node Data |" + tNode.text());
 	}
 
-	// ***************************************************** URL Crawling
-	// **************************************/
+	// ***************************************************** URL Crawling **************************************/
 	private boolean isDirtyURL(String url) {
 		if (!url.contains(BASE_URL)) {
 			return true;

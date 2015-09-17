@@ -1,6 +1,5 @@
-package com.example.recipe.data;
+package com.example.recipe.crawler;
 
-import com.example.recipe.utility.Util;
 import com.google.gson.Gson;
 
 import java.io.Serializable;
@@ -13,19 +12,21 @@ public class RecipeDescription implements Serializable{
 
 
     public String title;
+    public String description;
     public String imageUrl;
     public List<String> ingredients;
     public List<String> directions;
+    public List<String> nutritionList;
     public String serves;
     public String preparationTime;
-    public List<String> nutritionList;
+  
 
-    public static RecipeDescription getRecipeDescription() {
-        String json = Util.jsonData;
-        Gson gson = new Gson();
-        RecipeDescription desc = gson.fromJson(json, RecipeDescription.class);
-        return desc;
-    }
+//    public static RecipeDescription getRecipeDescription() {
+//        String json = Util.jsonData;
+//        Gson gson = new Gson();
+//        RecipeDescription desc = gson.fromJson(json, RecipeDescription.class);
+//        return desc;
+//    }
 
     public String getTitle() {
         return title;
@@ -59,14 +60,5 @@ public class RecipeDescription implements Serializable{
     public String getPreparationTime() {
         return preparationTime;
     }
-
-    public List<String> getNutritionList() {
-        return nutritionList;
-    }
-
-    public void setNutritionList(List<String> nutritionList) {
-        this.nutritionList = nutritionList;
-    }
-
 
 }

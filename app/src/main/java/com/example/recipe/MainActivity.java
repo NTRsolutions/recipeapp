@@ -18,22 +18,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 
-import com.example.recipe.crawler.WebCrawler;
-import com.example.recipe.data.Category;
-import com.example.recipe.data.CategoryDataStore;
 import com.example.recipe.data.RecipeDescription;
 import com.example.recipe.ui.BaseFragment;
-import com.example.recipe.ui.FeedsFragment;
 import com.example.recipe.ui.CategoryFragment;
 import com.example.recipe.ui.FavouriteFragment;
+import com.example.recipe.ui.FeedsFragment;
 import com.example.recipe.ui.RecipeDetailFragment;
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-
-import java.lang.reflect.Field;
-import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements MainActivityListener {
@@ -74,7 +64,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         final ActionBar ab = getSupportActionBar();
         //ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         ab.setDisplayHomeAsUpEnabled(true);
-        WebCrawler.getInstance().startCrawler();
         RecipeDescription recipeDescription = RecipeDescription.getRecipeDescription();
         Log.d(TAG, "onCreate ");
 
