@@ -26,7 +26,7 @@ import java.util.List;
 public class RecipeDetailFragment extends Fragment {
     public static final String RECIPE_DETAIL_KEY = "RECIPE_DETAIL_KEY";
     View rootView;
-    public static float MAX_CARD_HEIGHT_PECENTAGE = 0.30f;
+    public static float MAX_CARD_HEIGHT_PECENTAGE = 0.35f;
     RecipeDescription mRecipeDescritopn;
 
     public RecipeDetailFragment() {
@@ -113,7 +113,7 @@ public class RecipeDetailFragment extends Fragment {
             tv.setText(ingredient);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     linearLayout.getLayoutParams());
-            params.setMargins(10, 10, 10, 10);
+            params.setMargins(5, 5, 5, 5);
             linearLayout.addView(tv, params);
         }
     }
