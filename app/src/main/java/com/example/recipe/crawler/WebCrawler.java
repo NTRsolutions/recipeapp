@@ -11,16 +11,20 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * Created by root on 10/9/15.
  */
 public class WebCrawler {
+    HashMap<Integer, String> touchedUrl = new HashMap<>(10000);
     public static final String TAG = "WebCrawler";
 
-    public static final String URL = "http://allrecipes.co.in/recipe/379/print-friendly.aspx";
+//    public static final String URL = "http://allrecipes.co.in/recipe/379/print-friendly.aspx";
+    public static final String URL = "http://allrecipes.co.in/";
     public static final String BASE_URL = "http://allrecipes.co.in/";
+    public static final String PROBABLE_RECEPIE_ITEM_URL_PREFIX = "http://allrecipes.co.in/recipe/";
     private static WebCrawler sInstance;
 
     public static WebCrawler getInstance() {
@@ -43,8 +47,8 @@ public class WebCrawler {
         @Override
         protected Boolean doInBackground(String... params) {
             try {
-                testSample();
-//                extractLinks(URL);
+//                testSample();
+                extractLinks(URL);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -124,19 +128,39 @@ public class WebCrawler {
 
         return false;
     }
-    public List<String> extractLinks(String url) throws Exception {
+
+    public void extractLinks(String url) throws Exception {
+        int hashCode = url.hashCode();
+        if (touchedUrl.get(hashCode) != null) {
+            return ;
+        }
+
+        touchedUrl.put(hashCode, url);
+        Log.d(TAG, "Touched Url Count " + touchedUrl.size());
+
         final ArrayList<String> result = new ArrayList<String>();
         Document doc = Jsoup.connect(url).get();
         Elements links = doc.select("a[href]");
         for (Element link : links) {
             String urlFound = link.attr("abs:href");
 
-            if (isDirtyURL(urlFound)) {
+            if (!urlFound.startsWith(BASE_URL)) {
                 continue;
             }
 
-            Log.d(TAG, "extractLinks | " + link.attr("abs:href"));
+            int hashCodeInternal = urlFound.hashCode();
+            if (touchedUrl.get(hashCodeInternal) != null) {
+                continue;
+            } else {
+                //processing
+                if (!isDirtyURL(urlFound)) {
+                    Log.d(TAG, "extractLinks | " + link.attr("abs:href"));
+                }
+                // recursion
+                extractLinks(urlFound);
+            }
         }
-        return result;
+
+        return ;
     }
 }
