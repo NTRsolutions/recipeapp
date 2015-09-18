@@ -8,6 +8,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 public class MySQLAccess {
 	private Connection connect = null;
@@ -20,7 +23,12 @@ public class MySQLAccess {
 	URL, 
 	DONE,
 	DIRTY, 
-	SOURCE
+	SOURCE,
+	JSON,
+	TITLE,
+	DESCRIPTION,
+	COOKING_TIME,
+	SERVING
 	}
 	
 	public void setUpDB() throws ClassNotFoundException, SQLException{
@@ -32,6 +40,27 @@ public class MySQLAccess {
 						+ "user=sqluser&password=sqluserpw");
 
 		statement = connect.createStatement();
+	}
+	
+	public void updateInDb(int hashCode, Map<String, String> list) throws Exception {
+		try {
+			setUpDB();
+			String setSegment = "";
+			for(String key : list.keySet()){
+				setSegment += (key + " = '" + list.get(key)) + "',"; 
+			}
+			
+			setSegment = setSegment.substring(0, setSegment.length() - 1);
+			String qury = String.format("update recipe_item set %s where %s = %d", setSegment, 
+					COLUMNS.HASH.toString().toLowerCase(), hashCode);
+			preparedStatement = connect.prepareStatement(qury);
+			preparedStatement.executeUpdate();
+
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			close();
+		}
 	}
 	
 	public void insertInDb(int hashCode, String url) throws Exception {
@@ -49,7 +78,6 @@ public class MySQLAccess {
 		} finally {
 			close();
 		}
-
 	}
 
 	public ArrayList<String> readDataBase(int limit, boolean checkDirty) throws Exception {
