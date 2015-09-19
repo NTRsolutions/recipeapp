@@ -1,5 +1,7 @@
 package com.example.recipe.data;
 
+import android.net.Uri;
+
 import com.example.recipe.utility.Util;
 import com.google.gson.Gson;
 
@@ -10,10 +12,8 @@ import java.util.List;
  * Created by root on 13/9/15.
  */
 public class RecipeDescription implements Serializable{
-
-
     public String title;
-    public String imageUrl;
+    public Uri imageUrl;
     public List<String> ingredients;
     public List<String> directions;
     public String serves;
@@ -27,13 +27,19 @@ public class RecipeDescription implements Serializable{
         return desc;
     }
 
+    public static RecipeDescription getRecipeDescription(String json) {
+        Gson gson = new Gson();
+        RecipeDescription desc = gson.fromJson(json, RecipeDescription.class);
+        return desc;
+    }
+
     public String getTitle() {
         return title;
     }
 
 
 
-    public String getImageUrl() {
+    public Uri getImageUrl() {
         return imageUrl;
     }
 
@@ -68,5 +74,7 @@ public class RecipeDescription implements Serializable{
         this.nutritionList = nutritionList;
     }
 
-
+    public void setImageUrl(Uri imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }

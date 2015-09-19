@@ -71,7 +71,7 @@ public class WebCrawler {
 	// **************************************/
 
 	public void parseListUrl() throws Exception {
-		ArrayList<String> list = mDatabaseManager.readDataBase(50, true);
+		ArrayList<String> list = mDatabaseManager.readDataBase(150, true);
 		for (int i = 0; i < list.size(); i++) {
 			String url = list.get(i);
 			int hashCode = url.hashCode();
@@ -245,7 +245,7 @@ public class WebCrawler {
 					.equalsIgnoreCase("Preparation method")) {
 				int count = i + 1;
 				String temp = originalList.get(count).trim();
-				while (temp.length() > 50 && count < originalList.size()) {
+				while (temp.length() > 20 && count < originalList.size()) {
 					list.add(temp);
 					if ((count + 1) == originalList.size()) {
 						break;
