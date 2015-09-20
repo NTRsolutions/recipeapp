@@ -7,74 +7,74 @@
     card_view:cardElevation="4dp"
     card_view:cardUseCompatPadding="true">
 
-        <RelativeLayout
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/icon"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop" />
 
-            <ImageView
-                android:id="@+id/icon"
-                android:scaleType="centerCrop"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/firstLine"
-                android:layout_below="@id/icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:text="Example application"
-                android:typeface="normal"
-                android:textStyle="bold"
-                android:textSize="20sp" />
-
-
-        <LinearLayout
-            android:id="@+id/imageSelection"
+        <TextView
+            android:id="@+id/firstLine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_below="@id/firstLine">
-                <Button
-                    android:id="@+id/download"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Download"
-                    />
-
-                <Button
-                    android:id="@+id/next"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Next"
-                    />
-
-                <Button
-                    android:id="@+id/previous"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Previous"
-                    />
-            </LinearLayout>
+            android:layout_below="@id/icon"
+            android:padding="10dp"
+            android:text="Example application"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:typeface="normal" />
 
 
-            <LinearLayout
-                android:id="@+id/category"
+        <RelativeLayout
+            android:id="@+id/imageSelection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/firstLine"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/download"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_below="@id/imageSelection">
-
-                <Button
-                    android:id="@+id/categoryButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Category"
-                    />
-
-            </LinearLayout>
+                android:layout_alignParentLeft="true"
+                android:text="Download" />
 
 
+            <Button
+                android:id="@+id/previous"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Previous" />
+
+            <Button
+                android:id="@+id/next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="Next" />
+
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/categoryButton"
+            android:layout_below="@+id/imageSelection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Category" />
+
+        <com.example.recipe.widgets.FlowLayout
+            android:id="@+id/category"
+            android:layout_below="@+id/categoryButton"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+        </com.example.recipe.widgets.FlowLayout>
 
 
     </RelativeLayout>
