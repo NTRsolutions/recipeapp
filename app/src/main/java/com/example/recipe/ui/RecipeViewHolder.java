@@ -1,5 +1,6 @@
 package com.example.recipe.ui;
 
+import android.content.res.Resources;
 import android.content.Context;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -10,7 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.example.recipe.R;
 import com.example.recipe.data.DataUtility;
@@ -23,6 +26,8 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import java.util.ArrayList;
 
 /**
  * Created by rajnish on 6/8/15.
@@ -48,15 +53,64 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         mTitle = (TextView) view.findViewById(R.id.firstLine);
         mReciepeImageView = (ImageView) view.findViewById(R.id.icon);
         mListener = lstr;
-
         ViewGroup.LayoutParams layoutParams = mReciepeImageView.getLayoutParams();
         layoutParams.height = (int) (Config.SCREEN_SIZE.y
                 * Config.MAX_CATEGORY_CARD_HEIGHT_PECENTAGE);
         mReciepeImageView.setLayoutParams(layoutParams);
         mReciepeImageView.requestLayout();
+        final Button downloadButton = (Button) view.findViewById(R.id.download);
+        final Button nextButton = (Button) view.findViewById(R.id.next);
+        final Button previousButton =(Button) view.findViewById(R.id.previous);
+        Button categoryButton = (Button) view.findViewById(R.id.categoryButton);
 
-        Button downloadButton = (Button) view.findViewById(R.id.download);
-        Button nextButton = (Button) view.findViewById(R.id.next);
+        final LinearLayout addCategoryLayout = (LinearLayout) view.findViewById(R.id.category);
+        final String[] categoryOptions = {"North Indian","South Indian","MilkShakes","Cakes","Chinese"};
+
+        categoryButton.setOnClickListener(new View.OnClickListener() {
+
+
+            @Override
+            public void onClick(View v) {
+                Resources res = v.getContext().getResources();
+                final int selectedColor = res.getColor(R.color.blue);
+                final int unSelectedColor = res.getColor(R.color.grey);
+                for(final String options: categoryOptions){
+                    final Button addCategoryListButton = new Button(v.getContext());
+                    addCategoryListButton.setText(options);
+                    addCategoryListButton.setSelected(false);
+
+                    if (addCategoryListButton.isSelected()) {
+                        addCategoryListButton.setBackgroundColor(selectedColor);
+                    } else {
+                        addCategoryListButton.setBackgroundColor(unSelectedColor);
+                    }
+
+                    addCategoryLayout.addView(addCategoryListButton);
+                    final StringBuffer addCategoryItem = new StringBuffer();
+                    addCategoryListButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Button btn = (Button) v;
+                            btn.setSelected(!btn.isSelected());
+
+                            if (btn.isSelected()) {
+                                btn.setBackgroundColor(selectedColor);
+                                addCategoryItem.append(addCategoryListButton.getText());
+                            } else {
+                                btn.setBackgroundColor(unSelectedColor);
+                                while (addCategoryItem.indexOf(options) != -1 && options != null) {
+                                    int pos = addCategoryItem.indexOf(options);
+                                    if (pos < 0) break;
+                                    addCategoryItem.delete(pos, pos + addCategoryItem.length());
+
+                                }
+                            }
+
+                        }
+                    });
+                }
+            }
+        });
 
         downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,7 +127,15 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
             }
         });
 
-        mListener = lstr;
+        previousButton.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+
 
         view.setOnClickListener(new View.OnClickListener() {
             @Override
