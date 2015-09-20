@@ -18,6 +18,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 
+import com.example.recipe.data.DataUtility;
+import com.example.recipe.data.DownloadAndUnzipFile;
 import com.example.recipe.data.RecipeDescription;
 import com.example.recipe.ui.BaseFragment;
 import com.example.recipe.ui.CategoryFragment;
@@ -66,6 +68,13 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         ab.setDisplayHomeAsUpEnabled(true);
         RecipeDescription recipeDescription = RecipeDescription.getRecipeDescription();
         Log.d(TAG, "onCreate ");
+
+        String url = "http://virtualcook.parseapp.com/json/json.zip";
+        String tempPath = DataUtility.getInstance(this).getExternalFilesDirPath() + "/json.zip";
+        String finalPath =  DataUtility.getInstance(this).getExternalFilesDirPath()  + "/" + "json/";
+        DownloadAndUnzipFile downloadAndUnzipFile = new DownloadAndUnzipFile(
+                url, tempPath, finalPath);
+        downloadAndUnzipFile.execute("DownloadAndUnzipFile");
 
     }
 
