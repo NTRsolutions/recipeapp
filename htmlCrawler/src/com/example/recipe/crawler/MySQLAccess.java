@@ -47,7 +47,7 @@ public class MySQLAccess {
 			setUpDB();
 			String setSegment = "";
 			for(String key : list.keySet()){
-				setSegment += (key + " = '" + list.get(key)) + "',"; 
+				setSegment += (key + " = \"" + list.get(key)) + "\","; 
 			}
 			
 			setSegment = setSegment.substring(0, setSegment.length() - 1);

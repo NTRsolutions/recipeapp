@@ -71,7 +71,7 @@ public class WebCrawler {
 	// **************************************/
 
 	public void parseListUrl() throws Exception {
-		ArrayList<String> list = mDatabaseManager.readDataBase(150, true);
+		ArrayList<String> list = mDatabaseManager.readDataBase(500, true);
 		for (int i = 0; i < list.size(); i++) {
 			String url = list.get(i);
 			int hashCode = url.hashCode();
@@ -88,22 +88,45 @@ public class WebCrawler {
 				out.println(json);
 				out.close();
 				
+				String title = cleanStringBeforeDbQuery(recipeDescription.title);
+				String description = cleanStringBeforeDbQuery(recipeDescription.description);
+				String cookingTime = cleanStringBeforeDbQuery(recipeDescription.preparationTime);
+				String serving = cleanStringBeforeDbQuery(recipeDescription.serves);
+				assert(title != null);
+				assert(description != null);
+				
+				if (cookingTime == null) {
+					cookingTime = "";
+				}
+
+				if (serving == null) {
+					serving = "";
+				}
+				
 				HashMap<String, String> map = new HashMap<>();
-				map.put(COLUMNS.TITLE.toString().toLowerCase(), recipeDescription.title.trim());
-				map.put(COLUMNS.DESCRIPTION.toString().toLowerCase(), recipeDescription.description.trim());
-				map.put(COLUMNS.COOKING_TIME.toString().toLowerCase(), recipeDescription.preparationTime.trim());
-				map.put(COLUMNS.SERVING.toString().toLowerCase(), recipeDescription.serves.trim());
+				map.put(COLUMNS.TITLE.toString().toLowerCase(), title.trim());
+				map.put(COLUMNS.DESCRIPTION.toString().toLowerCase(), description.trim());
+				map.put(COLUMNS.COOKING_TIME.toString().toLowerCase(), cookingTime.trim());
+				map.put(COLUMNS.SERVING.toString().toLowerCase(), serving.trim());
 				mDatabaseManager.updateInDb(hashCode, map);
 				
 			} catch (Exception e) {
-				System.out.println();
+				System.out.println(json);
+				e.printStackTrace();
 			}
-
-
 		}
-
 	}
 
+	public String cleanStringBeforeDbQuery(String str) {
+		if (str == null) {
+			return str;
+		}
+		
+		str = str.replace("\\u0027", "'"); // replace unicode char
+		str = str.replace("\\\"", "'"); // replace unicode char
+		str = str.replace("\"", "'"); // replace unicode char
+		return str;
+	} 
 	/**
 	 * @param url
 	 */
