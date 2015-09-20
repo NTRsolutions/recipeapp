@@ -3,6 +3,7 @@ package com.example.recipe.data;
 import com.example.recipe.utility.Config;
 import com.parse.ParseObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,7 +11,7 @@ import java.util.List;
  */
 public class RecipeInfo {
     int id;
-    String mImageUrl;
+    ArrayList<String> mImageUrl;
     String mTitle;
     String mDescription;
     List<String> mIngredients;
@@ -27,11 +28,11 @@ public class RecipeInfo {
         this.id = id;
     }
 
-    public String getImageUrl() {
+    public ArrayList<String> getImageUrlList() {
         return mImageUrl;
     }
 
-    public void setImageUrl(String mImageUrl) {
+    public void setImageUrl(ArrayList<String>  mImageUrl) {
         this.mImageUrl = mImageUrl;
     }
 
@@ -89,7 +90,7 @@ public class RecipeInfo {
         recipeInfo.setTitle(parseObject.getString("title"));
         recipeInfo.setDescription(parseObject.getString("description"));
         recipeInfo.setCookingTime(parseObject.getString("cooking_time"));
-        recipeInfo.setImageUrl(Config.sRecipeInfoBaseUrl + "/" + recipeInfo.id + ".jpg");
+//        recipeInfo.setImageUrl(Config.sRecipeInfoBaseUrl + "/" + recipeInfo.id + ".jpg");
         return recipeInfo;
     }
 }

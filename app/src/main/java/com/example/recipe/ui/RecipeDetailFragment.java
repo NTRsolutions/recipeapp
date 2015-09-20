@@ -1,13 +1,12 @@
 package com.example.recipe.ui;
 
 
-import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -15,7 +14,7 @@ import android.widget.TextView;
 import com.example.recipe.data.RecipeDescription;
 import com.example.recipe.utility.Config;
 import com.example.recipe.R;
-import com.example.recipe.utility.Util;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -27,7 +26,7 @@ public class RecipeDetailFragment extends Fragment {
     public static final String RECIPE_DETAIL_KEY = "RECIPE_DETAIL_KEY";
     View rootView;
     public static float MAX_CARD_HEIGHT_PECENTAGE = 0.35f;
-    RecipeDescription mRecipeDescritopn;
+    RecipeDescription mRecipeData;
 
     public RecipeDetailFragment() {
         // Required empty public constructor
@@ -38,9 +37,14 @@ public class RecipeDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView =  inflater.inflate(R.layout.fragment_recipe2, null, false);
-        mRecipeDescritopn = (RecipeDescription) getArguments()
+        mRecipeData = (RecipeDescription) getArguments()
                 .getSerializable(RECIPE_DETAIL_KEY);
+        ImageView recipeImage = (ImageView) rootView.findViewById(R.id.recipe_image);
 
+        if (mRecipeData.getImageUrl() != null) {
+            Picasso.with(recipeImage.getContext()).load(
+                    mRecipeData.getImageUrl()).into(recipeImage);
+        }
         setUpBannerSize(rootView);
         setUpTitle(rootView);
         setUpIngredientView(rootView);
@@ -55,19 +59,19 @@ public class RecipeDetailFragment extends Fragment {
         TextView preparationTitle = (TextView) rootView.findViewById(R.id.preparation_title);
         preparationTitle.setText("Preparation Time");
         TextView preparationTime = (TextView) rootView.findViewById(R.id.preparationtime);
-        preparationTime.setText(mRecipeDescritopn.getPreparationTime());
+        preparationTime.setText(mRecipeData.getPreparationTime());
     }
 
     public void setUpServesTxt(View rootView) {
         TextView servesTitle = (TextView) rootView.findViewById(R.id.serves_title);
         servesTitle.setText("Serves");
         TextView serves = (TextView) rootView.findViewById(R.id.serves);
-        serves.setText(mRecipeDescritopn.getServes());
+        serves.setText(mRecipeData.getServes());
     }
 
-    public void setUpNutritionView(View rootView) {
+    public void setUpDirection(View rootView) {
         LinearLayout linearLayoutDirection = (LinearLayout) rootView.findViewById(R.id.direction_list);
-        List<String> listDirection = mRecipeDescritopn.getDirections();
+        List<String> listDirection = mRecipeData.getDirections();
         for(String direction : listDirection){
             TextView tvDirection = new TextView(getActivity());
             tvDirection.setText(direction);
@@ -78,9 +82,14 @@ public class RecipeDetailFragment extends Fragment {
         }
     }
 
-    public void setUpDirection(View rootView) {
+    public void setUpNutritionView(View rootView) {
         LinearLayout linearLayoutDirection = (LinearLayout) rootView.findViewById(R.id.nutrition_list);
-        List<String> listNutrition = mRecipeDescritopn.getNutritionList();
+        List<String> listNutrition = mRecipeData.getNutritionList();
+
+        if (listNutrition == null) {
+            return;
+        }
+
         for(String direction : listNutrition){
             TextView tvDirection = new TextView(getActivity());
             tvDirection.setText(direction);
@@ -93,7 +102,7 @@ public class RecipeDetailFragment extends Fragment {
 
     public void setUpTitle(View rootView) {
         TextView recipe = (TextView)rootView.findViewById(R.id.recipeId);
-        recipe.setText(mRecipeDescritopn.getTitle());
+        recipe.setText(mRecipeData.getTitle());
     }
 
     public void setUpBannerSize(View rootView) {
@@ -107,7 +116,7 @@ public class RecipeDetailFragment extends Fragment {
 
     public void setUpIngredientView(View rootView){
         LinearLayout linearLayout = (LinearLayout) rootView.findViewById(R.id.ingredient_list);
-        List<String> list = mRecipeDescritopn.getIngredients();
+        List<String> list = mRecipeData.getIngredients();
         for (String ingredient : list) {
             TextView tv = new TextView(getActivity());
             tv.setText(ingredient);
