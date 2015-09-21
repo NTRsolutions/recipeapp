@@ -43,6 +43,7 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
     private Uri mImageUri;
     private TextView mTitle;
     private RecipeViewHolderListener mListener;
+    private ImageView mFavouriteImage;
     private RecipeInfo mRecipeInfo;
     final String[] categoryList = {"North Indian","South Indian","MilkShakes","Cakes","Chinese",
             "Bengali", "Tandoor", "snacks", "Thai", "French", "Italian", "Punjabi", "Salad",
@@ -60,6 +61,7 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         mReciepeImageView = (ImageView) view.findViewById(R.id.icon);
         mTitle = (TextView) view.findViewById(R.id.firstLine);
         mReciepeImageView = (ImageView) view.findViewById(R.id.icon);
+        mFavouriteImage = (ImageView) view.findViewById(R.id.favourite);
         mListener = lstr;
         ViewGroup.LayoutParams layoutParams = mReciepeImageView.getLayoutParams();
         layoutParams.height = (int) (Config.SCREEN_SIZE.y
@@ -155,6 +157,27 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
                 }
             }
         });
+    }
+
+    private void setUpFavouriteImage(View rootView){
+        Resources res = rootView.getContext().getResources();
+        final int selectedColor = res.getColor(R.color.blue);
+        final int unSelectedColor = res.getColor(R.color.orange);
+        mFavouriteImage.setSelected(false);
+        mFavouriteImage.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                mFavouriteImage.setSelected(!mFavouriteImage.isSelected());
+                if (mFavouriteImage.isSelected()) {
+                    mFavouriteImage.setColorFilter(selectedColor);
+                } else {
+                    mFavouriteImage.setColorFilter(unSelectedColor);
+                }
+
+            }
+        });
+
     }
 
     //// TODO: 19/9/15  (rkumar) Debug code to remove later
@@ -263,6 +286,7 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         }
 
         setUpCategoryButton(rootView);
+        setUpFavouriteImage(rootView);
     }
 
     public void setRecipeInfo(RecipeInfo mRecipeInfo) {

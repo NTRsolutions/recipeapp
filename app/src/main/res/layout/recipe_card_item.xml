@@ -17,6 +17,14 @@
             android:layout_height="wrap_content"
             android:scaleType="centerCrop" />
 
+        <ImageView
+            android:id="@+id/favourite"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/favourite"
+            />
+
         <TextView
             android:id="@+id/firstLine"
             android:layout_width="wrap_content"
