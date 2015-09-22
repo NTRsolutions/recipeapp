@@ -128,6 +128,7 @@ public class RecipeDetailFragment extends Fragment {
     public void setUpIngredientView(View rootView){
         LinearLayout linearLayout = (LinearLayout) rootView.findViewById(R.id.ingredient_list);
         List<String> list = mRecipeData.getIngredients();
+        Resources resources = getResources();
 
         for (String ingredient : list) {
             LinearLayout innerLineaarLayout = new LinearLayout(getActivity());
@@ -136,6 +137,7 @@ public class RecipeDetailFragment extends Fragment {
 
             ImageView addImage = new ImageView(getActivity());
             addImage.setImageResource(R.drawable.addbutton);
+            addImage.setColorFilter(resources.getColor(R.color.colorAccent));
             innerLineaarLayout.addView(addImage);
 
             TextView tv = new TextView(getActivity());
@@ -154,8 +156,8 @@ public class RecipeDetailFragment extends Fragment {
     public void setUpFavouriteRecipe(View rootView){
         final ImageView favouriteRecipe = (ImageView) rootView.findViewById(R.id.favourite);
         Resources res = rootView.getContext().getResources();
-        final int selectedColor = res.getColor(R.color.blue);
-        final int unSelectedColor = res.getColor(R.color.orange);
+        final int selectedColor = res.getColor(R.color.colorAccent);
+        final int unSelectedColor = res.getColor(R.color.grey);
         favouriteRecipe.setColorFilter(unSelectedColor);
         favouriteRecipe.setSelected(false);
         favouriteRecipe.setOnClickListener(new View.OnClickListener(){
@@ -176,7 +178,7 @@ public class RecipeDetailFragment extends Fragment {
     public void setupShareRecipe(View rootView){
         final ImageView shareRecipe = (ImageView) rootView.findViewById(R.id.shareicon);
         Resources res = rootView.getContext().getResources();
-        final int selectedColor = res.getColor(R.color.orange);
+        final int selectedColor = res.getColor(R.color.colorAccent);
         shareRecipe.setColorFilter(selectedColor);
         shareRecipe.setOnClickListener(new View.OnClickListener(){
 
