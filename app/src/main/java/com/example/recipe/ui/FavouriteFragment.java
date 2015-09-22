@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FavouriteFragment extends BaseFragment {
+public class FavouriteFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     public FavouriteFragment(){}

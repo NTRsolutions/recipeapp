@@ -20,7 +20,7 @@ import com.example.recipe.data.RecipeDescription;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FeedsFragment extends BaseFragment {
+public class FeedsFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private MainActivity mMainActivity;

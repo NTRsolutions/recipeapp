@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CategoryFragment extends BaseFragment {
+public class CategoryFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter MyAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
