@@ -1,31 +1,35 @@
 package com.example.recipe.data;
 
-import com.example.recipe.utility.Config;
+import com.parse.GetCallback;
+import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * Created by root on 5/9/15.
  */
 public class RecipeInfo {
-    int id;
+    String objectId;
+    int recipeinfoId;
     ArrayList<String> mImageUrl;
     String mTitle;
     String mDescription;
     List<String> mIngredients;
     String mCookingTime;
     String mServing;
-    String mCategory;
     List<String> mTags;
+    String mCategory;
 
-    public int getId() {
-        return id;
+    public int getRecipeinfoId() {
+        return recipeinfoId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setRecipeinfoId(int recipeinfoId) {
+        this.recipeinfoId = recipeinfoId;
     }
 
     public ArrayList<String> getImageUrlList() {
@@ -80,17 +84,41 @@ public class RecipeInfo {
         return mTags;
     }
 
-    public void setmTags(List<String> mTags) {
+    public void setTags(List<String> mTags) {
         this.mTags = mTags;
+    }
+
+    public String getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(String objectId) {
+        this.objectId = objectId;
     }
 
     public static RecipeInfo getRecipeInfo(ParseObject parseObject) {
         RecipeInfo recipeInfo = new RecipeInfo();
-        recipeInfo.id = parseObject.getInt("recipeinfo_id");
+        recipeInfo.setObjectId(parseObject.getObjectId());
+        recipeInfo.recipeinfoId = parseObject.getInt("recipeinfo_id");
         recipeInfo.setTitle(parseObject.getString("title"));
         recipeInfo.setDescription(parseObject.getString("description"));
         recipeInfo.setCookingTime(parseObject.getString("cooking_time"));
-//        recipeInfo.setImageUrl(Config.sRecipeInfoBaseUrl + "/" + recipeInfo.id + ".jpg");
+        recipeInfo.setCategory(parseObject.getString("category"));
+//        recipeInfo.setImageUrl(Config.sRecipeInfoBaseUrl + "/" + recipeInfo.recipeinfo_id + ".jpg");
         return recipeInfo;
+    }
+
+    public static void updateRecipeInfo(RecipeInfo info, final HashMap<String, String> list) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(RecipeInfo.class.getSimpleName());
+        query.getInBackground(info.getObjectId(), new GetCallback<ParseObject>() {
+            public void done(ParseObject gameScore, ParseException e) {
+                if (e == null) {
+                    for (String key : list.keySet()) {
+                        gameScore.put(key, list.get(key));
+                    }
+                    gameScore.saveInBackground();
+                }
+            }
+        });
     }
 }

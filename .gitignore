@@ -5,3 +5,6 @@
 .DS_Store
 /build
 /captures
+/htmlCrawler/bin
+/app/app.iml
+/.idea/gradle.xml

@@ -2,18 +2,16 @@ package com.example.recipe.ui;
 
 import android.content.res.Resources;
 import android.content.Context;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import com.example.recipe.R;
 import com.example.recipe.data.DataUtility;
@@ -24,13 +22,9 @@ import com.example.recipe.utility.Config;
 import com.example.recipe.widgets.FlowLayout;
 import com.squareup.picasso.Picasso;
 
-import org.w3c.dom.Text;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import java.util.ArrayList;
 
 /**
  * Created by rajnish on 6/8/15.
@@ -45,7 +39,9 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
     private RecipeViewHolderListener mListener;
     private ImageView mFavouriteImage;
     private RecipeInfo mRecipeInfo;
-    final String[] categoryList = {"North Indian","South Indian","MilkShakes","Cakes","Chinese",
+    private FlowLayout mFlowLayout;
+
+    final String[] categoryList = {"NorthIndian","SouthIndian","MilkShakes","Cakes","Chinese",
             "Bengali", "Tandoor", "snacks", "Thai", "French", "Italian", "Punjabi", "Salad",
             "Pasta", "Kids", "breakfast", "lunch", "dinner"};
 
@@ -61,6 +57,7 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         mReciepeImageView = (ImageView) view.findViewById(R.id.icon);
         mTitle = (TextView) view.findViewById(R.id.firstLine);
         mReciepeImageView = (ImageView) view.findViewById(R.id.icon);
+        mFlowLayout = (FlowLayout) view.findViewById(R.id.tags);
         mFavouriteImage = (ImageView) view.findViewById(R.id.favourite);
         mListener = lstr;
         ViewGroup.LayoutParams layoutParams = mReciepeImageView.getLayoutParams();
@@ -93,8 +90,6 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
             }
         });
 
-
-
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -102,7 +97,7 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
                     String description = "this is the most yummlicious recipe";
                     //// TODO: 19/9/15  (rkumar) Debug code to remove later
                     String path = DataUtility.getInstance(mContext).getExternalFilesDirPath()
-                            + "/" + "json" + "/" + mRecipeInfo.getId() + ".json";
+                            + "/" + "json" + "/" + mRecipeInfo.getRecipeinfoId() + ".json";
                     String json = DataUtility.getInstance(mContext).loadJSONFromFile(path);
                     RecipeDescription recipeDescription = RecipeDescription.getRecipeDescription(json);
                     recipeDescription.setImageUrl(mImageUri);
@@ -127,9 +122,24 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
                 Button btn = (Button)v;
                 if(btn.isSelected()) {
                     // fetch selected list
+                    StringBuilder builder = new StringBuilder();
+                    for (int i = 0 ; i < addCategoryContainer.getChildCount() ; i++) {
+                        View view = addCategoryContainer.getChildAt(i);
+                        TextView textView = (TextView) view;
+                        if (textView.isSelected()) {
+                            builder.append("|" + textView.getText().toString());
+                        }
+                    }
+
                     btn.setText("Select Categories");
                     addCategoryContainer.removeAllViews();
                     btn.setSelected(!btn.isSelected());
+                    HashMap<String, String> list = new HashMap<String, String>();
+                    String updatedCategoryList = builder.toString().substring(1);
+                    list.put("category", updatedCategoryList );
+                    RecipeInfo.updateRecipeInfo(mRecipeInfo, list);
+                    mRecipeInfo.setCategory(updatedCategoryList);
+                    pupulateCategoryTags();
                     return;
                 }
 
@@ -248,7 +258,7 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         ArrayList<String> list = mRecipeInfo.getImageUrlList();
         String url = list.get(mCurrentImageCount);
         String finalPath = DataUtility.getInstance(mContext)
-                .getExternalFilesDirPath() + "/images/" + mRecipeInfo.getId() + ".jpg";
+                .getExternalFilesDirPath() + "/images/" + mRecipeInfo.getRecipeinfoId() + ".jpg";
 
         DownloadFileFromURL downloadFileFromURL = new DownloadFileFromURL(
                 mContext, url, finalPath);
@@ -262,31 +272,64 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         mTitle.setText(mRecipeInfo.getTitle());
         mReciepeImageView.setImageResource(android.R.color.transparent);
         String localImagePath = DataUtility.getInstance(mContext)
-                .getExternalFilesDirPath() + "/images/" + mRecipeInfo.getId() + ".jpg";
+                .getExternalFilesDirPath() + "/images/" + mRecipeInfo.getRecipeinfoId() + ".jpg";
+
+        String cloudImagePath = Config.sRecipeStorageCloudBaseUrl + "/images/" + mRecipeInfo.getRecipeinfoId() + ".jpg";
+
         File imageFile = new File(localImagePath);
         if (imageFile.exists()) {
             mImageUri = Uri.fromFile(imageFile);
             Picasso.with(mContext).load(imageFile).into(mReciepeImageView);
             mCardView.setCardBackgroundColor(resources.getColor(R.color.lightgreen));
         } else {
+            Picasso.with(mContext).load(cloudImagePath).error(R.mipmap.ic_launcher).into(mReciepeImageView);
+
             //// TODO: 19/9/15  (rkumar) Debug code to remove later
             DataUtility dataUtility = DataUtility.getInstance(mContext);
             HashMap<String, ArrayList<String>> map = dataUtility.getImageUrlMapList();
-            ArrayList<String> imageUrlList = map.get(mRecipeInfo.getId()+"");
+            ArrayList<String> imageUrlList = map.get(mRecipeInfo.getRecipeinfoId()+"");
 
             if (imageUrlList == null) {
                 dataUtility.networkImageRequest(Integer.toString(
-                        mRecipeInfo.getId()), mRecipeInfo.getTitle() + " reciepe");
+                        mRecipeInfo.getRecipeinfoId()), mRecipeInfo.getTitle() + " reciepe");
             } else {
                 mRecipeInfo.setImageUrl(imageUrlList);
                 mImageUri = Uri.parse(imageUrlList.get(0));
-                Picasso.with(mContext).load(mImageUri).into(mReciepeImageView);
+//                Picasso.with(mContext).load(mImageUri).into(mReciepeImageView);
                 mCardView.setCardBackgroundColor(resources.getColor(R.color.lightred));
             }
         }
 
         setUpCategoryButton(rootView);
         setUpFavouriteImage(rootView);
+        pupulateCategoryTags();
+    }
+
+    private void pupulateCategoryTags() {
+        mFlowLayout.removeAllViews();
+        String cateroty = mRecipeInfo.getCategory();
+
+        if (cateroty == null || cateroty.equalsIgnoreCase("")) {
+            return;
+        }
+
+        String[] categories = cateroty.split("\\|");
+
+        mFlowLayout.setSpacing(5, 10);
+        int numTags = categories.length;
+        for (int i = 0; i < numTags; ++i) {
+            String tagItem = "#" + categories[i];
+            TextView tv = new TextView(mContext);
+            tv.setText(tagItem);
+//            tv.setOnClickListener(createSearchOnClickListener(searchTagItem));
+            tv.setTextSize(15);
+            tv.setPadding(3, 3, 3, 3);
+            tv.setSingleLine();
+            tv.setMaxLines(1);
+            tv.setTextColor(mContext.getResources().getColor(R.color.blue));
+            tv.setEllipsize(TextUtils.TruncateAt.END);
+            mFlowLayout.addView(tv);
+        }
     }
 
     public void setRecipeInfo(RecipeInfo mRecipeInfo) {

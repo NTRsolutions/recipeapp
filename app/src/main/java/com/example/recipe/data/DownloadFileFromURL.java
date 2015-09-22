@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -37,6 +38,12 @@ public class DownloadFileFromURL extends AsyncTask<String, String, String> {
         URL url = null;
         try {
             url = new URL(mUrl);
+            String parentDir = mFinalePath.substring(0, mFinalePath.lastIndexOf("/"));
+            File file = new File(parentDir);
+            if (!file.exists()) {
+                file.mkdirs();
+            }
+
             URLConnection conection = url.openConnection();
             conection.connect();
             // getting file length

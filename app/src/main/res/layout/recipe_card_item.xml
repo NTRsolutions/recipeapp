@@ -36,12 +36,20 @@
             android:textStyle="bold"
             android:typeface="normal" />
 
+        <com.example.recipe.widgets.FlowLayout
+            android:id="@+id/tags"
+            android:layout_below="@+id/firstLine"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </com.example.recipe.widgets.FlowLayout>
+
 
         <RelativeLayout
             android:id="@+id/imageSelection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/firstLine"
+            android:layout_below="@id/tags"
             android:orientation="horizontal">
 
             <Button
@@ -80,8 +88,7 @@
             android:layout_below="@+id/categoryButton"
             android:padding="10dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
         </com.example.recipe.widgets.FlowLayout>
 
 
