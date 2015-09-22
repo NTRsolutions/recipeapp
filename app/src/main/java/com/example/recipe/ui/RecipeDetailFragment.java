@@ -1,8 +1,11 @@
 package com.example.recipe.ui;
 
 
+import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -18,6 +21,7 @@ import com.example.recipe.utility.Config;
 import com.example.recipe.R;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.List;
 
 
@@ -42,30 +46,14 @@ public class RecipeDetailFragment extends Fragment {
         mRecipeData = (RecipeDescription) getArguments()
                 .getSerializable(RECIPE_DETAIL_KEY);
         ImageView recipeImage = (ImageView) rootView.findViewById(R.id.recipe_image);
-        final ImageView favouriteRecipe = (ImageView) rootView.findViewById(R.id.favourite);
 
-        Resources res = rootView.getContext().getResources();
-        final int selectedColor = res.getColor(R.color.blue);
-        final int unSelectedColor = res.getColor(R.color.orange);
-        favouriteRecipe.setSelected(false);
-        favouriteRecipe.setOnClickListener(new View.OnClickListener(){
-
-            @Override
-            public void onClick(View v) {
-                favouriteRecipe.setSelected(!favouriteRecipe.isSelected());
-                if (favouriteRecipe.isSelected()) {
-                    favouriteRecipe.setColorFilter(selectedColor);
-                } else {
-                    favouriteRecipe.setColorFilter(unSelectedColor);
-                }
-
-            }
-        });
 
         if (mRecipeData.getImageUrl() != null) {
             Picasso.with(recipeImage.getContext()).load(
                     mRecipeData.getImageUrl()).into(recipeImage);
         }
+        setupShareRecipe(rootView);
+        setUpFavouriteRecipe(rootView);
         setUpBannerSize(rootView);
         setUpTitle(rootView);
         setUpIngredientView(rootView);
@@ -161,6 +149,53 @@ public class RecipeDetailFragment extends Fragment {
 
 
         }
+    }
+
+    public void setUpFavouriteRecipe(View rootView){
+        final ImageView favouriteRecipe = (ImageView) rootView.findViewById(R.id.favourite);
+        Resources res = rootView.getContext().getResources();
+        final int selectedColor = res.getColor(R.color.blue);
+        final int unSelectedColor = res.getColor(R.color.orange);
+        favouriteRecipe.setColorFilter(unSelectedColor);
+        favouriteRecipe.setSelected(false);
+        favouriteRecipe.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                favouriteRecipe.setSelected(!favouriteRecipe.isSelected());
+                if (favouriteRecipe.isSelected()) {
+                    favouriteRecipe.setColorFilter(selectedColor);
+                } else {
+                    favouriteRecipe.setColorFilter(unSelectedColor);
+                }
+
+            }
+        });
+    }
+
+    public void setupShareRecipe(View rootView){
+        final ImageView shareRecipe = (ImageView) rootView.findViewById(R.id.shareicon);
+        Resources res = rootView.getContext().getResources();
+        final int selectedColor = res.getColor(R.color.orange);
+        shareRecipe.setColorFilter(selectedColor);
+        shareRecipe.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+//                File file = new File(Environment.getExternalStorageDirectory(),
+//                        "PicsArt_1402676920928.jpg");
+                shareIntent.setType("image/*");
+                String imagePath = Environment.getExternalStorageDirectory()
+                        + "PicsArt_1402676920928.jpg";
+//                Uri outputFileUri = Uri.parse(file.getAbsolutePath());
+                File imageFileToShare = new File(imagePath);
+                Uri uri = Uri.fromFile(imageFileToShare);
+                shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+
+               getActivity().startActivity(Intent.createChooser(shareIntent, "SEND"));
+            }
+        });
     }
 
     @Override

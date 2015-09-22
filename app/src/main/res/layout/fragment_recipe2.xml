@@ -27,8 +27,9 @@
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
                     android:src="@drawable/chocolate" />
-            </RelativeLayout>
 
+
+            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -46,6 +47,33 @@
                     android:textStyle="bold"
                     android:typeface="normal"
                     android:background="#0000FF"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/recipeId"
+                >
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/favourite"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/favourite"
+                        />
+
+                    <ImageView
+                        android:id="@+id/shareicon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/shareicon"
+                        />
+
+                </LinearLayout>
             </RelativeLayout>
 
             <RelativeLayout
