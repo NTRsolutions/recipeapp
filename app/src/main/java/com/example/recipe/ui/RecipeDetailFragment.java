@@ -69,6 +69,7 @@ public class RecipeDetailFragment extends Fragment {
         preparationTitle.setText("Preparation Time");
         TextView preparationTime = (TextView) rootView.findViewById(R.id.preparationtime);
         preparationTime.setText(mRecipeData.getPreparationTime());
+        preparationTime.setTextSize(Config.TEXT_SIZE_CONTENT);
     }
 
     public void setUpServesTxt(View rootView) {
@@ -76,6 +77,7 @@ public class RecipeDetailFragment extends Fragment {
         servesTitle.setText("Serves");
         TextView serves = (TextView) rootView.findViewById(R.id.serves);
         serves.setText(mRecipeData.getServes());
+        serves.setTextSize(Config.TEXT_SIZE_CONTENT);
     }
 
     public void setUpDirection(View rootView) {
@@ -85,6 +87,7 @@ public class RecipeDetailFragment extends Fragment {
         for(String direction : listDirection){
             TextView tvDirection = new TextView(getActivity());
             tvDirection.setText(direction);
+            tvDirection.setTextSize(Config.TEXT_SIZE_CONTENT);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     linearLayoutDirection.getLayoutParams());
             params.setMargins(10, 10, 10, 10);
@@ -102,12 +105,14 @@ public class RecipeDetailFragment extends Fragment {
         }
 
         for(String direction : listNutrition){
-            TextView tvDirection = new TextView(getActivity());
-            tvDirection.setText(direction);
+            TextView tvNutrition = new TextView(getActivity());
+            tvNutrition.setText(direction);
+            tvNutrition.setTextSize(Config.TEXT_SIZE_CONTENT);
+
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     linearLayoutDirection.getLayoutParams());
             params.setMargins(10, 10, 10, 10);
-            linearLayoutDirection.addView(tvDirection, params);
+            linearLayoutDirection.addView(tvNutrition, params);
         }
     }
 
@@ -138,15 +143,19 @@ public class RecipeDetailFragment extends Fragment {
             ImageView addImage = new ImageView(getActivity());
             addImage.setImageResource(R.drawable.addbutton);
             addImage.setColorFilter(resources.getColor(R.color.colorAccent));
+            ViewGroup.LayoutParams imageParams = new ViewGroup.LayoutParams(50, 50);
+            addImage.setLayoutParams(imageParams);
+            addImage.setPadding(0, 3, 10, 3);
             innerLineaarLayout.addView(addImage);
 
             TextView tv = new TextView(getActivity());
             tv.setText(ingredient);
+            tv.setTextSize(Config.TEXT_SIZE_CONTENT);
             innerLineaarLayout.addView(tv);
 
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     linearLayout.getLayoutParams());
-            params.setMargins(5, 5, 5, 5);
+            params.setMargins(5, 9, 5, 9);
             linearLayout.addView(innerLineaarLayout,params);
 
 

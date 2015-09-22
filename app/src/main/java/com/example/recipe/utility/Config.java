@@ -21,6 +21,7 @@ public class Config {
     public static Point FULL_SCREEN_SIZE = new Point();
     public static float MAX_CATEGORY_CARD_HEIGHT_PECENTAGE = 0.40f;
     public static Context APPLICATION_CONTEXT = null;
+    public static final int TEXT_SIZE_CONTENT = 18;
 
     public static String sBaseUrl = "http://virtualcook.parseapp.com";
     public static String sRecipeInfoBaseUrl = "http://virtualcook.parseapp.com/media/recipeinfo";
