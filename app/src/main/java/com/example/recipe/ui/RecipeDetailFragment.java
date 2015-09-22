@@ -1,8 +1,10 @@
 package com.example.recipe.ui;
 
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +42,25 @@ public class RecipeDetailFragment extends Fragment {
         mRecipeData = (RecipeDescription) getArguments()
                 .getSerializable(RECIPE_DETAIL_KEY);
         ImageView recipeImage = (ImageView) rootView.findViewById(R.id.recipe_image);
+        final ImageView favouriteRecipe = (ImageView) rootView.findViewById(R.id.favourite);
+
+        Resources res = rootView.getContext().getResources();
+        final int selectedColor = res.getColor(R.color.blue);
+        final int unSelectedColor = res.getColor(R.color.orange);
+        favouriteRecipe.setSelected(false);
+        favouriteRecipe.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                favouriteRecipe.setSelected(!favouriteRecipe.isSelected());
+                if (favouriteRecipe.isSelected()) {
+                    favouriteRecipe.setColorFilter(selectedColor);
+                } else {
+                    favouriteRecipe.setColorFilter(unSelectedColor);
+                }
+
+            }
+        });
 
         if (mRecipeData.getImageUrl() != null) {
             Picasso.with(recipeImage.getContext()).load(
@@ -70,7 +91,8 @@ public class RecipeDetailFragment extends Fragment {
     }
 
     public void setUpDirection(View rootView) {
-        LinearLayout linearLayoutDirection = (LinearLayout) rootView.findViewById(R.id.direction_list);
+        LinearLayout linearLayoutDirection = (LinearLayout) rootView
+                .findViewById(R.id.direction_list);
         List<String> listDirection = mRecipeData.getDirections();
         for(String direction : listDirection){
             TextView tvDirection = new TextView(getActivity());
@@ -83,7 +105,8 @@ public class RecipeDetailFragment extends Fragment {
     }
 
     public void setUpNutritionView(View rootView) {
-        LinearLayout linearLayoutDirection = (LinearLayout) rootView.findViewById(R.id.nutrition_list);
+        LinearLayout linearLayoutDirection = (LinearLayout) rootView
+                .findViewById(R.id.nutrition_list);
         List<String> listNutrition = mRecipeData.getNutritionList();
 
         if (listNutrition == null) {
@@ -117,13 +140,26 @@ public class RecipeDetailFragment extends Fragment {
     public void setUpIngredientView(View rootView){
         LinearLayout linearLayout = (LinearLayout) rootView.findViewById(R.id.ingredient_list);
         List<String> list = mRecipeData.getIngredients();
+
         for (String ingredient : list) {
+            LinearLayout innerLineaarLayout = new LinearLayout(getActivity());
+            innerLineaarLayout.setOrientation(LinearLayout.HORIZONTAL);
+            innerLineaarLayout.setGravity(Gravity.CENTER);
+
+            ImageView addImage = new ImageView(getActivity());
+            addImage.setImageResource(R.drawable.addbutton);
+            innerLineaarLayout.addView(addImage);
+
             TextView tv = new TextView(getActivity());
             tv.setText(ingredient);
+            innerLineaarLayout.addView(tv);
+
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     linearLayout.getLayoutParams());
             params.setMargins(5, 5, 5, 5);
-            linearLayout.addView(tv, params);
+            linearLayout.addView(innerLineaarLayout,params);
+
+
         }
     }
 
