@@ -53,7 +53,8 @@
                 android:id="@+id/topICons"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/recipeId">
+                android:layout_below="@+id/recipeId"
+                android:padding="10dp">
 
                 <LinearLayout
                     android:id="@+id/serve"
@@ -104,7 +105,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/topICons"
                 android:orientation="horizontal"
-                android:paddingTop="5dp">
+                android:padding="10dp">
 
                 <TextView
                     android:id="@+id/preparation_title"
@@ -125,7 +126,7 @@
                 android:id="@+id/ingredient"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="5dp">
+                android:padding="10dp">
 
                 <TextView
                     android:id="@+id/ingredient_title"
@@ -149,7 +150,7 @@
                 android:id="@+id/directions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="10dp">
+                android:padding="10dp">
 
                 <TextView
                     android:id="@+id/direction_title"
