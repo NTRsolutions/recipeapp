@@ -2,7 +2,6 @@ package com.example.recipe.data;
 
 import android.net.Uri;
 
-import com.example.recipe.utility.Util;
 import com.google.gson.Gson;
 
 import java.io.Serializable;
@@ -19,13 +18,6 @@ public class RecipeDescription implements Serializable{
     public String serves;
     public String preparationTime;
     public List<String> nutritionList;
-
-    public static RecipeDescription getRecipeDescription() {
-        String json = Util.jsonData;
-        Gson gson = new Gson();
-        RecipeDescription desc = gson.fromJson(json, RecipeDescription.class);
-        return desc;
-    }
 
     public static RecipeDescription getRecipeDescription(String json) {
         Gson gson = new Gson();

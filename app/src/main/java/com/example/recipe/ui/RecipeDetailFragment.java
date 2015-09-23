@@ -17,8 +17,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.recipe.data.RecipeDescription;
+import com.example.recipe.data.ShoppingListDataStore;
 import com.example.recipe.utility.Config;
 import com.example.recipe.R;
+import com.example.recipe.utility.SpringOnTouchListener;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -131,11 +133,10 @@ public class RecipeDetailFragment extends Fragment {
     }
 
     public void setUpIngredientView(View rootView){
-        LinearLayout linearLayout = (LinearLayout) rootView.findViewById(R.id.ingredient_list);
+        LinearLayout ingredientListLayout = (LinearLayout) rootView.findViewById(R.id.ingredient_list);
         List<String> list = mRecipeData.getIngredients();
         Resources resources = getResources();
-
-        for (String ingredient : list) {
+        for (final String ingredient : list) {
             LinearLayout innerLineaarLayout = new LinearLayout(getActivity());
             innerLineaarLayout.setOrientation(LinearLayout.HORIZONTAL);
             innerLineaarLayout.setGravity(Gravity.CENTER);
@@ -153,12 +154,17 @@ public class RecipeDetailFragment extends Fragment {
             tv.setTextSize(Config.TEXT_SIZE_CONTENT);
             innerLineaarLayout.addView(tv);
 
+            innerLineaarLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ShoppingListDataStore.updateShoppingList(mRecipeData, ingredient);
+                }
+            });
+
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    linearLayout.getLayoutParams());
+                    ingredientListLayout.getLayoutParams());
             params.setMargins(5, 9, 5, 9);
-            linearLayout.addView(innerLineaarLayout,params);
-
-
+            ingredientListLayout.addView(innerLineaarLayout, params);
         }
     }
 
@@ -169,17 +175,15 @@ public class RecipeDetailFragment extends Fragment {
         final int unSelectedColor = res.getColor(R.color.grey);
         favouriteRecipe.setColorFilter(unSelectedColor);
         favouriteRecipe.setSelected(false);
-        favouriteRecipe.setOnClickListener(new View.OnClickListener(){
-
+        favouriteRecipe.setOnTouchListener(new SpringOnTouchListener(favouriteRecipe) {
             @Override
-            public void onClick(View v) {
+            protected void onClick(View view) {
                 favouriteRecipe.setSelected(!favouriteRecipe.isSelected());
                 if (favouriteRecipe.isSelected()) {
                     favouriteRecipe.setColorFilter(selectedColor);
                 } else {
                     favouriteRecipe.setColorFilter(unSelectedColor);
                 }
-
             }
         });
     }

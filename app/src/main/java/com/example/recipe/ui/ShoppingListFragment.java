@@ -1,5 +1,7 @@
 package com.example.recipe.ui;
 
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -11,6 +13,7 @@ import android.widget.TextView;
 
 import com.example.recipe.R;
 import com.example.recipe.data.ShoppingListDataStore;
+import com.example.recipe.utility.Config;
 
 import java.util.List;
 
@@ -33,18 +36,29 @@ public class ShoppingListFragment extends Fragment {
         interceptTouchEvent(rootView);
 
         LinearLayout llayout = (LinearLayout) rootView.findViewById(R.id.shoppingingredient_list);
-        List<ShoppingListDataStore.ShoppingListInfo> shoppingList=  mShoppingListDataStore.getList();
+        List<ShoppingListDataStore.ShoppingItemInfo> shoppingList=  mShoppingListDataStore.getList();
 
-        for(ShoppingListDataStore.ShoppingListInfo info: shoppingList){
+        for(ShoppingListDataStore.ShoppingItemInfo info: shoppingList){
+
             TextView tvRecipeName = new TextView(getActivity());
             tvRecipeName.setText(info.getRecipeName());
+            tvRecipeName.setTextSize(20);
+            tvRecipeName.setTypeface(null, Typeface.BOLD);
             llayout.addView(tvRecipeName);
-            String[] content  = info.getRecipeContentList();
-            for(String item : content){
+            List<String> content  = info.getRecipeContentList();
+            for(String item : content) {
                 TextView tvRecipeContent = new TextView(getActivity());
                 tvRecipeContent.setText(item);
+                tvRecipeContent.setTextSize(Config.TEXT_SIZE_CONTENT);
                 llayout.addView(tvRecipeContent);
             }
+            View v = new View(getActivity());
+            v.setLayoutParams(new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    2
+            ));
+            v.setBackgroundColor(Color.parseColor("#B3B3B3"));
+            llayout.addView(v);
 
         }
         return rootView;

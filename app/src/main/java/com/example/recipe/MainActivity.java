@@ -73,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         final ActionBar ab = getSupportActionBar();
         //ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         ab.setDisplayHomeAsUpEnabled(true);
-        RecipeDescription recipeDescription = RecipeDescription.getRecipeDescription();
         Log.d(TAG, "onCreate ");
 
         String url = "http://virtualcook.parseapp.com/json/json.zip";
