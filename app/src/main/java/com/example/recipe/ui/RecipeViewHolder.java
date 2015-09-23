@@ -90,7 +90,7 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
             }
         });
 
-        view.setOnClickListener(new View.OnClickListener() {
+        mReciepeImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mListener != null) {
