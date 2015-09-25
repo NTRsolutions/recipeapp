@@ -9,7 +9,9 @@ public class FoodCategoryList {
             "SouthIndian",
             "Vegetarian",
             "NonVegetarian",
+
             "Easy",
+            "Healthy",
 
             //Sweet's
             "MilkShakes",

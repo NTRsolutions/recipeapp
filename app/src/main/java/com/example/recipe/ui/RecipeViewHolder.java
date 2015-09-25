@@ -109,6 +109,7 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
     //// TODO: 19/9/15  (rkumar) Debug code to remove later
     private void setUpCategoryButton(View rootView) {
         Button categoryButton = (Button) rootView.findViewById(R.id.categoryButton);
+        categoryButton.setSelected(false);
         categoryButton.setText("Select Category");
         final FlowLayout addCategoryContainer = (FlowLayout) rootView.findViewById(R.id.category);
         addCategoryContainer.removeAllViews();
