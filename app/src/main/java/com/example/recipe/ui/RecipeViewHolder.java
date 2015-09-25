@@ -19,6 +19,7 @@ import com.example.recipe.data.DownloadFileFromURL;
 import com.example.recipe.data.RecipeDescription;
 import com.example.recipe.data.RecipeInfo;
 import com.example.recipe.utility.Config;
+import com.example.recipe.utility.FoodCategoryList;
 import com.example.recipe.widgets.FlowLayout;
 import com.squareup.picasso.Picasso;
 
@@ -40,10 +41,6 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
     private ImageView mFavouriteImage;
     private RecipeInfo mRecipeInfo;
     private FlowLayout mFlowLayout;
-
-    final String[] categoryList = {"NorthIndian","SouthIndian","MilkShakes","Cakes","Chinese",
-            "Bengali", "Tandoor", "snacks", "Thai", "French", "Italian", "Punjabi", "Salad",
-            "Pasta", "Kids", "breakfast", "lunch", "dinner"};
 
     public interface RecipeViewHolderListener {
         void onViewHolderClicked(RecipeDescription recipeDescription);
@@ -154,7 +151,7 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
                 Resources res = v.getContext().getResources();
                 final int selectedColor = res.getColor(R.color.blue);
                 final int unSelectedColor = res.getColor(R.color.greylight);
-                for(final String options: categoryList){
+                for(final String options: FoodCategoryList.sCategoryList){
                     final TextView suggestedTextView = new TextView(v.getContext());
                     suggestedTextView.setPadding(5, 5, 5, 5);
                     suggestedTextView.setText(options);
