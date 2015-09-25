@@ -19,6 +19,7 @@ public class RecipeInfo implements Serializable{
     public List<String> nutritionList;
     public String serves;
     public String preparationTime;
+    public String category;
   
 
 //    public static RecipeDescription getRecipeDescription() {
@@ -135,6 +136,18 @@ public class RecipeInfo implements Serializable{
 
 	public void setPreparationTime(String preparationTime) {
 		this.preparationTime = preparationTime;
+	}
+
+
+
+	public String getCategory() {
+		return category;
+	}
+
+
+
+	public void setCategory(String category) {
+		this.category = category;
 	}
 
 }
