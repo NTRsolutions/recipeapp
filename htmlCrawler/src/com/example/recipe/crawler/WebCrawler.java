@@ -71,16 +71,20 @@ public class WebCrawler {
 	// **************************************/
 
 	public void parseListUrl() throws Exception {
-		ArrayList<String> list = mDatabaseManager.readDataBase(500, true);
+		
+		// DB row's unUpdated
+		String whereClause = " where dirty = 0 ";
+		ArrayList<RecipeInfo> list = mDatabaseManager.readDataBase(500, whereClause);
 		for (int i = 0; i < list.size(); i++) {
-			String url = list.get(i);
+			String url = list.get(i).getBaseUrl();
 			int hashCode = url.hashCode();
-			RecipeDescription recipeDescription = testSample(list.get(i));
-//			RecipeDescription recipeDescription = testSample("http://allrecipes.co.in/recipe/5856/print-friendly.aspx");
+			
+			// Updated RecipeInfo from parsed data
+			RecipeInfo recipeDescription = testSample(list.get(i).getBaseUrl());
 
 			Gson gson = new Gson();
 			String json = gson.toJson(recipeDescription,
-					RecipeDescription.class);
+					RecipeInfo.class);
 			
 			try {
 				String filename = BASE_PATH_TO_SAVE_JSON + hashCode + ".json";
@@ -130,8 +134,8 @@ public class WebCrawler {
 	/**
 	 * @param url
 	 */
-	public RecipeDescription testSample(String url) {
-		RecipeDescription recipeDescription = new RecipeDescription();
+	public RecipeInfo testSample(String url) {
+		RecipeInfo recipeDescription = new RecipeInfo();
 		Document doc = null;
 		try {
 			doc = Jsoup.connect(url).timeout(10 * 1000).get();

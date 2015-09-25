@@ -33,6 +33,7 @@ public class RecipeDataStore {
         }
 
         ParseQuery<ParseObject> category = ParseQuery.getQuery(RecipeInfo.class.getSimpleName());
+        category.setLimit(1000);
         category.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> results, ParseException e) {
                 List<RecipeInfo> list = new ArrayList<>();

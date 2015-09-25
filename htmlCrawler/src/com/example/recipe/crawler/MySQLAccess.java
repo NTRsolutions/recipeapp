@@ -19,7 +19,7 @@ public class MySQLAccess {
 	private ResultSet resultSet = null;
 
 	public enum COLUMNS {
-		RECIPEINFO_ID, URL, DONE, DIRTY, SOURCE, JSON, TITLE, DESCRIPTION, COOKING_TIME, SERVING
+		RECIPEINFO_ID, URL, DONE, DIRTY, SOURCE, JSON, TITLE, DESCRIPTION, COOKING_TIME, SERVING, IMAGE_DOWNLOADED
 	}
 
 	public void setUpDB() throws ClassNotFoundException, SQLException {
@@ -72,17 +72,11 @@ public class MySQLAccess {
 		}
 	}
 
-	public ArrayList<String> readDataBase(int limit, boolean checkDirty)
+	public ArrayList<RecipeInfo> readDataBase(int limit, String whereClause)
 			throws Exception {
-		ArrayList<String> list = new ArrayList<>();
-
+		ArrayList<RecipeInfo> list = new ArrayList<>();
 		try {
 			setUpDB();
-
-			String whereClause = "";
-			if (checkDirty) {
-				whereClause = " where dirty = 0 ";
-			}
 			String query = null;
 			if (limit > 0) {
 				query = String.format(
@@ -97,7 +91,8 @@ public class MySQLAccess {
 			resultSet = preparedStatement.executeQuery();
 
 			while (resultSet.next()) {
-				String hash = resultSet.getString(COLUMNS.RECIPEINFO_ID.toString()
+				RecipeInfo info = new RecipeInfo();
+				int hash = resultSet.getInt(COLUMNS.RECIPEINFO_ID.toString()
 						.toLowerCase());
 				String url = resultSet.getString(COLUMNS.URL.toString()
 						.toLowerCase());
@@ -105,16 +100,24 @@ public class MySQLAccess {
 						.toLowerCase());
 				String done = resultSet.getString(COLUMNS.DONE.toString()
 						.toLowerCase());
+				String title = resultSet.getString(COLUMNS.TITLE.toString()
+						.toLowerCase());
+				String description = resultSet.getString(COLUMNS.DESCRIPTION.toString()
+						.toLowerCase());
 				String source = resultSet.getString(COLUMNS.SOURCE.toString()
 						.toLowerCase());
 
+				info.setHash(hash);
+				info.setDescription(description);
+				info.setTitle(title);
+				
 				// System.out.println("hash: " + hash);
 				// System.out.println("url: " + url);
 				// System.out.println("dirty: " + dirty);
 				// System.out.println("done: " + done);
 				// System.out.println("source: " + source);
-
-				list.add(url);
+				
+				list.add(info);
 			}
 		} catch (Exception e) {
 			throw e;
@@ -146,12 +149,12 @@ public class MySQLAccess {
 
 	public static void main(String args[]) {
 		MySQLAccess dao = new MySQLAccess();
-		try {
-			dao.readDataBase(10, true);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			dao.readDataBase(10, true);
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 
 }

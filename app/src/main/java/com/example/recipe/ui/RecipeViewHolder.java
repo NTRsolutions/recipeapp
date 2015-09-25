@@ -214,11 +214,11 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
 
     //// TODO: 19/9/15  (rkumar) Debug code to remove later
     public void showNextRecipeImage() {
-        if (mReciepeImageView == null) {
+        ArrayList<String> list = mRecipeInfo.getImageUrlList();
+
+        if (list == null || mReciepeImageView == null) {
             return;
         }
-
-        ArrayList<String> list = mRecipeInfo.getImageUrlList();
 
         // When next Clicked firt time trigger all downloads for preview to save time
         if (mCurrentImageCount == 0) {
@@ -239,11 +239,12 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
 
     //// TODO: 19/9/15  (rkumar) Debug code to remove later
     public void showPreviousRecipeImage() {
-        if (mReciepeImageView == null) {
+        ArrayList<String> list = mRecipeInfo.getImageUrlList();
+
+        if (list == null || mReciepeImageView == null) {
             return;
         }
 
-        ArrayList<String> list = mRecipeInfo.getImageUrlList();
         mCurrentImageCount--;
         if (mCurrentImageCount < 0) {
             mCurrentImageCount = list.size() - 1;
@@ -287,14 +288,11 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
             //// TODO: 19/9/15  (rkumar) Debug code to remove later
             DataUtility dataUtility = DataUtility.getInstance(mContext);
             HashMap<String, ArrayList<String>> map = dataUtility.getImageUrlMapList();
-            ArrayList<String> imageUrlList = map.get(mRecipeInfo.getRecipeinfoId()+"");
 
-            if (imageUrlList == null) {
-                dataUtility.networkImageRequest(Integer.toString(
-                        mRecipeInfo.getRecipeinfoId()), mRecipeInfo.getTitle() + " reciepe");
+            if (mRecipeInfo.getImageUrlList() == null) {
+                populateImageUrlList();
             } else {
-                mRecipeInfo.setImageUrl(imageUrlList);
-                mImageUri = Uri.parse(imageUrlList.get(0));
+                mImageUri = Uri.parse(mRecipeInfo.getImageUrlList().get(0));
 //                Picasso.with(mContext).load(mImageUri).into(mReciepeImageView);
                 mCardView.setCardBackgroundColor(resources.getColor(R.color.lightred));
             }
@@ -303,6 +301,17 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         setUpCategoryButton(rootView);
         setUpFavouriteImage(rootView);
         pupulateCategoryTags();
+    }
+
+    public void populateImageUrlList() {
+        int imagePerItem = 9;
+        ArrayList<String>  imageUrlArray = new ArrayList<>();
+        int recipeId = mRecipeInfo.getRecipeinfoId();
+        String baseUrl = String.format("http://192.168.1.106:8000/file_server/%d/", recipeId);
+        for (int i = 0; i < imagePerItem; i++) {
+            imageUrlArray.add(baseUrl + i);
+        }
+        mRecipeInfo.setImageUrl(imageUrlArray);
     }
 
     private void pupulateCategoryTags() {

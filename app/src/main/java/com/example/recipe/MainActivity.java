@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
         // Find our drawer view
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nvView);
@@ -70,9 +69,9 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
                 new OnNavigationItemSelectedListenerImpl());
 
         // Set the menu icon instead of the launcher icon.
-        final ActionBar ab = getSupportActionBar();
+        final ActionBar actionBar = getSupportActionBar();
         //ab.setHomeAsUpIndicator(R.drawable.ic_menu);
-        ab.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
         Log.d(TAG, "onCreate ");
 
         String url = "http://virtualcook.parseapp.com/json/json.zip";
