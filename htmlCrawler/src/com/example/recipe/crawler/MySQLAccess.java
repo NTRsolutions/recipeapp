@@ -19,7 +19,8 @@ public class MySQLAccess {
 	private ResultSet resultSet = null;
 
 	public enum COLUMNS {
-		RECIPEINFO_ID, URL, DONE, DIRTY, SOURCE, JSON, TITLE, DESCRIPTION, COOKING_TIME, SERVING, IMAGE_DOWNLOADED
+		RECIPEINFO_ID, URL, DONE, DIRTY, SOURCE, JSON, TITLE, 
+		DESCRIPTION, COOKING_TIME, SERVING, IMAGE_DOWNLOADED, CATEGORY
 	}
 
 	public void setUpDB() throws ClassNotFoundException, SQLException {

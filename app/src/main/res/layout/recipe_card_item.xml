@@ -44,54 +44,6 @@
             android:layout_height="wrap_content">
         </com.example.recipe.widgets.FlowLayout>
 
-
-        <RelativeLayout
-            android:id="@+id/imageSelection"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tags"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/download"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:text="Download" />
-
-
-            <Button
-                android:id="@+id/previous"
-                android:layout_centerHorizontal="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Previous" />
-
-            <Button
-                android:id="@+id/next"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:text="Next" />
-
-        </RelativeLayout>
-
-        <Button
-            android:id="@+id/categoryButton"
-            android:layout_below="@+id/imageSelection"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Category" />
-
-        <com.example.recipe.widgets.FlowLayout
-            android:id="@+id/category"
-            android:layout_below="@+id/categoryButton"
-            android:padding="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </com.example.recipe.widgets.FlowLayout>
-
-
     </RelativeLayout>
 
 </android.support.v7.widget.CardView>

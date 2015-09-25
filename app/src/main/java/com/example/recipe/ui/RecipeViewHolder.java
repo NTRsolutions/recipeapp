@@ -41,10 +41,6 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
     private RecipeInfo mRecipeInfo;
     private FlowLayout mFlowLayout;
 
-    final String[] categoryList = {"NorthIndian","SouthIndian","MilkShakes","Cakes","Chinese",
-            "Bengali", "Tandoor", "snacks", "Thai", "French", "Italian", "Punjabi", "Salad",
-            "Pasta", "Kids", "breakfast", "lunch", "dinner"};
-
     public interface RecipeViewHolderListener {
         void onViewHolderClicked(RecipeDescription recipeDescription);
     }
@@ -65,31 +61,6 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
                 * Config.MAX_CATEGORY_CARD_HEIGHT_PECENTAGE);
         mReciepeImageView.setLayoutParams(layoutParams);
         mReciepeImageView.requestLayout();
-        final Button downloadButton = (Button) view.findViewById(R.id.download);
-        final Button nextButton = (Button) view.findViewById(R.id.next);
-        final Button previousButton =(Button) view.findViewById(R.id.previous);
-
-        downloadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                downloadRecipeImage();
-            }
-        });
-
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showNextRecipeImage();
-            }
-        });
-
-        previousButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                showPreviousRecipeImage();
-            }
-        });
-
         mReciepeImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -109,72 +80,12 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         });
     }
 
-    //// TODO: 19/9/15  (rkumar) Debug code to remove later
-    private void setUpCategoryButton(View rootView) {
-        Button categoryButton = (Button) rootView.findViewById(R.id.categoryButton);
-        categoryButton.setText("Select Category");
-        final FlowLayout addCategoryContainer = (FlowLayout) rootView.findViewById(R.id.category);
-        addCategoryContainer.removeAllViews();
-        addCategoryContainer.setSpacing(10, 10);
-        categoryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Button btn = (Button)v;
-                if(btn.isSelected()) {
-                    // fetch selected list
-                    StringBuilder builder = new StringBuilder();
-                    for (int i = 0 ; i < addCategoryContainer.getChildCount() ; i++) {
-                        View view = addCategoryContainer.getChildAt(i);
-                        TextView textView = (TextView) view;
-                        if (textView.isSelected()) {
-                            builder.append("|" + textView.getText().toString());
-                        }
-                    }
-
-                    btn.setText("Select Categories");
-                    addCategoryContainer.removeAllViews();
-                    btn.setSelected(!btn.isSelected());
-                    HashMap<String, String> list = new HashMap<String, String>();
-                    String updatedCategoryList = builder.toString().substring(1);
-                    list.put("category", updatedCategoryList );
-                    RecipeInfo.updateRecipeInfo(mRecipeInfo, list);
-                    mRecipeInfo.setCategory(updatedCategoryList);
-                    pupulateCategoryTags();
-                    return;
-                }
-
-                btn.setSelected(!btn.isSelected());
-                btn.setText("Submit Selected Categories");
-
-                // categoryButton not selected add children
-                Resources res = v.getContext().getResources();
-                final int selectedColor = res.getColor(R.color.blue);
-                final int unSelectedColor = res.getColor(R.color.greylight);
-                for(final String options: categoryList){
-                    final TextView suggestedTextView = new TextView(v.getContext());
-                    suggestedTextView.setPadding(5, 5, 5, 5);
-                    suggestedTextView.setText(options);
-                    suggestedTextView.setSelected(false);
-
-                    if (suggestedTextView.isSelected()) {
-                        suggestedTextView.setBackgroundColor(selectedColor);
-                    } else {
-                        suggestedTextView.setBackgroundColor(unSelectedColor);
-                    }
-                    addCategoryContainer.addView(suggestedTextView);
-                    setSeggestedTextClickListener(suggestedTextView);
-
-                }
-            }
-        });
-    }
-
     private void setUpFavouriteImage(View rootView){
         Resources res = rootView.getContext().getResources();
         final int selectedColor = res.getColor(R.color.blue);
         final int unSelectedColor = res.getColor(R.color.orange);
         mFavouriteImage.setSelected(false);
-        mFavouriteImage.setOnClickListener(new View.OnClickListener(){
+        mFavouriteImage.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -190,128 +101,38 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
 
     }
 
-    //// TODO: 19/9/15  (rkumar) Debug code to remove later
-    public void setSeggestedTextClickListener(final TextView suggestedCategoryView) {
-        Resources res = suggestedCategoryView.getContext().getResources();
-        final int selectedColor = res.getColor(R.color.blue);
-        final int unSelectedColor = res.getColor(R.color.greylight);
-        suggestedCategoryView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TextView btn = (TextView) v;
-                btn.setSelected(!btn.isSelected());
-                if (btn.isSelected()) {
-                    btn.setBackgroundColor(selectedColor);
-                } else {
-                    btn.setBackgroundColor(unSelectedColor);
-                }
-            }
-        });
-    }
-
-    //// TODO: 19/9/15  (rkumar) Debug code to remove later
-    int mCurrentImageCount = 0;
-
-    //// TODO: 19/9/15  (rkumar) Debug code to remove later
-    public void showNextRecipeImage() {
-        ArrayList<String> list = mRecipeInfo.getImageUrlList();
-
-        if (list == null || mReciepeImageView == null) {
-            return;
-        }
-
-        // When next Clicked firt time trigger all downloads for preview to save time
-        if (mCurrentImageCount == 0) {
-            for (String url : list) {
-                Picasso.with(mContext).load(url);
-            }
-        }
-
-        mCurrentImageCount++;
-        if (mCurrentImageCount == list.size()) {
-            mCurrentImageCount = 0;
-        }
-
-        String path = list.get(mCurrentImageCount);
-        Picasso.with(mContext).load(path).into(mReciepeImageView);
-
-    }
-
-    //// TODO: 19/9/15  (rkumar) Debug code to remove later
-    public void showPreviousRecipeImage() {
-        ArrayList<String> list = mRecipeInfo.getImageUrlList();
-
-        if (list == null || mReciepeImageView == null) {
-            return;
-        }
-
-        mCurrentImageCount--;
-        if (mCurrentImageCount < 0) {
-            mCurrentImageCount = list.size() - 1;
-        }
-
-        String path = list.get(mCurrentImageCount);
-        Picasso.with(mContext).load(path).into(mReciepeImageView);
-    }
-
-    //// TODO: 19/9/15  (rkumar) Debug code to remove later
-    public void downloadRecipeImage() {
-        ArrayList<String> list = mRecipeInfo.getImageUrlList();
-        String url = list.get(mCurrentImageCount);
-        String finalPath = DataUtility.getInstance(mContext)
-                .getExternalFilesDirPath() + "/images/" + mRecipeInfo.getRecipeinfoId() + ".jpg";
-
-        DownloadFileFromURL downloadFileFromURL = new DownloadFileFromURL(
-                mContext, url, finalPath);
-        downloadFileFromURL.execute("DownloadFileFromURL Task");
-    }
-
     public void onBindView() {
         Resources resources = mContext.getResources();
         mCardView.setCardBackgroundColor(resources.getColor(R.color.white));
-        mCurrentImageCount = 0;
         mTitle.setText(mRecipeInfo.getTitle());
         mReciepeImageView.setImageResource(android.R.color.transparent);
         String localImagePath = DataUtility.getInstance(mContext)
                 .getExternalFilesDirPath() + "/images/" + mRecipeInfo.getRecipeinfoId() + ".jpg";
 
-        String cloudImagePath = Config.sRecipeStorageCloudBaseUrl + "/images/" + mRecipeInfo.getRecipeinfoId() + ".jpg";
+        String cloudImagePath = Config.sRecipeStorageCloudBaseUrl + "/images/"
+                + mRecipeInfo.getRecipeinfoId() + ".jpg";
 
         File imageFile = new File(localImagePath);
         if (imageFile.exists()) {
             mImageUri = Uri.fromFile(imageFile);
             Picasso.with(mContext).load(imageFile).into(mReciepeImageView);
-            mCardView.setCardBackgroundColor(resources.getColor(R.color.lightgreen));
+//            mCardView.setCardBackgroundColor(resources.getColor(R.color.lightgreen));
         } else {
             Picasso.with(mContext).load(cloudImagePath).error(R.mipmap.ic_launcher).into(mReciepeImageView);
-
-            //// TODO: 19/9/15  (rkumar) Debug code to remove later
-            DataUtility dataUtility = DataUtility.getInstance(mContext);
-            HashMap<String, ArrayList<String>> map = dataUtility.getImageUrlMapList();
-
-            if (mRecipeInfo.getImageUrlList() == null) {
-                populateImageUrlList();
-            } else {
-                mImageUri = Uri.parse(mRecipeInfo.getImageUrlList().get(0));
-//                Picasso.with(mContext).load(mImageUri).into(mReciepeImageView);
-                mCardView.setCardBackgroundColor(resources.getColor(R.color.lightred));
-            }
+            downloadRecipeImage(cloudImagePath);
+//            mCardView.setCardBackgroundColor(resources.getColor(R.color.lightred));
         }
 
-        setUpCategoryButton(rootView);
         setUpFavouriteImage(rootView);
         pupulateCategoryTags();
     }
 
-    public void populateImageUrlList() {
-        int imagePerItem = 9;
-        ArrayList<String>  imageUrlArray = new ArrayList<>();
-        int recipeId = mRecipeInfo.getRecipeinfoId();
-        String baseUrl = String.format("http://192.168.1.106:8000/file_server/%d/", recipeId);
-        for (int i = 0; i < imagePerItem; i++) {
-            imageUrlArray.add(baseUrl + i);
-        }
-        mRecipeInfo.setImageUrl(imageUrlArray);
+    public void downloadRecipeImage(String url) {
+        String finalPath = DataUtility.getInstance(mContext)
+                .getExternalFilesDirPath() + "/images/" + mRecipeInfo.getRecipeinfoId() + ".jpg";
+        DownloadFileFromURL downloadFileFromURL = new DownloadFileFromURL(
+                mContext, url, finalPath);
+        downloadFileFromURL.execute("DownloadFileFromURL Task");
     }
 
     private void pupulateCategoryTags() {
