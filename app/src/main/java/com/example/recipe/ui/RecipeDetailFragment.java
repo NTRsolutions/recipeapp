@@ -6,11 +6,13 @@ import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -35,6 +37,7 @@ public class RecipeDetailFragment extends Fragment {
     View rootView;
     public static float MAX_CARD_HEIGHT_PECENTAGE = 0.35f;
     RecipeDescription mRecipeData;
+    Boolean mItemUpdated;
 
     public RecipeDetailFragment() {
         // Required empty public constructor
@@ -132,22 +135,29 @@ public class RecipeDetailFragment extends Fragment {
         banner.requestLayout();
     }
 
-    public void setUpIngredientView(View rootView){
+    public void setUpIngredientView(final View rootView){
         LinearLayout ingredientListLayout = (LinearLayout) rootView.findViewById(R.id.ingredient_list);
         List<String> list = mRecipeData.getIngredients();
         Resources resources = getResources();
         for (final String ingredient : list) {
-            LinearLayout innerLineaarLayout = new LinearLayout(getActivity());
+            final LinearLayout innerLineaarLayout = new LinearLayout(getActivity());
             innerLineaarLayout.setOrientation(LinearLayout.HORIZONTAL);
             innerLineaarLayout.setGravity(Gravity.CENTER);
 
-            ImageView addImage = new ImageView(getActivity());
+            final ImageView addImage = new ImageView(getActivity());
             addImage.setImageResource(R.drawable.addbutton);
             addImage.setColorFilter(resources.getColor(R.color.colorAccent));
             ViewGroup.LayoutParams imageParams = new ViewGroup.LayoutParams(50, 50);
             addImage.setLayoutParams(imageParams);
             addImage.setPadding(0, 3, 10, 3);
-            innerLineaarLayout.addView(addImage);
+            if(ShoppingListDataStore.checkIfItemPresent(mRecipeData,ingredient)){
+                addImage.setImageResource(R.drawable.checkbutton);
+                innerLineaarLayout.addView(addImage);
+                innerLineaarLayout.setSelected(true);
+            }else {
+                innerLineaarLayout.addView(addImage);
+                innerLineaarLayout.setSelected(false);
+            }
 
             TextView tv = new TextView(getActivity());
             tv.setText(ingredient);
@@ -155,9 +165,26 @@ public class RecipeDetailFragment extends Fragment {
             innerLineaarLayout.addView(tv);
 
             innerLineaarLayout.setOnClickListener(new View.OnClickListener() {
+                FrameLayout parentView = (FrameLayout) rootView.findViewById(R.id.parentView);
+
                 @Override
                 public void onClick(View v) {
-                    ShoppingListDataStore.updateShoppingList(mRecipeData, ingredient);
+                    innerLineaarLayout.setSelected(!innerLineaarLayout.isSelected());
+                    boolean isSelected = innerLineaarLayout.isSelected();
+                    if (isSelected) {
+                        mItemUpdated = ShoppingListDataStore.updateShoppingList(mRecipeData, ingredient);
+                        Snackbar.make(parentView, "Item is added to shopping cart", Snackbar.LENGTH_LONG)
+                                .setAction("show", null)
+                                .show();
+                        addImage.setImageResource(R.drawable.checkbutton);
+                    } else {
+                        mItemUpdated = ShoppingListDataStore.deleteShoppingIngredientItem(mRecipeData, ingredient);
+                        Snackbar.make(parentView, "Item is removed from shopping cart", Snackbar.LENGTH_LONG)
+                                .setAction("show", null)
+                                .show();
+                        addImage.setImageResource(R.drawable.addbutton);
+
+                    }
                 }
             });
 

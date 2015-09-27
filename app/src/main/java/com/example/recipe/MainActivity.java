@@ -1,6 +1,8 @@
 package com.example.recipe;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -29,6 +31,8 @@ import com.example.recipe.ui.FavouriteFragment;
 import com.example.recipe.ui.FeedsFragment;
 import com.example.recipe.ui.RecipeDetailFragment;
 import com.example.recipe.ui.ShoppingListFragment;
+import com.example.recipe.utility.AppPreference;
+import com.google.gson.Gson;
 
 
 public class MainActivity extends AppCompatActivity implements MainActivityListener {
@@ -62,6 +66,9 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //load shopping fragment
+        loadPreferences();
+
 
         // Find our drawer view
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -82,6 +89,23 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
                 url, tempPath, finalPath);
         downloadAndUnzipFile.execute("DownloadAndUnzipFile");
 
+    }
+
+    public void onPause() {
+        super.onPause();
+        createSharedPreference();
+    }
+
+    protected void loadPreferences(){
+        String shoppingList = AppPreference.getInstance(this)
+                .getString(ShoppingListDataStore.SAVED_SHOPPING_LIST,"");
+        ShoppingListDataStore.createFromJson(shoppingList);
+    }
+
+    private void createSharedPreference(){
+        String shoppingList = ShoppingListDataStore.getInstance().getJsonStr();
+        AppPreference.getInstance(this).putString(
+                ShoppingListDataStore.SAVED_SHOPPING_LIST, shoppingList);
     }
 
     private class OnNavigationItemSelectedListenerImpl implements
