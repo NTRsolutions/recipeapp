@@ -4,8 +4,6 @@ import com.google.gson.Gson;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -45,21 +43,21 @@ public class ShoppingListDataStore implements Serializable {
         this.list = list;
     }
 
-    public static boolean updateShoppingList(RecipeDescription recipeDescription, String ingredientItem) {
-        String title = recipeDescription.getTitle();
-        List<String> recipeIngredientList = recipeDescription.getIngredients();
+    public static boolean updateShoppingList(RecipeInfo recipeInfo, String ingredientItem) {
+        String title = recipeInfo.getTitle();
+        List<String> recipeIngredientList = recipeInfo.getIngredients();
         ShoppingListDataStore listInstance = ShoppingListDataStore.getInstance();
         ArrayList<ShoppingItemInfo> shoppingInfoList = listInstance.getList();
         Boolean itemAdded = false;
         // generate Hash
-        int hashCode = generateHashcode(recipeDescription);
+        int hashCode = generateHashcode(recipeInfo);
 
         // if nothing added so far, add fresh entry
         if (shoppingInfoList.size() == 0) {
             ArrayList<String> ingredientList = new ArrayList<>();
             ingredientList.add(ingredientItem);
             ShoppingItemInfo shoppingListInfo = new ShoppingItemInfo(title,
-                    ingredientList, hashCode,recipeDescription);
+                    ingredientList, hashCode, recipeInfo);
             shoppingInfoList.add(shoppingListInfo);
             itemAdded = true;
             return itemAdded;
@@ -80,7 +78,7 @@ public class ShoppingListDataStore implements Serializable {
             ArrayList<String> ingredientList = new ArrayList<>();
             ingredientList.add(ingredientItem);
             ShoppingItemInfo shoppingListInfo = new ShoppingItemInfo(title,
-                    ingredientList, hashCode,recipeDescription);
+                    ingredientList, hashCode, recipeInfo);
             shoppingInfoList.add(shoppingListInfo);
             itemAdded = true;
             return itemAdded;
@@ -96,14 +94,14 @@ public class ShoppingListDataStore implements Serializable {
     }
 
     public static boolean deleteShoppingIngredientItem(
-            RecipeDescription recipeDescription, String ingredientItem) {
+            RecipeInfo recipeInfo, String ingredientItem) {
         Boolean removeItem = false;
 
         ShoppingListDataStore listInstance = ShoppingListDataStore.getInstance();
         ArrayList<ShoppingItemInfo> shoppingInfoList = listInstance.getList();
 
         // generate Hash
-        int hashCode = generateHashcode(recipeDescription);
+        int hashCode = generateHashcode(recipeInfo);
 
 
         // existance check
@@ -136,9 +134,9 @@ public class ShoppingListDataStore implements Serializable {
     }
 
 
-    public static int generateHashcode(RecipeDescription recipeDescription) {
-        String title = recipeDescription.getTitle();
-        List<String> recipeIngredientList = recipeDescription.getIngredients();
+    public static int generateHashcode(RecipeInfo recipeInfo) {
+        String title = recipeInfo.getTitle();
+        List<String> recipeIngredientList = recipeInfo.getIngredients();
         String hashString = title;
         for (String str : recipeIngredientList) {
             hashString += str;
@@ -147,13 +145,13 @@ public class ShoppingListDataStore implements Serializable {
         return hashCode;
     }
 
-    public static boolean checkIfItemPresent(RecipeDescription recipeDescription,String ingredientItem){
+    public static boolean checkIfItemPresent(RecipeInfo recipeInfo,String ingredientItem){
         Boolean itemIsPresent = false;
         ShoppingListDataStore listInstance = ShoppingListDataStore.getInstance();
         ArrayList<ShoppingItemInfo> shoppingInfoList = listInstance.getList();
 
         // generate Hash
-        int hashCode = generateHashcode(recipeDescription);
+        int hashCode = generateHashcode(recipeInfo);
 
 
         // existance check
@@ -184,7 +182,7 @@ public class ShoppingListDataStore implements Serializable {
 
 
     public static class ShoppingItemInfo {
-        RecipeDescription recipeDescription;
+        RecipeInfo recipeInfo;
         String recipeName;
         List<String> recipeContentList = new ArrayList<>();
         int hashCode;
@@ -197,15 +195,15 @@ public class ShoppingListDataStore implements Serializable {
             return recipeContentList;
         }
 
-        public RecipeDescription getRecipeDescription() {
-            return recipeDescription;
+        public RecipeInfo getRecipeInfo() {
+            return recipeInfo;
         }
 
 
 
         public ShoppingItemInfo(String recipeName, List<String> shoppingIngredient, int hCode
-                ,RecipeDescription recipeDescription) {
-            this.recipeDescription = recipeDescription;
+                ,RecipeInfo recipeInfo) {
+            this.recipeInfo = recipeInfo;
             this.recipeName = recipeName;
             this.recipeContentList = shoppingIngredient;
             this.hashCode = hCode;

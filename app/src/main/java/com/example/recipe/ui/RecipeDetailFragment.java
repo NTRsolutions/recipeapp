@@ -18,7 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.recipe.data.RecipeDescription;
+import com.example.recipe.data.RecipeInfo;
 import com.example.recipe.data.ShoppingListDataStore;
 import com.example.recipe.utility.Config;
 import com.example.recipe.R;
@@ -36,7 +36,7 @@ public class RecipeDetailFragment extends Fragment {
     public static final String RECIPE_DETAIL_KEY = "RECIPE_DETAIL_KEY";
     View rootView;
     public static float MAX_CARD_HEIGHT_PECENTAGE = 0.35f;
-    RecipeDescription mRecipeData;
+    RecipeInfo mRecipeData;
     Boolean mItemUpdated;
 
     public RecipeDetailFragment() {
@@ -48,7 +48,7 @@ public class RecipeDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView =  inflater.inflate(R.layout.fragment_recipe2, null, false);
-        mRecipeData = (RecipeDescription) getArguments()
+        mRecipeData = (RecipeInfo) getArguments()
                 .getSerializable(RECIPE_DETAIL_KEY);
         ImageView recipeImage = (ImageView) rootView.findViewById(R.id.recipe_image);
 
@@ -81,7 +81,7 @@ public class RecipeDetailFragment extends Fragment {
         TextView servesTitle = (TextView) rootView.findViewById(R.id.serves_title);
         servesTitle.setText("Serves");
         TextView serves = (TextView) rootView.findViewById(R.id.serves);
-        serves.setText(mRecipeData.getServes());
+        serves.setText(mRecipeData.getmServing());
         serves.setTextSize(Config.TEXT_SIZE_CONTENT);
     }
 

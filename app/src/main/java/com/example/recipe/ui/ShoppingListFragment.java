@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.recipe.R;
-import com.example.recipe.data.RecipeDescription;
+import com.example.recipe.data.RecipeInfo;
 import com.example.recipe.data.ShoppingListDataStore;
 
 import java.util.List;
@@ -157,7 +157,7 @@ public class ShoppingListFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            RecipeDescription recipeDesc = mInfoViewRecipe.getRecipeDescription();
+            RecipeInfo recipeDesc = mInfoViewRecipe.getRecipeInfo();
             Bundle bundle = new Bundle();
             bundle.putSerializable(RecipeDetailFragment.RECIPE_DETAIL_KEY, recipeDesc);
             RecipeDetailFragment rFrag = new RecipeDetailFragment();

@@ -8,14 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.recipe.R;
-import com.example.recipe.data.DataUtility;
 import com.example.recipe.data.RecipeDataStore;
-import com.example.recipe.data.RecipeDescription;
 import com.example.recipe.data.RecipeInfo;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -28,7 +24,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
     private RecipeAdapterListener mRecipeAdapterListener;
 
     public interface RecipeAdapterListener {
-        void onRecipeAdapterListener(RecipeDescription recipeDescription);
+        void onRecipeAdapterListener(RecipeInfo recipeInfo);
     }
 
     public RecipeAdapter(Context context, RecipeAdapterListener recipeAdapterListener){
@@ -74,9 +70,9 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
         }
 
         @Override
-        public void onViewHolderClicked(RecipeDescription recipeDescription) {
+        public void onViewHolderClicked(RecipeInfo recipeInfo) {
             if (recipeAdapter != null && recipeAdapter.mRecipeAdapterListener != null) {
-                recipeAdapter.mRecipeAdapterListener.onRecipeAdapterListener(recipeDescription);
+                recipeAdapter.mRecipeAdapterListener.onRecipeAdapterListener(recipeInfo);
             }
             return ;
         }
