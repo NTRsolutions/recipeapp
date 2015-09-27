@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:id="@+id/shoppingdialog"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/viewrecipe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18dp"
+        android:textColor="@color/white"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:layout_margin="10dp"
+        android:background="@color/grey"
+        />
+    <TextView
+
+        android:id="@+id/deleteall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18dp"
+        android:textColor="@color/white"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:layout_margin="10dp"
+        android:background="@color/grey"/>
+
+    <TextView
+        android:id="@+id/sharelist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18dp"
+        android:textColor="@color/white"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:layout_margin="10dp"
+        android:background="@color/grey"
+        />
+
+</LinearLayout>

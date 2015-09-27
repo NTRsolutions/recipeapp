@@ -4,7 +4,6 @@ package com.example.recipe.ui;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,9 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.recipe.MainActivity;
-import com.example.recipe.OnItemClickListener;
 import com.example.recipe.R;
-import com.example.recipe.data.RecipeDescription;
+import com.example.recipe.data.RecipeInfo;
 
 
 /**
@@ -53,9 +51,9 @@ public class FeedsFragment extends Fragment {
     private class RecipeAdapterListenerImpl implements RecipeAdapter.RecipeAdapterListener {
 
         @Override
-        public void onRecipeAdapterListener(RecipeDescription recipeDescription) {
+        public void onRecipeAdapterListener(RecipeInfo recipeInfo) {
             if (mMainActivity != null) {
-                mMainActivity.showDetailView(recipeDescription);
+                mMainActivity.showDetailView(recipeInfo);
             }
         }
     }

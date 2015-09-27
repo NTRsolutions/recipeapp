@@ -22,13 +22,14 @@ import android.view.ViewGroup;
 
 import com.example.recipe.data.DataUtility;
 import com.example.recipe.data.DownloadAndUnzipFile;
-import com.example.recipe.data.RecipeDescription;
+import com.example.recipe.data.RecipeInfo;
 import com.example.recipe.data.ShoppingListDataStore;
 import com.example.recipe.ui.CategoryFragment;
 import com.example.recipe.ui.FavouriteFragment;
 import com.example.recipe.ui.FeedsFragment;
 import com.example.recipe.ui.RecipeDetailFragment;
 import com.example.recipe.ui.ShoppingListFragment;
+import com.example.recipe.utility.AppPreference;
 
 
 public class MainActivity extends AppCompatActivity implements MainActivityListener {
@@ -62,6 +63,9 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //load shopping fragment
+        loadPreferences();
+
         // Find our drawer view
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nvView);
@@ -81,6 +85,23 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
                 url, tempPath, finalPath);
         downloadAndUnzipFile.execute("DownloadAndUnzipFile");
 
+    }
+
+    public void onPause() {
+        super.onPause();
+        createSharedPreference();
+    }
+
+    protected void loadPreferences(){
+        String shoppingList = AppPreference.getInstance(this)
+                .getString(ShoppingListDataStore.SAVED_SHOPPING_LIST,"");
+        ShoppingListDataStore.createFromJson(shoppingList);
+    }
+
+    private void createSharedPreference(){
+        String shoppingList = ShoppingListDataStore.getInstance().getJsonStr();
+        AppPreference.getInstance(this).putString(
+                ShoppingListDataStore.SAVED_SHOPPING_LIST, shoppingList);
     }
 
     private class OnNavigationItemSelectedListenerImpl implements
@@ -139,10 +160,10 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
                 .commit();
     }
 
-    public void showDetailView(RecipeDescription recipeDescription) {
+    public void showDetailView(RecipeInfo recipeInfo) {
         Log.d("TAG", "showDetailView");
         Bundle bundle = new Bundle();
-        bundle.putSerializable(RecipeDetailFragment.RECIPE_DETAIL_KEY, recipeDescription);
+        bundle.putSerializable(RecipeDetailFragment.RECIPE_DETAIL_KEY, recipeInfo);
         RecipeDetailFragment rFrag = new RecipeDetailFragment();
         rFrag.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().add(

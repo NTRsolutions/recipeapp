@@ -22,12 +22,11 @@ public class RecipeDataStore {
     }
 
     public static void fetchAllInfoData(final RecipeDataStoreListener listener) {
-
         if (sRecipeInfoList == null) {
             sRecipeInfoList = new ArrayList<>();
         }
 
-        if (listener != null && sRecipeInfoList.size() >0) {
+        if (listener != null && sRecipeInfoList.size() > 0) {
             listener.onDataFetchComplete(sRecipeInfoList);
             return;
         }
