@@ -190,6 +190,7 @@ public class RecipeDataStore {
 
         RecipeDataStore.getsInstance(mContext).addFreeTextTag(
                 info, Config.sFavouriteTag);
+        sFavouriteRecipeInfoList.add(info);
     }
 
     public void removeFavouriteTextTags(RecipeInfo info) {
@@ -203,6 +204,7 @@ public class RecipeDataStore {
 
         RecipeDataStore.getsInstance(mContext).removeFreeTextTag(
                 info, Config.sFavouriteTag);
+        sFavouriteRecipeInfoList.remove(info);
     }
 
     public boolean isFavouriteTextTag(RecipeInfo info) {
