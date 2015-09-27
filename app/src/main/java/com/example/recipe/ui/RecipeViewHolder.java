@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,6 +23,8 @@ import com.example.recipe.widgets.FlowLayout;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by rajnish on 6/8/15.
@@ -135,7 +138,7 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
                     HashMap<String, String> list = new HashMap<String, String>();
                     String updatedCategoryList = builder.toString().substring(1);
                     list.put("category", updatedCategoryList );
-                    RecipeInfo.updateRecipeInfo(mRecipeInfo, list);
+                    RecipeInfo.updateRecipeInfoCategoryOnCloud(mRecipeInfo, list);
                     mRecipeInfo.setCategory(updatedCategoryList);
                     pupulateCategoryTags();
                     return;
@@ -309,7 +312,7 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         for (int i = 0; i < imagePerItem; i++) {
             imageUrlArray.add(baseUrl + i);
         }
-        mRecipeInfo.setImageUrl(imageUrlArray);
+        mRecipeInfo.setImageUrlList(imageUrlArray);
     }
 
     private void pupulateCategoryTags() {

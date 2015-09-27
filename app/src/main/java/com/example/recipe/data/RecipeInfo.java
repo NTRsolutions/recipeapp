@@ -3,9 +3,14 @@ package com.example.recipe.data;
 import android.net.Uri;
 
 import com.google.gson.Gson;
+import com.parse.GetCallback;
+import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -17,6 +22,7 @@ public class RecipeInfo implements Serializable{
     public String title;
     String description;
     public Uri imageUrl;
+    public ArrayList<String> imageUrlList;
     public List<String> ingredients;
     public List<String> directions;
     public String serves;
@@ -88,6 +94,14 @@ public class RecipeInfo implements Serializable{
         this.imageUrl = imageUrl;
     }
 
+    public void setImageUrlList(ArrayList<String> list) {
+        this.imageUrlList = list;
+    }
+
+    public ArrayList<String> getImageUrlList() {
+        return imageUrlList;
+    }
+
     public String getCategory() {
         return category;
     }
@@ -130,5 +144,19 @@ public class RecipeInfo implements Serializable{
         recipeInfo.setCategory(parseObject.getString("category"));
 //        recipeInfo.setImageUrl(Config.sRecipeInfoBaseUrl + "/" + recipeInfo.recipeinfo_id + ".jpg");
         return recipeInfo;
+    }
+
+    public static void updateRecipeInfoCategoryOnCloud(RecipeInfo info, final HashMap<String, String> list) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(RecipeInfo.class.getSimpleName());
+        query.getInBackground(info.getObjectId(), new GetCallback<ParseObject>() {
+            public void done(ParseObject obj, ParseException e) {
+                if (e == null) {
+                    for (String key : list.keySet()) {
+                        obj.put(key, list.get(key));
+                    }
+                    obj.saveInBackground();
+                }
+            }
+        });
     }
 }
