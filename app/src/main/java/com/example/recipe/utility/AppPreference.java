@@ -35,4 +35,16 @@ public class AppPreference {
         String returnValue = mPref.getString(key, value);
         return returnValue;
     }
+
+
+    public void putBoolean(String key, boolean value){
+        SharedPreferences.Editor editor = mPref.edit();
+        editor.putBoolean(key, value);
+        editor.commit();
+    }
+
+    public boolean getBoolean(String key, boolean value){
+        boolean returnValue = mPref.getBoolean(key, value);
+        return returnValue;
+    }
 }
