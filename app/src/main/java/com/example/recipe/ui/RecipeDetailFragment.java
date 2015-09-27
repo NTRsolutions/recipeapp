@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.recipe.data.RecipeDataStore;
 import com.example.recipe.data.RecipeInfo;
 import com.example.recipe.data.ShoppingListDataStore;
 import com.example.recipe.utility.Config;
@@ -201,16 +202,27 @@ public class RecipeDetailFragment extends Fragment {
         Resources res = rootView.getContext().getResources();
         final int selectedColor = res.getColor(R.color.colorAccent);
         final int unSelectedColor = res.getColor(R.color.grey);
-        favouriteRecipe.setColorFilter(unSelectedColor);
-        favouriteRecipe.setSelected(false);
+
+        if (RecipeDataStore.getsInstance(getActivity()).isFavouriteTextTag(mRecipeInfo)) {
+            favouriteRecipe.setColorFilter(selectedColor);
+            favouriteRecipe.setSelected(true);
+        } else {
+            favouriteRecipe.setColorFilter(unSelectedColor);
+            favouriteRecipe.setSelected(false);
+        }
+
         favouriteRecipe.setOnTouchListener(new SpringOnTouchListener(favouriteRecipe) {
             @Override
             protected void onClick(View view) {
                 favouriteRecipe.setSelected(!favouriteRecipe.isSelected());
                 if (favouriteRecipe.isSelected()) {
                     favouriteRecipe.setColorFilter(selectedColor);
+                    RecipeDataStore.getsInstance(getActivity()).addFavouriteTextTags(
+                            mRecipeInfo);
                 } else {
                     favouriteRecipe.setColorFilter(unSelectedColor);
+                    RecipeDataStore.getsInstance(getActivity()).removeFavouriteTextTags(
+                            mRecipeInfo);
                 }
             }
         });

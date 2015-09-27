@@ -11,9 +11,11 @@ import com.couchbase.lite.Mapper;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryEnumerator;
 import com.couchbase.lite.QueryRow;
+import com.couchbase.lite.Reducer;
 import com.couchbase.lite.UnsavedRevision;
 import com.couchbase.lite.View;
 import com.example.recipe.utility.AppPreference;
+import com.example.recipe.utility.Config;
 import com.google.gson.Gson;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -21,6 +23,8 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -33,10 +37,12 @@ public class RecipeDataStore {
     public static final String TAG = "RecipeDataStore";
     public static final String kRecipeInfoTimeLapseView = "kRecipeInfoTimeLapseView";
     public static final String kRecipeInfoView = "kRecipeInfoView";
+    public static final String kSearchTagsView = "kSearchTagsView";
     public static final String kJsonDownloadedKey = "kJsonDownloadedKey";
     private boolean isJsonZipDownloaded;
     private static RecipeDataStore sInstance;
     static List<RecipeInfo> sRecipeInfoList;
+    static List<RecipeInfo> sFavouriteRecipeInfoList;
     private int singleBatchLimit = 1000;
     private Gson mGson;
     Database mDataBase;
@@ -75,12 +81,48 @@ public class RecipeDataStore {
         }
 
         createViews();
+        sFavouriteRecipeInfoList = searchDocuments(Config.sFavouriteTag, 1000);
     }
 
     // create View's for search.
     private void createViews() {
         createRecipeInfoView();
         createRecipeInfoTimeLapseView();
+        createSearchView();
+    }
+
+    private void createSearchView() {
+        View searchView = mDataBase.getView(kSearchTagsView);
+        searchView.setMapReduce(new Mapper() {
+            @Override
+            public void map(Map<String, Object> document, Emitter emitter) {
+                RecipeInfo info = recipeFromJsonMap(document);
+                String category = info.getCategory();
+                if (category != null) {
+                    String[] categories = category.split("\\|");
+                    int numTags = categories.length;
+                    for (int i = 0; i < numTags; ++i) {
+                        emitter.emit(categories[i], info);
+                    }
+                }
+
+                List<String> additionalTags = info.getTags();
+                if (additionalTags != null) {
+                    for (String tag : additionalTags) {
+                        emitter.emit(tag, jsonMapFromRecipeInfo(info));
+                    }
+                }
+            }
+        }, new Reducer() {
+            @Override
+            public Object reduce(List<Object> keys, List<Object> values, boolean rereduce) {
+                if (rereduce) {
+                    return View.totalValues(values);
+                } else {
+                    return values.size();
+                }
+            }
+        }, "1"  /*version. Increment me after each change in this map function*/);
     }
 
     private void createRecipeInfoView() {
@@ -109,6 +151,138 @@ public class RecipeDataStore {
         }, "1"  /*version. Increment me after each change in this map function*/);
     }
 
+    public List<RecipeInfo> searchDocuments(String searchTag, int num) {
+        Query query = mDataBase.getView(kSearchTagsView).createQuery();
+        List<Object> keys = new ArrayList<>();
+        keys.add(searchTag);
+        query.setKeys(keys);
+        query.setLimit(num);
+        query.setMapOnly(true);
+        QueryEnumerator result;
+        try {
+            result = query.run();
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        List<RecipeInfo> infoList = new ArrayList<>();
+        for (Iterator<QueryRow> it = result; it.hasNext();) {
+            QueryRow row = it.next();
+            Log.d(TAG, row.getDocumentId());
+            Document doc = row.getDocument();
+            Map<String, Object> properties = doc.getProperties();
+            RecipeInfo recipeInfo = recipeFromJsonMap(properties);
+            infoList.add(recipeInfo);
+        }
+
+        Log.v(TAG, "Searched for docs with tag: " + searchTag + ". Found docs: " + infoList);
+        return infoList;
+    }
+
+    public void addFavouriteTextTags(RecipeInfo info) {
+        for (RecipeInfo recipeInfo : sFavouriteRecipeInfoList) {
+            if (recipeInfo.getRecipeinfoId() == info.getRecipeinfoId()) {
+                //alredyAdded;
+                return;
+            }
+        }
+
+        RecipeDataStore.getsInstance(mContext).addFreeTextTag(
+                info, Config.sFavouriteTag);
+    }
+
+    public void removeFavouriteTextTags(RecipeInfo info) {
+        boolean found = false;
+        for (RecipeInfo recipeInfo : sFavouriteRecipeInfoList) {
+            if (recipeInfo.getRecipeinfoId() == info.getRecipeinfoId()) {
+                found = true;
+                break;
+            }
+        }
+
+        RecipeDataStore.getsInstance(mContext).removeFreeTextTag(
+                info, Config.sFavouriteTag);
+    }
+
+    public boolean isFavouriteTextTag(RecipeInfo info) {
+        boolean found = false;
+        for (RecipeInfo recipeInfo : sFavouriteRecipeInfoList) {
+            if (recipeInfo.getRecipeinfoId() == info.getRecipeinfoId()) {
+                found = true;
+                break;
+            }
+        }
+        return found;
+    }
+
+    public void addFreeTextTags(RecipeInfo info, final Collection<String> freeTextTags) {
+        // Wil create a document with key: mediaId if one doesn't exist as yet.
+        String documentId = info.getDocId();
+        Document doc = mDataBase.getDocument(documentId);
+        try {
+            doc.update(new Document.DocumentUpdater() {
+                @Override
+                public boolean update(UnsavedRevision newRevision) {
+                    Map<String, Object> properties = newRevision.getUserProperties();
+
+                    RecipeInfo recipeInfo = recipeFromJsonMap(properties);
+                    if (recipeInfo.getTags() == null) {
+                        recipeInfo.setTags(new ArrayList<String>());
+                    }
+
+                    recipeInfo.getTags().addAll(freeTextTags);
+                    newRevision.setUserProperties(jsonMapFromRecipeInfo(recipeInfo));
+
+                    Log.v(TAG, "Added free tags. tags: " + mGson.toJson(recipeInfo));
+                    return true;
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public void addFreeTextTag(RecipeInfo info, final String freeTextTag) {
+        addFreeTextTags(info, Collections.singleton(freeTextTag));
+    }
+
+    public void removeFreeTextTags(RecipeInfo info, final Collection<String> freeTextTags) {
+        final String documentId = info.getDocId();
+        // Wil create a document with key: mediaId if one doesn't exist as yet.
+        Document doc = mDataBase.getDocument(documentId);
+        try {
+            doc.update(new Document.DocumentUpdater() {
+                @Override
+                public boolean update(UnsavedRevision newRevision) {
+                    Map<String, Object> properties = newRevision.getUserProperties();
+
+                    RecipeInfo recipeInfo = recipeFromJsonMap(properties);
+                    if (recipeInfo.getTags() == null) {
+                        Log.w(TAG, "removeFreeTextTags() null list for mediaId: " + documentId);
+                        return false;
+                    }
+                    boolean modified = recipeInfo.getTags().removeAll(freeTextTags);
+                    if (!modified) {
+                        Log.w(TAG, "removeFreeTextTags() tags not found for mediaId: " + documentId
+                                + ", current tags: " + recipeInfo.getTags()
+                                + ", removal request: " + freeTextTags);
+                        return false;
+                    }
+
+                    newRevision.setUserProperties(jsonMapFromRecipeInfo(recipeInfo));
+                    Log.v(TAG, "removed free tags. tags: " + mGson.toJson(recipeInfo));
+                    return true;
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void removeFreeTextTag(RecipeInfo info, final String freeTextTag) {
+        removeFreeTextTags(info, Collections.singleton(freeTextTag));
+    }
+
     public void getRecipeList(RecipeCategoryType type, RecipeDataStoreListener listener) {
         switch (type) {
             case FEED:
@@ -117,11 +291,17 @@ public class RecipeDataStore {
             case CATEGORY:
                 break;
             case FAVOURITE:
+                getFavouriteData(listener);
                 break;
             case HISTORY:
                 getHistoryData(listener);
                 break;
         }
+    }
+
+    private void getFavouriteData(RecipeDataStoreListener listener) {
+        sFavouriteRecipeInfoList = searchDocuments(Config.sFavouriteTag, 1000);
+        listener.onDataFetchComplete(sFavouriteRecipeInfoList);
     }
 
     private void getHistoryData(RecipeDataStoreListener listener) {
