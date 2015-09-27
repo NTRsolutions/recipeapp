@@ -3,9 +3,12 @@ package com.example.recipe.data;
 import android.content.Context;
 import android.util.Log;
 
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.recipe.GoogleImageDownloader.GoolgeImageJsonResponse;
 import com.example.recipe.GoogleImageDownloader.Result;
 import com.google.gson.Gson;
@@ -122,5 +125,33 @@ public class DataUtility {
             }
         });
         NetworkUtility.getInstance(mContext).addToRequestQueue(jsObjRequest);
+    }
+
+    //// TODO: 19/9/15  (rkumar) Debug code to remove later
+    public void networkImageRequestNewImpl(final String docId, String query) {
+        String url = "http://www.bing.com/images/search?q=" + query;
+        url = url.replace(" ", "+");
+        // Request a string response
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Result handling
+                        System.out.println(response.substring(0, 100));
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                // Error handling
+                System.out.println("Something went wrong!");
+                error.printStackTrace();
+
+            }
+        });
+
+        // Add the request to the queue
+        Volley.newRequestQueue(mContext).add(stringRequest);
     }
 }
