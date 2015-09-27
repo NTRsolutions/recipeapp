@@ -20,13 +20,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 
-import com.example.recipe.data.DataUtility;
-import com.example.recipe.data.DownloadAndUnzipFile;
+import com.example.recipe.data.RecipeDataStore;
 import com.example.recipe.data.RecipeInfo;
 import com.example.recipe.data.ShoppingListDataStore;
 import com.example.recipe.ui.CategoryFragment;
-import com.example.recipe.ui.FavouriteFragment;
-import com.example.recipe.ui.FeedsFragment;
+import com.example.recipe.ui.RecipeListFragment;
 import com.example.recipe.ui.RecipeDetailFragment;
 import com.example.recipe.ui.ShoppingListFragment;
 import com.example.recipe.utility.AppPreference;
@@ -41,10 +39,11 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
     private Toolbar toolbar;
     ScreenSlidePagerAdapter mPagerAdapter;
 
-    enum Pages {
+    public enum Pages {
         FEED,
         CATEGORIES,
-        FAVOURITE
+        FAVOURITE,
+        RECENT,
     }
 
     @Override
@@ -78,18 +77,20 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         actionBar.setDisplayHomeAsUpEnabled(true);
         Log.d(TAG, "onCreate ");
 
-        String url = "http://virtualcook.parseapp.com/json/json.zip";
-        String tempPath = DataUtility.getInstance(this).getExternalFilesDirPath() + "/json.zip";
-        String finalPath =  DataUtility.getInstance(this).getExternalFilesDirPath()  + "/" + "json/";
-        DownloadAndUnzipFile downloadAndUnzipFile = new DownloadAndUnzipFile(
-                url, tempPath, finalPath);
-        downloadAndUnzipFile.execute("DownloadAndUnzipFile");
+        RecipeDataStore.getsInstance(this).checkAndDownloadJsonData();
 
     }
 
-    public void onPause() {
+    @Override
+     public void onPause() {
         super.onPause();
         createSharedPreference();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        RecipeDataStore.getsInstance(this).dispose();
     }
 
     protected void loadPreferences(){
@@ -226,16 +227,13 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
             Pages page = Pages.values()[position];
             Fragment fragment = null;
             switch (page) {
-                case FAVOURITE:
-                    fragment = new FavouriteFragment();
-                    break;
                 case CATEGORIES:
                     fragment = new CategoryFragment();
                     break;
-
-
                 case FEED:
-                    fragment = new FeedsFragment();
+                case FAVOURITE:
+                case RECENT:
+                    fragment = RecipeListFragment.getInstance(page);
                     break;
             }
             return fragment;

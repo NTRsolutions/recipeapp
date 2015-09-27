@@ -2,6 +2,7 @@ package com.example.recipe.data;
 
 import android.net.Uri;
 
+import com.example.recipe.utility.Config;
 import com.google.gson.Gson;
 import com.parse.ParseObject;
 
@@ -16,7 +17,6 @@ public class RecipeInfo implements Serializable{
     int recipeinfoId;
     public String title;
     String description;
-    public Uri imageUrl;
     public List<String> ingredients;
     public List<String> directions;
     public String serves;
@@ -24,6 +24,10 @@ public class RecipeInfo implements Serializable{
     public List<String> nutritionList;
     List<String> mTags;
     String category;
+    Long lastViewedTime;
+
+    // dynamically generated, dont serialise
+    public transient Uri imageUrl;
 
     public static RecipeInfo getRecipeDescription(String json) {
         Gson gson = new Gson();
@@ -31,6 +35,11 @@ public class RecipeInfo implements Serializable{
         return desc;
     }
 
+    public String getDocId() {
+        return String.valueOf(recipeinfoId);
+    }
+
+    // will be used as docId
     public int getRecipeinfoId() {
         return recipeinfoId;
     }
@@ -118,6 +127,20 @@ public class RecipeInfo implements Serializable{
 
     public void setDescription(String mDescription) {
         this.description = mDescription;
+    }
+
+
+    public Long getLastViewedTime() {
+        return lastViewedTime;
+    }
+
+    public void setLastViewedTime(Long lastViewedTime) {
+        this.lastViewedTime = lastViewedTime;
+    }
+
+    public void updateLastViewedTime() {
+        this.lastViewedTime = System.currentTimeMillis();
+        RecipeDataStore.getsInstance(Config.APPLICATION_CONTEXT).updateDoc(this);
     }
 
     public static RecipeInfo getRecipeInfo(ParseObject parseObject) {

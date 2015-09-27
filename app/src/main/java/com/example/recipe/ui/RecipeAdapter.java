@@ -30,15 +30,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
     public RecipeAdapter(Context context, RecipeAdapterListener recipeAdapterListener){
         this.mContext = context;
         this.mRecipeAdapterListener = recipeAdapterListener;
-        RecipeDataStore.fetchAllInfoData(new RecipeDataStore.RecipeDataStoreListener() {
-            @Override
-            public void onDataFetchComplete(List<RecipeInfo> list) {
-                mDataItems = list;
-                notifyDataSetChanged();
-            }
-        });
     }
-
 
     @Override
     public RecipeViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
@@ -60,6 +52,10 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
     @Override
     public int getItemCount() {
         return mDataItems.size();
+    }
+
+    public void updateDataList(List<RecipeInfo> dataItems) {
+        mDataItems = dataItems;
     }
 
     public static class ClickResolver implements RecipeViewHolder.RecipeViewHolderListener {

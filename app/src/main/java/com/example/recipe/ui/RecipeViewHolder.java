@@ -68,6 +68,11 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
                     String json = DataUtility.getInstance(mContext).loadJSONFromFile(path);
                     RecipeInfo recipeInfo = RecipeInfo.getRecipeDescription(json);
                     recipeInfo.setImageUrl(mImageUri);
+
+                    // fill missing data in json
+                    recipeInfo.setRecipeinfoId(mRecipeInfo.getRecipeinfoId());
+                    recipeInfo.setCategory(mRecipeInfo.getCategory());
+
                     mListener.onViewHolderClicked(recipeInfo);
                     Log.d("TAG", "in view holder click" + description);
 
