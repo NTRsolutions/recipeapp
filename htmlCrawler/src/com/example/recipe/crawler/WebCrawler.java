@@ -58,34 +58,57 @@ public class WebCrawler {
 	}
 
 	public void startCrawler() {
-		try {
-			parseListUrl();
-			// extractLinks(URL);
-			// dumpDataLinearly();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		parseListUrl();
+		// extractLinks(URL);
+		// dumpDataLinearly();
 	}
 
 	// ***************************************************** URL Parsing
 	// **************************************/
 
-	public void parseListUrl() throws Exception {
+	public void parseListUrl() {
+		String whereClause = " where dirty = 0 and done = 0";
+		ArrayList<RecipeInfo> list = null;
+		try {
+			// DB row's primary data, not updated yet
+			list = mDatabaseManager.readDataBase(12950, whereClause);
+		} catch (Exception e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+			System.out.println("mDatabaseManager read fail");
+			return;
+		}
 		
-		// DB row's unUpdated
-		String whereClause = " where dirty = 0 ";
-		ArrayList<RecipeInfo> list = mDatabaseManager.readDataBase(500, whereClause);
 		for (int i = 0; i < list.size(); i++) {
 			String url = list.get(i).getBaseUrl();
 			int hashCode = url.hashCode();
 			
+			
+			
 			// Updated RecipeInfo from parsed data
-			RecipeInfo recipeDescription = testSample(list.get(i).getBaseUrl());
+			RecipeInfo recipeDescription = null;
+			try {
+				recipeDescription = parseSingleUrl(list.get(i).getBaseUrl());
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				
+				HashMap<String, String> map = new HashMap<>();
+				map.put(COLUMNS.DIRTY.toString().toLowerCase(), 1 + "");
+				try {
+					mDatabaseManager.updateInDb(hashCode, map);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				continue;
+			}
 
+			
+			
 			Gson gson = new Gson();
 			String json = gson.toJson(recipeDescription,
-					RecipeInfo.class);
-			
+					RecipeInfo.class);			
 			try {
 				String filename = BASE_PATH_TO_SAVE_JSON + hashCode + ".json";
 				PrintWriter out = new PrintWriter(filename);
@@ -96,6 +119,8 @@ public class WebCrawler {
 				String description = cleanStringBeforeDbQuery(recipeDescription.description);
 				String cookingTime = cleanStringBeforeDbQuery(recipeDescription.preparationTime);
 				String serving = cleanStringBeforeDbQuery(recipeDescription.serves);
+				
+				
 				assert(title != null);
 				assert(description != null);
 				
@@ -112,6 +137,7 @@ public class WebCrawler {
 				map.put(COLUMNS.DESCRIPTION.toString().toLowerCase(), description.trim());
 				map.put(COLUMNS.COOKING_TIME.toString().toLowerCase(), cookingTime.trim());
 				map.put(COLUMNS.SERVING.toString().toLowerCase(), serving.trim());
+				map.put(COLUMNS.DONE.toString().toLowerCase(), 1 + "");
 				mDatabaseManager.updateInDb(hashCode, map);
 				
 			} catch (Exception e) {
@@ -133,20 +159,17 @@ public class WebCrawler {
 	} 
 	/**
 	 * @param url
+	 * @throws IOException 
 	 */
-	public RecipeInfo testSample(String url) {
+	public RecipeInfo parseSingleUrl(String url) throws IOException {
 		RecipeInfo recipeDescription = new RecipeInfo();
 		Document doc = null;
-		try {
-			doc = Jsoup.connect(url).timeout(10 * 1000).get();
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
+		doc = Jsoup.connect(url).timeout(5 * 1000).get();
 
 		if (doc == null) {
-			return null;
+			throw new IOException();
 		}
+		
 		Elements elements = doc.getElementsByClass("fullContainer");
 		ArrayList<String> parsedList = new ArrayList<String>();
 		for (Element element : elements) {

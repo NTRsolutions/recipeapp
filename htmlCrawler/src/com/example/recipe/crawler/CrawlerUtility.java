@@ -1,5 +1,10 @@
 package com.example.recipe.crawler;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import org.jsoup.Jsoup;
@@ -26,5 +31,26 @@ public class CrawlerUtility {
 
 		return list;
 	}
+	
+    public static String loadJSONFromFile(String filePath) {
+        StringBuffer stringBuffer = new StringBuffer();
+        String aDataRow = "";
+        try {
+            File myFile = new File(filePath);
+            FileInputStream fIn = new FileInputStream(myFile);
+            BufferedReader myReader = new BufferedReader(
+                    new InputStreamReader(fIn));
+
+            while ((aDataRow = myReader.readLine()) != null) {
+                stringBuffer.append(aDataRow + "\n");
+            }
+            myReader.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return stringBuffer.toString();
+
+    }
 	
 }

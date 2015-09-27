@@ -107,10 +107,15 @@ public class MySQLAccess {
 						.toLowerCase());
 				String source = resultSet.getString(COLUMNS.SOURCE.toString()
 						.toLowerCase());
+				String category = resultSet.getString(COLUMNS.CATEGORY.toString()
+						.toLowerCase());
 
+				
 				info.setHash(hash);
+				info.setBaseUrl(url);
 				info.setDescription(description);
 				info.setTitle(title);
+				info.setCategory(category);
 				
 				// System.out.println("hash: " + hash);
 				// System.out.println("url: " + url);

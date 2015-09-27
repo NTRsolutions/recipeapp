@@ -27,6 +27,8 @@ public class FoodCategoryList {
             "Chinese",
             "Soup",
             "Bengali",
+            "Chutney",
+            "Curry",
 
             "Snacks",
             "Thai",
@@ -40,11 +42,18 @@ public class FoodCategoryList {
             "Lamb",
             "Mutton",
             "Egg",
-            "Panner",
+            "Paneer",
+            "Pork",
+            "Beef",
+            "Fish",
+            "Prawn",
 
             "Breakfast",
             "Lunch",
             "Dinner",
+
+            //Carbohydrate
+            "Rice",
 
             //Hidden Tags
             "default"
