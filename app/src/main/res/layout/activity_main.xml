@@ -42,9 +42,10 @@
                         android:layout_height="wrap_content"
                         android:background="@color/colorPrimary"
                         android:layout_below="@+id/toolbar"
-                        app:tabGravity="fill"
+                        app:tabGravity="center"
+                        app:tabIndicatorHeight="3dp"
                         app:tabMaxWidth="0dp"
-                        app:tabMode="fixed"
+                        app:tabMode="scrollable"
                         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                         />
                 </RelativeLayout>

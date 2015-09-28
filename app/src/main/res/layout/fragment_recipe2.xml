@@ -33,13 +33,12 @@
                     android:id="@+id/recipeId"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:layout_margin="1dp"
                     android:background="@color/colorPrimary"
-                    android:padding="5dp"
                     android:textColor="@color/white"
                     android:textSize="25sp"
                     android:textStyle="bold"
                     android:typeface="normal"
+                    android:gravity="center_vertical|left"
                     android:fontFamily="sans-serif-thin"
                     android:layout_alignParentBottom="true"/>
 
@@ -59,24 +58,6 @@
                 </RelativeLayout>
 
 
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/banner">
-
-                <!--<TextView-->
-                    <!--android:id="@+id/recipeId"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_margin="1dp"-->
-                    <!--android:background="@color/colorPrimary"-->
-                    <!--android:padding="5dp"-->
-                    <!--android:textColor="@color/white"-->
-                    <!--android:textSize="25sp"-->
-                    <!--android:textStyle="bold"-->
-                    <!--android:typeface="normal" />-->
             </RelativeLayout>
 
             <RelativeLayout
@@ -123,8 +104,9 @@
 
                     <ImageView
                         android:id="@+id/shareicon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
                         android:src="@drawable/shareicon" />
 
                 </LinearLayout>
