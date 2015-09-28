@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -41,6 +42,7 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
 
     public interface RecipeViewHolderListener {
         void onViewHolderClicked(RecipeInfo recipeInfo);
+        void onTagClicked(String tag);
     }
 
     public RecipeViewHolder(Context context, View view, final RecipeViewHolderListener lstr) {
@@ -79,14 +81,6 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
                     Log.d("TAG", "in view holder click" + description);
 
                 }
-            }
-        });
-
-        Button browse = (Button) view.findViewById(R.id.browse_button);
-        browse.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((MainActivity) v.getContext()).showDetailViewBrowseFragment();
             }
         });
     }
@@ -162,7 +156,7 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
             String tagItem = "#" + categories[i];
             TextView tv = new TextView(mContext);
             tv.setText(tagItem);
-//            tv.setOnClickListener(createSearchOnClickListener(searchTagItem));
+            tv.setOnClickListener(new TagsClickListenerImpl(tagItem));
             tv.setTextSize(15);
             tv.setPadding(3, 3, 3, 3);
             tv.setSingleLine();
@@ -176,4 +170,19 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
     public void setRecipeInfo(RecipeInfo mRecipeInfo) {
         this.mRecipeInfo = mRecipeInfo;
     }
+
+    public class TagsClickListenerImpl implements View.OnClickListener {
+        String mSerachSrting;
+
+        TagsClickListenerImpl(String searchString) {
+            mSerachSrting = searchString;
+        }
+
+        @Override
+        public void onClick(View v) {
+            mSerachSrting = mSerachSrting.replace("#", "");
+            ((MainActivity) v.getContext()).showDetailViewBrowseFragment(mSerachSrting);
+        }
+    }
+
 }

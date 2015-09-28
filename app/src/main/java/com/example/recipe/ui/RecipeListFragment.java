@@ -76,7 +76,7 @@ public class RecipeListFragment extends Fragment {
         }
 
         RecipeDataStore.getsInstance(getActivity()).getRecipeList(
-                recipeCategoryType, new RecipeDataStoreListenerImpl());
+                recipeCategoryType, new RecipeDataStoreListenerImpl(), null);
         return rootView;
     }
 
@@ -95,6 +95,7 @@ public class RecipeListFragment extends Fragment {
             mAdapter.notifyDataSetChanged();
         }
     }
+
 
     private class RecipeAdapterListenerImpl implements RecipeAdapter.RecipeAdapterListener {
 
