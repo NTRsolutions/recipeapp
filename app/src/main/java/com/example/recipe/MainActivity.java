@@ -1,8 +1,6 @@
 package com.example.recipe;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -24,18 +22,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.example.recipe.data.DataUtility;
-import com.example.recipe.data.DownloadAndUnzipFile;
-import com.example.recipe.data.RecipeDescription;
+import com.example.recipe.data.RecipeDataStore;
+import com.example.recipe.data.RecipeInfo;
 import com.example.recipe.data.ShoppingListDataStore;
 import com.example.recipe.ui.BrowseFragment;
 import com.example.recipe.ui.CategoryFragment;
-import com.example.recipe.ui.FavouriteFragment;
-import com.example.recipe.ui.FeedsFragment;
+import com.example.recipe.ui.RecipeListFragment;
 import com.example.recipe.ui.RecipeDetailFragment;
 import com.example.recipe.ui.ShoppingListFragment;
 import com.example.recipe.utility.AppPreference;
-import com.google.gson.Gson;
 
 
 public class MainActivity extends AppCompatActivity implements MainActivityListener {
@@ -47,11 +42,12 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
     private Toolbar toolbar;
     ScreenSlidePagerAdapter mPagerAdapter;
     private Button mButton ;
-    private RecipeDescription  mRecipeDesciption;
-    enum Pages {
+    private RecipeInfo  mRecipeInfo;
+    public enum Pages {
         FEED,
         CATEGORIES,
-        FAVOURITE
+        FAVOURITE,
+        RECENT,
     }
 
     @Override
@@ -86,12 +82,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         actionBar.setDisplayHomeAsUpEnabled(true);
         Log.d(TAG, "onCreate ");
 
-        String url = "http://virtualcook.parseapp.com/json/json.zip";
-        String tempPath = DataUtility.getInstance(this).getExternalFilesDirPath() + "/json.zip";
-        String finalPath =  DataUtility.getInstance(this).getExternalFilesDirPath()  + "/" + "json/";
-        DownloadAndUnzipFile downloadAndUnzipFile = new DownloadAndUnzipFile(
-                url, tempPath, finalPath);
-        downloadAndUnzipFile.execute("DownloadAndUnzipFile");
+        RecipeDataStore.getsInstance(this).checkAndDownloadJsonData();
 
 
 
@@ -100,9 +91,16 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
 
     }
 
-    public void onPause() {
+    @Override
+     public void onPause() {
         super.onPause();
         createSharedPreference();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        RecipeDataStore.getsInstance(this).dispose();
     }
 
     protected void loadPreferences(){
@@ -173,22 +171,22 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
                 .commit();
     }
 
-    public void showDetailView(RecipeDescription recipeDescription) {
+    public void showDetailView(RecipeInfo recipeInfo) {
         Log.d("TAG", "showDetailView");
         Bundle bundle = new Bundle();
-        bundle.putSerializable(RecipeDetailFragment.RECIPE_DETAIL_KEY, recipeDescription);
+        bundle.putSerializable(RecipeDetailFragment.RECIPE_DETAIL_KEY, recipeInfo);
         RecipeDetailFragment rFrag = new RecipeDetailFragment();
         rFrag.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().add(
                 R.id.full_screen_view, rFrag, "Detail Fragment")
                 .addToBackStack(RecipeDetailFragment.class.getSimpleName())
                 .commit();
-        mRecipeDesciption = recipeDescription;
+        mRecipeInfo = recipeInfo;
     }
 
     public void showDetailViewBrowseFragment(){
         Bundle bundle = new Bundle();
-        bundle.putSerializable(BrowseFragment.RECIPE_DETAIL_KEY, mRecipeDesciption);
+        bundle.putSerializable(BrowseFragment.RECIPE_DETAIL_KEY, mRecipeInfo);
         BrowseFragment rFragment = new BrowseFragment();
         rFragment.setArguments(bundle);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -261,16 +259,13 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
             Pages page = Pages.values()[position];
             Fragment fragment = null;
             switch (page) {
-                case FAVOURITE:
-                    fragment = new FavouriteFragment();
-                    break;
                 case CATEGORIES:
                     fragment = new CategoryFragment();
                     break;
-
-
                 case FEED:
-                    fragment = new FeedsFragment();
+                case FAVOURITE:
+                case RECENT:
+                    fragment = RecipeListFragment.getInstance(page);
                     break;
             }
             return fragment;

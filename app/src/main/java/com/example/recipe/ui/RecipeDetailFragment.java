@@ -19,7 +19,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.recipe.data.RecipeDescription;
+import com.example.recipe.data.RecipeDataStore;
+import com.example.recipe.data.RecipeInfo;
 import com.example.recipe.data.ShoppingListDataStore;
 import com.example.recipe.utility.Config;
 import com.example.recipe.R;
@@ -37,7 +38,7 @@ public class RecipeDetailFragment extends Fragment {
     public static final String RECIPE_DETAIL_KEY = "RECIPE_DETAIL_KEY";
     View rootView;
     public static float MAX_CARD_HEIGHT_PECENTAGE = 0.35f;
-    RecipeDescription mRecipeData;
+    RecipeInfo mRecipeInfo;
     Boolean mItemUpdated;
 
     public RecipeDetailFragment() {
@@ -49,14 +50,15 @@ public class RecipeDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView =  inflater.inflate(R.layout.fragment_recipe2, null, false);
-        mRecipeData = (RecipeDescription) getArguments()
+        mRecipeInfo = (RecipeInfo) getArguments()
                 .getSerializable(RECIPE_DETAIL_KEY);
+        mRecipeInfo.updateLastViewedTime();
         ImageView recipeImage = (ImageView) rootView.findViewById(R.id.recipe_image);
 
 
-        if (mRecipeData.getImageUrl() != null) {
+        if (mRecipeInfo.getImageUrl() != null) {
             Picasso.with(recipeImage.getContext()).load(
-                    mRecipeData.getImageUrl()).into(recipeImage);
+                    mRecipeInfo.getImageUrl()).into(recipeImage);
         }
 
         setupShareRecipe(rootView);
@@ -77,7 +79,7 @@ public class RecipeDetailFragment extends Fragment {
         TextView preparationTitle = (TextView) rootView.findViewById(R.id.preparation_title);
         preparationTitle.setText("Preparation Time");
         TextView preparationTime = (TextView) rootView.findViewById(R.id.preparationtime);
-        preparationTime.setText(mRecipeData.getPreparationTime());
+        preparationTime.setText(mRecipeInfo.getPreparationTime());
         preparationTime.setTextSize(Config.TEXT_SIZE_CONTENT);
     }
 
@@ -85,14 +87,14 @@ public class RecipeDetailFragment extends Fragment {
         TextView servesTitle = (TextView) rootView.findViewById(R.id.serves_title);
         servesTitle.setText("Serves");
         TextView serves = (TextView) rootView.findViewById(R.id.serves);
-        serves.setText(mRecipeData.getServes());
+        serves.setText(mRecipeInfo.getmServing());
         serves.setTextSize(Config.TEXT_SIZE_CONTENT);
     }
 
     public void setUpDirection(View rootView) {
         LinearLayout linearLayoutDirection = (LinearLayout) rootView
                 .findViewById(R.id.direction_list);
-        List<String> listDirection = mRecipeData.getDirections();
+        List<String> listDirection = mRecipeInfo.getDirections();
         for(String direction : listDirection){
             TextView tvDirection = new TextView(getActivity());
             tvDirection.setText(direction);
@@ -107,7 +109,7 @@ public class RecipeDetailFragment extends Fragment {
     public void setUpNutritionView(View rootView) {
         LinearLayout linearLayoutDirection = (LinearLayout) rootView
                 .findViewById(R.id.nutrition_list);
-        List<String> listNutrition = mRecipeData.getNutritionList();
+        List<String> listNutrition = mRecipeInfo.getNutritionList();
 
         if (listNutrition == null) {
             return;
@@ -127,7 +129,7 @@ public class RecipeDetailFragment extends Fragment {
 
     public void setUpTitle(View rootView) {
         TextView recipe = (TextView)rootView.findViewById(R.id.recipeId);
-        recipe.setText(mRecipeData.getTitle());
+        recipe.setText(mRecipeInfo.getTitle());
     }
 
     public void setUpBannerSize(View rootView) {
@@ -141,7 +143,7 @@ public class RecipeDetailFragment extends Fragment {
 
     public void setUpIngredientView(final View rootView){
         LinearLayout ingredientListLayout = (LinearLayout) rootView.findViewById(R.id.ingredient_list);
-        List<String> list = mRecipeData.getIngredients();
+        List<String> list = mRecipeInfo.getIngredients();
         Resources resources = getResources();
         for (final String ingredient : list) {
             final LinearLayout innerLineaarLayout = new LinearLayout(getActivity());
@@ -154,7 +156,7 @@ public class RecipeDetailFragment extends Fragment {
             ViewGroup.LayoutParams imageParams = new ViewGroup.LayoutParams(50, 50);
             addImage.setLayoutParams(imageParams);
             addImage.setPadding(0, 3, 10, 3);
-            if(ShoppingListDataStore.checkIfItemPresent(mRecipeData,ingredient)){
+            if(ShoppingListDataStore.checkIfItemPresent(mRecipeInfo,ingredient)){
                 addImage.setImageResource(R.drawable.checkbutton);
                 innerLineaarLayout.addView(addImage);
                 innerLineaarLayout.setSelected(true);
@@ -176,13 +178,13 @@ public class RecipeDetailFragment extends Fragment {
                     innerLineaarLayout.setSelected(!innerLineaarLayout.isSelected());
                     boolean isSelected = innerLineaarLayout.isSelected();
                     if (isSelected) {
-                        mItemUpdated = ShoppingListDataStore.updateShoppingList(mRecipeData, ingredient);
+                        mItemUpdated = ShoppingListDataStore.updateShoppingList(mRecipeInfo, ingredient);
                         Snackbar.make(parentView, "Item is added to shopping cart", Snackbar.LENGTH_LONG)
                                 .setAction("show", null)
                                 .show();
                         addImage.setImageResource(R.drawable.checkbutton);
                     } else {
-                        mItemUpdated = ShoppingListDataStore.deleteShoppingIngredientItem(mRecipeData, ingredient);
+                        mItemUpdated = ShoppingListDataStore.deleteShoppingIngredientItem(mRecipeInfo, ingredient);
                         Snackbar.make(parentView, "Item is removed from shopping cart", Snackbar.LENGTH_LONG)
                                 .setAction("show", null)
                                 .show();
@@ -204,16 +206,27 @@ public class RecipeDetailFragment extends Fragment {
         Resources res = rootView.getContext().getResources();
         final int selectedColor = res.getColor(R.color.colorAccent);
         final int unSelectedColor = res.getColor(R.color.grey);
-        favouriteRecipe.setColorFilter(unSelectedColor);
-        favouriteRecipe.setSelected(false);
+
+        if (RecipeDataStore.getsInstance(getActivity()).isFavouriteTextTag(mRecipeInfo)) {
+            favouriteRecipe.setColorFilter(selectedColor);
+            favouriteRecipe.setSelected(true);
+        } else {
+            favouriteRecipe.setColorFilter(unSelectedColor);
+            favouriteRecipe.setSelected(false);
+        }
+
         favouriteRecipe.setOnTouchListener(new SpringOnTouchListener(favouriteRecipe) {
             @Override
             protected void onClick(View view) {
                 favouriteRecipe.setSelected(!favouriteRecipe.isSelected());
                 if (favouriteRecipe.isSelected()) {
                     favouriteRecipe.setColorFilter(selectedColor);
+                    RecipeDataStore.getsInstance(getActivity()).addFavouriteTextTags(
+                            mRecipeInfo);
                 } else {
                     favouriteRecipe.setColorFilter(unSelectedColor);
+                    RecipeDataStore.getsInstance(getActivity()).removeFavouriteTextTags(
+                            mRecipeInfo);
                 }
             }
         });

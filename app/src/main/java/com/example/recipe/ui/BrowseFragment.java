@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 
 import com.example.recipe.MainActivity;
 import com.example.recipe.R;
-import com.example.recipe.data.RecipeDescription;
+import com.example.recipe.data.RecipeInfo;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -54,7 +54,7 @@ public class BrowseFragment extends Fragment {
     private class RecipeAdapterListenerImpl implements RecipeAdapter.RecipeAdapterListener {
 
         @Override
-        public void onRecipeAdapterListener(RecipeDescription recipeDescription) {
+        public void onRecipeAdapterListener(RecipeInfo recipeDescription) {
             if (mMainActivity != null) {
                 mMainActivity.showDetailView(recipeDescription);
             }

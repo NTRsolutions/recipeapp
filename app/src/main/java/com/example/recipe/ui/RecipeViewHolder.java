@@ -1,7 +1,7 @@
 package com.example.recipe.ui;
 
-import android.content.res.Resources;
 import android.content.Context;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -10,7 +10,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,15 +17,12 @@ import com.example.recipe.MainActivity;
 import com.example.recipe.R;
 import com.example.recipe.data.DataUtility;
 import com.example.recipe.data.DownloadFileFromURL;
-import com.example.recipe.data.RecipeDescription;
 import com.example.recipe.data.RecipeInfo;
 import com.example.recipe.utility.Config;
 import com.example.recipe.widgets.FlowLayout;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by rajnish on 6/8/15.
@@ -44,7 +40,7 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
     private FlowLayout mFlowLayout;
 
     public interface RecipeViewHolderListener {
-        void onViewHolderClicked(RecipeDescription recipeDescription);
+        void onViewHolderClicked(RecipeInfo recipeInfo);
     }
 
     public RecipeViewHolder(Context context, View view, final RecipeViewHolderListener lstr) {
@@ -72,9 +68,14 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
                     String path = DataUtility.getInstance(mContext).getExternalFilesDirPath()
                             + "/" + "json" + "/" + mRecipeInfo.getRecipeinfoId() + ".json";
                     String json = DataUtility.getInstance(mContext).loadJSONFromFile(path);
-                    RecipeDescription recipeDescription = RecipeDescription.getRecipeDescription(json);
-                    recipeDescription.setImageUrl(mImageUri);
-                    mListener.onViewHolderClicked(recipeDescription);
+                    RecipeInfo recipeInfo = RecipeInfo.getRecipeDescription(json);
+                    recipeInfo.setImageUrl(mImageUri);
+
+                    // fill missing data in json
+                    recipeInfo.setRecipeinfoId(mRecipeInfo.getRecipeinfoId());
+                    recipeInfo.setCategory(mRecipeInfo.getCategory());
+
+                    mListener.onViewHolderClicked(recipeInfo);
                     Log.d("TAG", "in view holder click" + description);
 
                 }

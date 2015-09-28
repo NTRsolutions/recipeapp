@@ -23,8 +23,7 @@ public class AppCouchBaseImpl {
     private Context mContext;
 
     public enum DatabaseType {
-        VIDEO_INFO_STORE,
-        TAG_STORE
+        RECIPE_DATA_STORE
     }
 
     public static AppCouchBaseImpl getsInstance(Context context) {
@@ -51,14 +50,7 @@ public class AppCouchBaseImpl {
         Assert.assertNotNull(manager);
         Database database = null;
         switch (type) {
-            case VIDEO_INFO_STORE:
-                if ((this.mVideoInfoDatabase == null) && (this.manager != null)) {
-                    this.mVideoInfoDatabase = manager.getDatabase(type.name().toLowerCase());
-                }
-                database = mVideoInfoDatabase;
-                break;
-
-            case TAG_STORE:
+            case RECIPE_DATA_STORE:
                 if ((this.mTagsDatabase == null) && (this.manager != null)) {
                     this.mTagsDatabase = manager.getDatabase(type.name().toLowerCase());
                 }
