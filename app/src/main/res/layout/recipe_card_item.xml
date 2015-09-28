@@ -36,6 +36,14 @@
             android:textStyle="bold"
             android:typeface="normal" />
 
+        <Button
+            android:id="@+id/browse_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="browse"
+            android:layout_below="@+id/firstLine"
+            android:background="@color/grey"/>
+
         <com.example.recipe.widgets.FlowLayout
             android:id="@+id/tags"
             android:layout_below="@+id/firstLine"

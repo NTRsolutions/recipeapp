@@ -12,6 +12,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -57,6 +58,7 @@ public class RecipeDetailFragment extends Fragment {
             Picasso.with(recipeImage.getContext()).load(
                     mRecipeData.getImageUrl()).into(recipeImage);
         }
+
         setupShareRecipe(rootView);
         setUpFavouriteRecipe(rootView);
         setUpBannerSize(rootView);
@@ -68,6 +70,8 @@ public class RecipeDetailFragment extends Fragment {
         setUpNutritionView(rootView);
         return rootView;
     }
+
+
 
     public void setUpPrepTimetxt(View rootView) {
         TextView preparationTitle = (TextView) rootView.findViewById(R.id.preparation_title);
