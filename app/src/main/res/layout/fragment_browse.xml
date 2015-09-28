@@ -1,0 +1,75 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:clickable="true">
+
+    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        card_view:cardCornerRadius="3dp"
+        card_view:cardElevation="4dp"
+        card_view:cardUseCompatPadding="true">
+
+        <RelativeLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:paddingLeft="2dp">
+             <TextView
+                 android:id="@+id/tagText"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:text="palak"
+                 android:textSize="20dp"
+                 android:background="@color/colorAccent"/>
+            <ImageView
+                android:id="@+id/cleartag"
+                android:layout_width="wrap_content"
+                android:src="@drawable/clearbox"
+                android:layout_height="27dp"
+                android:layout_toRightOf="@+id/tagText"
+                android:background="@color/colorAccent"
+                />
+
+
+        </RelativeLayout>>
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        card_view:cardCornerRadius="3dp"
+        card_view:cardElevation="4dp"
+        card_view:cardUseCompatPadding="true">
+
+        <RelativeLayout
+            android:id="@+id/tag_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tagbutton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+
+        </RelativeLayout>>
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/my_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical" />
+
+</LinearLayout>

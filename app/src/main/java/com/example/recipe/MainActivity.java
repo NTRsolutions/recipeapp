@@ -18,11 +18,14 @@ import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.example.recipe.data.RecipeDataStore;
 import com.example.recipe.data.RecipeInfo;
 import com.example.recipe.data.ShoppingListDataStore;
+import com.example.recipe.ui.BrowseFragment;
 import com.example.recipe.ui.CategoryFragment;
 import com.example.recipe.ui.RecipeListFragment;
 import com.example.recipe.ui.RecipeDetailFragment;
@@ -38,7 +41,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
     ScreenSlidePagerAdapter mPagerAdapter;
-
+    private Button mButton ;
+    private RecipeInfo  mRecipeInfo;
     public enum Pages {
         FEED,
         CATEGORIES,
@@ -53,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         mviewPager = (ViewPager) findViewById(R.id.pager);
         mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         mviewPager.setAdapter(mPagerAdapter);
+
 
 
         mTabLayout = (TabLayout) findViewById(R.id.tablayout);
@@ -79,6 +84,11 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
 
         RecipeDataStore.getsInstance(this).checkAndDownloadJsonData();
 
+
+
+
+
+
     }
 
     @Override
@@ -95,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
 
     protected void loadPreferences(){
         String shoppingList = AppPreference.getInstance(this)
-                .getString(ShoppingListDataStore.SAVED_SHOPPING_LIST,"");
+                .getString(ShoppingListDataStore.SAVED_SHOPPING_LIST, "");
         ShoppingListDataStore.createFromJson(shoppingList);
     }
 
@@ -171,6 +181,28 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
                 R.id.full_screen_view, rFrag, "Detail Fragment")
                 .addToBackStack(RecipeDetailFragment.class.getSimpleName())
                 .commit();
+        mRecipeInfo = recipeInfo;
+    }
+
+    public void showDetailViewBrowseFragment(){
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(BrowseFragment.RECIPE_DETAIL_KEY, mRecipeInfo);
+        BrowseFragment rFragment = new BrowseFragment();
+        rFragment.setArguments(bundle);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        if (rFragment == null) {
+            rFragment = new BrowseFragment();
+        }
+
+        if (rFragment.isAdded()){
+            transaction.show(rFragment);
+        } else {
+            transaction.add(R.id.full_screen_view, rFragment, "TAG").
+                    addToBackStack("TAG");;
+        }
+
+        transaction.commit();
     }
 
     @Override
