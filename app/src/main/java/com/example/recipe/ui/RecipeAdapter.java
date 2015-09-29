@@ -17,6 +17,7 @@ import java.util.List;
 /**
  * Created by rajnish on 6/8/15.
  */
+
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
     public static final String TAG = "RecipeAdapter";
     private List<RecipeInfo> mDataItems = new ArrayList<>();
@@ -71,6 +72,15 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
                 recipeAdapter.mRecipeAdapterListener.onRecipeAdapterListener(recipeInfo);
             }
             return ;
+        }
+
+        @Override
+        public void onTagClicked(String tag) {
+            tag = tag.replace("#", "");
+            List<RecipeInfo> list = RecipeDataStore.getsInstance(recipeAdapter.mContext)
+                    .searchDocuments(tag, 1000);
+            recipeAdapter.mDataItems = list;
+            recipeAdapter.notifyDataSetChanged();
         }
     }
 

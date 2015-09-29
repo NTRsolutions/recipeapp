@@ -27,7 +27,7 @@ public class Config {
     public static String sRecipeInfoBaseUrl = "http://virtualcook.parseapp.com/media/recipeinfo";
     public static String sRecipeStorageCloudBaseUrl = "https://storage.googleapis.com/recipeapp";
 
-    public static String sFavouriteTag = "#favourite";
+    public static String sFavouriteTag = "favourite";
 
     public static void initialize(Context context){
         setDeviceDensityDpi(context);

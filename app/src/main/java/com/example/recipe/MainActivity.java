@@ -184,10 +184,10 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         mRecipeInfo = recipeInfo;
     }
 
-    public void showDetailViewBrowseFragment(){
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(BrowseFragment.RECIPE_DETAIL_KEY, mRecipeInfo);
+    public void showDetailViewBrowseFragment(String query){
         BrowseFragment rFragment = new BrowseFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(BrowseFragment.SEARCH_QUERY_KEY, query);
         rFragment.setArguments(bundle);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
@@ -195,12 +195,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
             rFragment = new BrowseFragment();
         }
 
-        if (rFragment.isAdded()){
-            transaction.show(rFragment);
-        } else {
-            transaction.add(R.id.full_screen_view, rFragment, "TAG").
+        transaction.replace(R.id.full_screen_view, rFragment, "TAG").
                     addToBackStack("TAG");;
-        }
 
         transaction.commit();
     }

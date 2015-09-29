@@ -285,12 +285,13 @@ public class RecipeDataStore {
         removeFreeTextTags(info, Collections.singleton(freeTextTag));
     }
 
-    public void getRecipeList(RecipeCategoryType type, RecipeDataStoreListener listener) {
+    public void getRecipeList(RecipeCategoryType type, RecipeDataStoreListener listener, String extraParam) {
         switch (type) {
             case FEED:
                 getFeedData(listener);
                 break;
             case CATEGORY:
+                getCategoryData(extraParam, listener);
                 break;
             case FAVOURITE:
                 getFavouriteData(listener);
@@ -299,6 +300,11 @@ public class RecipeDataStore {
                 getHistoryData(listener);
                 break;
         }
+    }
+
+    private void getCategoryData(String searchTag, RecipeDataStoreListener listener) {
+        List<RecipeInfo> list = searchDocuments(searchTag, 1000);
+        listener.onDataFetchComplete(list);
     }
 
     private void getFavouriteData(RecipeDataStoreListener listener) {
