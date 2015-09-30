@@ -11,34 +11,31 @@
         android:id="@+id/card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        card_view:cardCornerRadius="3dp"
-        card_view:cardElevation="4dp"
+        card_view:cardCornerRadius="1dp"
+        card_view:cardElevation="1dp"
         card_view:cardUseCompatPadding="true">
 
         <RelativeLayout
             android:id="@+id/content"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="2dp"
-            android:paddingBottom="2dp"
-            android:paddingLeft="2dp">
+            android:background="@drawable/round_button_drawable"
+            android:layout_margin="5dp">
              <TextView
                  android:id="@+id/tagText"
                  android:layout_width="wrap_content"
                  android:layout_height="wrap_content"
-                 android:text="palak"
-                 android:textSize="20dp"
-                 android:background="@color/colorAccent"/>
+                 android:layout_centerVertical="true"
+                 android:padding="5dp"
+                 android:textSize="16dp" />
             <ImageView
                 android:id="@+id/cleartag"
                 android:layout_width="wrap_content"
                 android:src="@drawable/clearbox"
-                android:layout_height="27dp"
+                android:layout_height="20dp"
+                android:layout_centerVertical="true"
                 android:layout_toRightOf="@+id/tagText"
-                android:background="@color/colorAccent"
                 />
-
-
         </RelativeLayout>>
 
     </android.support.v7.widget.CardView>
@@ -48,22 +45,21 @@
         android:id="@+id/card_view_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        card_view:cardCornerRadius="3dp"
-        card_view:cardElevation="4dp"
+        card_view:cardCornerRadius="1dp"
+        card_view:cardElevation="1dp"
         card_view:cardUseCompatPadding="true">
 
-        <RelativeLayout
+        <HorizontalScrollView
             android:id="@+id/tag_button"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/tagbutton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-
-        </RelativeLayout>>
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:id="@+id/tag_list"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+            </LinearLayout>
+        </HorizontalScrollView>>
 
     </android.support.v7.widget.CardView>
 

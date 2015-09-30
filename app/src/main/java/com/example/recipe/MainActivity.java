@@ -32,6 +32,8 @@ import com.example.recipe.ui.RecipeDetailFragment;
 import com.example.recipe.ui.ShoppingListFragment;
 import com.example.recipe.utility.AppPreference;
 
+import java.util.ArrayList;
+
 
 public class MainActivity extends AppCompatActivity implements MainActivityListener {
     public static final String TAG = "MainActivity";
@@ -187,6 +189,11 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
     public void showDetailViewBrowseFragment(String query){
         BrowseFragment rFragment = new BrowseFragment();
         Bundle bundle = new Bundle();
+        ArrayList<String> tagItems = new ArrayList<>();
+        tagItems.add("chutney");
+        tagItems.add("desserts");
+        tagItems.add("fish");
+        bundle.putStringArrayList(BrowseFragment.SEARCH_TAG_ITEMS,tagItems);
         bundle.putString(BrowseFragment.SEARCH_QUERY_KEY, query);
         rFragment.setArguments(bundle);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
