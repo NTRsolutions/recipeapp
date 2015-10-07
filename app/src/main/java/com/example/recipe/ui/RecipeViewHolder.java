@@ -113,16 +113,15 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         mReciepeImageView.setImageResource(android.R.color.transparent);
         String localImagePath = DataUtility.getInstance(mContext)
                 .getExternalFilesDirPath() + "/images/" + mRecipeInfo.getRecipeinfoId() + ".jpg";
-
-        String cloudImagePath = Config.sRecipeStorageCloudBaseUrl + "/images/"
-                + mRecipeInfo.getRecipeinfoId() + ".jpg";
-
         File imageFile = new File(localImagePath);
         if (imageFile.exists()) {
             mImageUri = Uri.fromFile(imageFile);
             Picasso.with(mContext).load(imageFile).into(mReciepeImageView);
 //            mCardView.setCardBackgroundColor(resources.getColor(R.color.lightgreen));
         } else {
+            String cloudImagePath = Config.sRecipeStorageCloudBaseUrl + "/images/"
+                    + mRecipeInfo.getRecipeinfoId() + ".jpg";
+
             Picasso.with(mContext).load(cloudImagePath).error(R.mipmap.ic_launcher).into(mReciepeImageView);
             downloadRecipeImage(cloudImagePath);
 //            mCardView.setCardBackgroundColor(resources.getColor(R.color.lightred));
