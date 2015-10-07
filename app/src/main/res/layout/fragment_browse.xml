@@ -50,7 +50,8 @@
         card_view:cardUseCompatPadding="true">
 
         <HorizontalScrollView
-            android:id="@+id/tag_button"
+            android:id="@+id/list_scroll"
+            android:scrollbars="none"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <LinearLayout

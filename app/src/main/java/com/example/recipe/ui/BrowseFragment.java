@@ -2,7 +2,6 @@ package com.example.recipe.ui;
 
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -27,8 +27,6 @@ import java.util.List;
  */
 public class BrowseFragment extends Fragment {
     public static final String SEARCH_QUERY_KEY = "SEARCH_QUERY_KEY";
-    public static final String SEARCH_TAG_ITEMS = "SEARCH_TAG_ITEMS";
-
     public BrowseFragment() {
         // Required empty public constructor
     }
@@ -58,8 +56,7 @@ public class BrowseFragment extends Fragment {
 
         mAdapter = new RecipeAdapter(getActivity(), new RecipeAdapterListenerImpl());
         mRecyclerView.setAdapter(mAdapter);
-        ArrayList<String> tagItems =  getArguments().getStringArrayList("SEARCH_TAG_ITEMS");
-
+        ArrayList<String> tagItems =  RecipeDataStore.getsInstance(getActivity()).getRelatedTag();
         final TextView queryText = (TextView) rootView.findViewById(R.id.tagText);
         queryText.setText(query);
 
@@ -89,6 +86,13 @@ public class BrowseFragment extends Fragment {
         }
 
         ImageView clearTag = (ImageView) rootView.findViewById(R.id.cleartag);
+        final HorizontalScrollView scrollView = (HorizontalScrollView)rootView.findViewById(R.id.list_scroll);
+        scrollView.postDelayed(new Runnable() {
+            public void run() {
+                scrollView.fullScroll(HorizontalScrollView.FOCUS_LEFT);
+            }
+        }, 100L);
+
         clearTag.setColorFilter(getResources().getColor(R.color.black));
         clearTag.setOnClickListener(new View.OnClickListener(){
             @Override

@@ -18,7 +18,6 @@ import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
@@ -27,12 +26,10 @@ import com.example.recipe.data.RecipeInfo;
 import com.example.recipe.data.ShoppingListDataStore;
 import com.example.recipe.ui.BrowseFragment;
 import com.example.recipe.ui.CategoryFragment;
-import com.example.recipe.ui.RecipeListFragment;
 import com.example.recipe.ui.RecipeDetailFragment;
+import com.example.recipe.ui.RecipeListFragment;
 import com.example.recipe.ui.ShoppingListFragment;
 import com.example.recipe.utility.AppPreference;
-
-import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity implements MainActivityListener {
@@ -189,11 +186,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
     public void showDetailViewBrowseFragment(String query){
         BrowseFragment rFragment = new BrowseFragment();
         Bundle bundle = new Bundle();
-        ArrayList<String> tagItems = new ArrayList<>();
-        tagItems.add("chutney");
-        tagItems.add("desserts");
-        tagItems.add("fish");
-        bundle.putStringArrayList(BrowseFragment.SEARCH_TAG_ITEMS,tagItems);
         bundle.putString(BrowseFragment.SEARCH_QUERY_KEY, query);
         rFragment.setArguments(bundle);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
