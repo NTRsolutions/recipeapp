@@ -2,6 +2,7 @@ package com.example.recipe.crawler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -63,6 +64,10 @@ public class RecipeCategorisation {
 				category = recipeCategorisation.categoriseAsSauce(info, jsonStr, category);
 				category = recipeCategorisation.categoriseAsKerala(info, jsonStr, category);
 				category = recipeCategorisation.categoriseAsSouthIndian(info, jsonStr, category);
+				
+				category = recipeCategorisation.categoriseAsBaked(info, jsonStr, category);
+				category = recipeCategorisation.categoriseAsHealty(info, jsonStr, category);
+				
 				
 				
 				if (!category.equalsIgnoreCase("default")) {
@@ -448,6 +453,45 @@ public class RecipeCategorisation {
 		return category;
 	}
 	
+	String categoriseAsBaked(RecipeInfo info, String jsonStr, String category) {
+		String bakedStr = FoodCategoryList.FoodCategory.BAKED.getValue();	
+		String ovenStr = "oven";
+		// use only title for segmentation
+		if (jsonStr.toLowerCase().contains(bakedStr) 
+				|| jsonStr.toLowerCase().contains(ovenStr)) {
+			category = appendCategory(category, bakedStr);
+		}
+		
+		return category;
+	}
+	
+	String categoriseAsHealty(RecipeInfo info, String jsonStr, String category) {
+		String HealthyStr = FoodCategoryList.FoodCategory.HEALTHY.getValue();	
+		String ovenStr = "oven";
+		// use only title for segmentation
+		List<String> list = info.nutritionList;
+		if (list == null || list.size() == 0) {
+			return category;
+		}
+		
+		for(String str : list) {
+			if (str.toLowerCase().contains("calories")) {
+				String val = str.replaceAll("[^.0-9]", "");
+				float cal = 100000;
+				try {
+					cal = Float.parseFloat(val);
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+				
+				if (cal < 200) {
+					category = appendCategory(category, HealthyStr);
+				}
+			}
+		}
+		
+		return category;
+	}
 	/************************************************ Utility Functions *************************************/
 	
 	boolean containedInList(String originalCategoryList, String newEntry) {

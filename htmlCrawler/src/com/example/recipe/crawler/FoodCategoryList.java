@@ -13,7 +13,6 @@ public class FoodCategoryList {
         NON_VEGETARIAN("NonVegetarian"),
 
         EASY("Easy"),
-        HEALTHY("Healthy"),
 
         //Sweet's
         MILKSHAKES("MilkShakes"),
@@ -39,6 +38,8 @@ public class FoodCategoryList {
         SALAD("Salad"),
         PASTA("Pasta"),
         PARATHA("Paratha"),
+        BAKED("BAKED"),
+        HEALTHY("HEALTHY"),
         
         // food items
         CHICKEN("Chicken"),
