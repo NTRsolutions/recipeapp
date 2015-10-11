@@ -39,5 +39,6 @@ dependencies {
     compile 'org.jsoup:jsoup:1.8.3'
     compile 'com.mcxiaoke.volley:library:1.0.15'
     compile 'com.facebook.rebound:rebound:0.3.8'
+    compile 'de.hdodenhof:circleimageview:2.0.0'
 
 }

@@ -3,6 +3,7 @@ package com.example.recipe.ui;
 import android.content.Context;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.speech.tts.TextToSpeech;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -13,18 +14,23 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.recipe.MainActivity;
 import com.example.recipe.R;
 import com.example.recipe.data.DataUtility;
 import com.example.recipe.data.DownloadFileFromURL;
 import com.example.recipe.data.RecipeInfo;
 import com.example.recipe.utility.Config;
 import com.example.recipe.utility.FoodCategoryList;
+import com.example.recipe.utility.Utility;
 import com.example.recipe.widgets.FlowLayout;
 import com.squareup.picasso.Picasso;
+
+import org.jsoup.helper.StringUtil;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by rajnish on 6/8/15.
@@ -40,9 +46,12 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
     private ImageView mFavouriteImage;
     private RecipeInfo mRecipeInfo;
     private FlowLayout mFlowLayout;
+    private ImageView browseButton;
+    private TextToSpeech textToSpeech;
 
     public interface RecipeViewHolderListener {
         void onViewHolderClicked(RecipeInfo recipeInfo);
+        void onTagClicked(String tag);
     }
 
     public RecipeViewHolder(Context context, View view, final RecipeViewHolderListener lstr) {
@@ -55,6 +64,9 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         mReciepeImageView = (ImageView) view.findViewById(R.id.icon);
         mFlowLayout = (FlowLayout) view.findViewById(R.id.tags);
         mFavouriteImage = (ImageView) view.findViewById(R.id.favourite);
+        browseButton = (ImageView) view.findViewById(R.id.browse_button);
+        browseButton.setColorFilter(mContext.getResources().getColor(R.color.blue));
+
         mListener = lstr;
         ViewGroup.LayoutParams layoutParams = mReciepeImageView.getLayoutParams();
         layoutParams.height = (int) (Config.SCREEN_SIZE.y
@@ -121,11 +133,11 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         categoryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Button btn = (Button)v;
-                if(btn.isSelected()) {
+                Button btn = (Button) v;
+                if (btn.isSelected()) {
                     // fetch selected list
                     StringBuilder builder = new StringBuilder();
-                    for (int i = 0 ; i < addCategoryContainer.getChildCount() ; i++) {
+                    for (int i = 0; i < addCategoryContainer.getChildCount(); i++) {
                         View view = addCategoryContainer.getChildAt(i);
                         TextView textView = (TextView) view;
                         if (textView.isSelected()) {
@@ -142,7 +154,7 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
                     btn.setSelected(!btn.isSelected());
                     HashMap<String, String> list = new HashMap<String, String>();
                     String updatedCategoryList = builder.toString().substring(1);
-                    list.put("category", updatedCategoryList );
+                    list.put("category", updatedCategoryList);
                     RecipeInfo.updateRecipeInfoCategoryOnCloud(mRecipeInfo, list);
                     mRecipeInfo.setCategory(updatedCategoryList);
                     pupulateCategoryTags();
@@ -156,7 +168,7 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
                 Resources res = v.getContext().getResources();
                 final int selectedColor = res.getColor(R.color.blue);
                 final int unSelectedColor = res.getColor(R.color.greylight);
-                for(final String options: FoodCategoryList.sCategoryList){
+                for (final String options : FoodCategoryList.sCategoryList) {
                     final TextView suggestedTextView = new TextView(v.getContext());
                     suggestedTextView.setPadding(5, 5, 5, 5);
                     suggestedTextView.setText(options);
@@ -180,7 +192,7 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         final int selectedColor = res.getColor(R.color.blue);
         final int unSelectedColor = res.getColor(R.color.orange);
         mFavouriteImage.setSelected(false);
-        mFavouriteImage.setOnClickListener(new View.OnClickListener(){
+        mFavouriteImage.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -270,6 +282,13 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         DownloadFileFromURL downloadFileFromURL = new DownloadFileFromURL(
                 mContext, url, finalPath);
         downloadFileFromURL.execute("DownloadFileFromURL Task");
+
+    }
+
+    public void unBind() {
+        textToSpeech.stop();
+        textToSpeech.shutdown();
+        textToSpeech = null;
     }
 
     public void onBindView() {
@@ -281,14 +300,15 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         String localImagePath = DataUtility.getInstance(mContext)
                 .getExternalFilesDirPath() + "/images/" + mRecipeInfo.getRecipeinfoId() + ".jpg";
 
-        String cloudImagePath = Config.sRecipeStorageCloudBaseUrl + "/images/" + mRecipeInfo.getRecipeinfoId() + ".jpg";
-
         File imageFile = new File(localImagePath);
         if (imageFile.exists()) {
             mImageUri = Uri.fromFile(imageFile);
             Picasso.with(mContext).load(imageFile).into(mReciepeImageView);
             mCardView.setCardBackgroundColor(resources.getColor(R.color.lightgreen));
         } else {
+            String cloudImagePath = Config.sRecipeStorageCloudBaseUrl + "/images/"
+                    + mRecipeInfo.getRecipeinfoId() + ".jpg";
+
             Picasso.with(mContext).load(cloudImagePath).error(R.mipmap.ic_launcher).into(mReciepeImageView);
 
             //// TODO: 19/9/15  (rkumar) Debug code to remove later
@@ -307,6 +327,32 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         setUpCategoryButton(rootView);
         setUpFavouriteImage(rootView);
         pupulateCategoryTags();
+
+        textToSpeech = new TextToSpeech(mContext, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+
+            }
+        });
+
+        final StringBuilder sb = new StringBuilder();
+        List<String> list = mRecipeInfo.getDirections();
+
+        if (list != null && list.size() >0) {
+            sb.append(mRecipeInfo.getDescription());
+            for (String s : list)
+            {
+                sb.append(s);
+                sb.append("\t");
+            }
+        }
+
+        browseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                textToSpeech.speak(sb.toString(), TextToSpeech.QUEUE_FLUSH, null);
+            }
+        });
     }
 
     public void populateImageUrlList() {
@@ -322,13 +368,13 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
 
     private void pupulateCategoryTags() {
         mFlowLayout.removeAllViews();
-        String cateroty = mRecipeInfo.getCategory();
+        String categoryStr = mRecipeInfo.getCategory();
 
-        if (cateroty == null || cateroty.equalsIgnoreCase("")) {
+        if (categoryStr == null || categoryStr.equalsIgnoreCase("")) {
             return;
         }
 
-        String[] categories = cateroty.split("\\|");
+        String[] categories = Utility.getCategories(categoryStr);
 
         mFlowLayout.setSpacing(5, 10);
         int numTags = categories.length;
@@ -336,7 +382,7 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
             String tagItem = "#" + categories[i];
             TextView tv = new TextView(mContext);
             tv.setText(tagItem);
-//            tv.setOnClickListener(createSearchOnClickListener(searchTagItem));
+            tv.setOnClickListener(new TagsClickListenerImpl(tagItem));
             tv.setTextSize(15);
             tv.setPadding(3, 3, 3, 3);
             tv.setSingleLine();
@@ -350,4 +396,19 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
     public void setRecipeInfo(RecipeInfo mRecipeInfo) {
         this.mRecipeInfo = mRecipeInfo;
     }
+
+    public class TagsClickListenerImpl implements View.OnClickListener {
+        String mSerachSrting;
+
+        TagsClickListenerImpl(String searchString) {
+            mSerachSrting = searchString;
+        }
+
+        @Override
+        public void onClick(View v) {
+            mSerachSrting = mSerachSrting.replace("#", "");
+            ((MainActivity) v.getContext()).showDetailViewBrowseFragment(mSerachSrting);
+        }
+    }
+
 }
