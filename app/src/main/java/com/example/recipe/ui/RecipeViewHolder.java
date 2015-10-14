@@ -3,24 +3,24 @@ package com.example.recipe.ui;
 import android.content.Context;
 import android.content.res.Resources;
 import android.net.Uri;
-import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.recipe.MainActivity;
 import com.example.recipe.R;
 import com.example.recipe.data.DataUtility;
+import com.example.recipe.data.DownloadDescFromUrl;
 import com.example.recipe.data.DownloadFileFromURL;
 import com.example.recipe.data.RecipeInfo;
 import com.example.recipe.utility.Config;
 import com.example.recipe.widgets.FlowLayout;
+
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -41,7 +41,7 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
     private FlowLayout mFlowLayout;
 
     public interface RecipeViewHolderListener {
-        void onViewHolderClicked(RecipeInfo recipeInfo);
+        void onViewHolderClicked(int recipeInfoId);
         void onTagClicked(String tag);
     }
 
@@ -65,21 +65,7 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View v) {
                 if (mListener != null) {
-                    String description = "this is the most yummlicious recipe";
-                    //// TODO: 19/9/15  (rkumar) Debug code to remove later
-                    String path = DataUtility.getInstance(mContext).getExternalFilesDirPath()
-                            + "/" + "json" + "/" + mRecipeInfo.getRecipeinfoId() + ".json";
-                    String json = DataUtility.getInstance(mContext).loadJSONFromFile(path);
-                    RecipeInfo recipeInfo = RecipeInfo.getRecipeDescription(json);
-                    recipeInfo.setImageUrl(mImageUri);
-
-                    // fill missing data in json
-                    recipeInfo.setRecipeinfoId(mRecipeInfo.getRecipeinfoId());
-                    recipeInfo.setCategory(mRecipeInfo.getCategory());
-
-                    mListener.onViewHolderClicked(recipeInfo);
-                    Log.d("TAG", "in view holder click" + description);
-
+                    mListener.onViewHolderClicked(mRecipeInfo.getRecipeinfoId());
                 }
             }
         });
@@ -106,7 +92,8 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
 
     }
 
-    public void onBindView() {
+    public void onBindView(RecipeInfo dataItem) {
+        mRecipeInfo = dataItem;
         Resources resources = mContext.getResources();
         mCardView.setCardBackgroundColor(resources.getColor(R.color.white));
         mTitle.setText(mRecipeInfo.getTitle());
@@ -114,6 +101,7 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         String localImagePath = DataUtility.getInstance(mContext)
                 .getExternalFilesDirPath() + "/images/" + mRecipeInfo.getRecipeinfoId() + ".jpg";
         File imageFile = new File(localImagePath);
+        mImageUri  = null;
         if (imageFile.exists()) {
             mImageUri = Uri.fromFile(imageFile);
             Picasso.with(mContext).load(imageFile).into(mReciepeImageView);
@@ -126,6 +114,8 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
             downloadRecipeImage(cloudImagePath);
 //            mCardView.setCardBackgroundColor(resources.getColor(R.color.lightred));
         }
+
+
 
         setUpFavouriteImage(rootView);
         pupulateCategoryTags();
@@ -183,5 +173,4 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
             ((MainActivity) v.getContext()).showDetailViewBrowseFragment(mSerachSrting);
         }
     }
-
 }

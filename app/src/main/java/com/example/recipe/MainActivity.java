@@ -44,7 +44,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
     private Toolbar toolbar;
     ScreenSlidePagerAdapter mPagerAdapter;
     private Button mButton ;
-    private RecipeInfo  mRecipeInfo;
     public enum Pages {
         FEED,
         CATEGORIES,
@@ -84,13 +83,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         actionBar.setDisplayHomeAsUpEnabled(true);
         Log.d(TAG, "onCreate ");
 
-        RecipeDataStore.getsInstance(this).checkAndDownloadJsonData();
-
-
-
-
-
-
+//        RecipeDataStore.getsInstance(this).checkAndDownloadJsonData();
     }
 
     @Override
@@ -173,17 +166,16 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
                 .commit();
     }
 
-    public void showDetailView(RecipeInfo recipeInfo) {
+    public void showDetailView(int recipeInfoId) {
         Log.d("TAG", "showDetailView");
         Bundle bundle = new Bundle();
-        bundle.putSerializable(RecipeDetailFragment.RECIPE_DETAIL_KEY, recipeInfo);
+        bundle.putInt(RecipeDetailFragment.RECIPE_DETAIL_KEY, recipeInfoId);
         RecipeDetailFragment rFrag = new RecipeDetailFragment();
         rFrag.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().add(
                 R.id.full_screen_view, rFrag, "Detail Fragment")
                 .addToBackStack(RecipeDetailFragment.class.getSimpleName())
                 .commit();
-        mRecipeInfo = recipeInfo;
     }
 
     public void showDetailViewBrowseFragment(String query){

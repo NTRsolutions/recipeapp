@@ -65,8 +65,8 @@ public class CategoryFragment extends Fragment {
     private class RecipeAdapterListenerImpl implements RecipeAdapter.RecipeAdapterListener {
 
         @Override
-        public void onRecipeAdapterListener(RecipeInfo recipeInfo) {
-            mMainActivity.showDetailView(recipeInfo);
+        public void onRecipeAdapterListener(int recipeInfoId) {
+            mMainActivity.showDetailView(recipeInfoId);
         }
     }
 

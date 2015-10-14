@@ -124,9 +124,9 @@ public class BrowseFragment extends Fragment {
     private class RecipeAdapterListenerImpl implements RecipeAdapter.RecipeAdapterListener {
 
         @Override
-        public void onRecipeAdapterListener(RecipeInfo recipeDescription) {
+        public void onRecipeAdapterListener(int recipeInfoId) {
             if (mMainActivity != null) {
-                mMainActivity.showDetailView(recipeDescription);
+                mMainActivity.showDetailView(recipeInfoId);
             }
         }
     }

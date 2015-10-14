@@ -25,7 +25,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
     private RecipeAdapterListener mRecipeAdapterListener;
 
     public interface RecipeAdapterListener {
-        void onRecipeAdapterListener(RecipeInfo recipeInfo);
+        void onRecipeAdapterListener(int recipeInfoId);
     }
 
     public RecipeAdapter(Context context, RecipeAdapterListener recipeAdapterListener){
@@ -46,8 +46,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
     public void onBindViewHolder(RecipeViewHolder myViewHolder, int i) {
         Log.d(TAG, "onBindViewHolder ");
         RecipeInfo dataItem = mDataItems.get(i);
-        myViewHolder.setRecipeInfo(dataItem);
-        myViewHolder.onBindView();
+        myViewHolder.onBindView(dataItem);
     }
 
     @Override
@@ -67,9 +66,9 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
         }
 
         @Override
-        public void onViewHolderClicked(RecipeInfo recipeInfo) {
+        public void onViewHolderClicked(int recipeInfoId) {
             if (recipeAdapter != null && recipeAdapter.mRecipeAdapterListener != null) {
-                recipeAdapter.mRecipeAdapterListener.onRecipeAdapterListener(recipeInfo);
+                recipeAdapter.mRecipeAdapterListener.onRecipeAdapterListener(recipeInfoId);
             }
             return ;
         }

@@ -382,11 +382,16 @@ public class RecipeDataStore {
         }
     }
 
+    public RecipeInfo getRecipeInfo(int recipeinfoId) {
+        Document doc = mDataBase.getDocument(String.valueOf(recipeinfoId));
+        Map<String, Object> properties = doc.getProperties();
+        RecipeInfo recipeInfo = recipeFromJsonMap(properties);
+        return recipeInfo;
+    }
+
     private void addVideoInfoToCache(RecipeInfo info) {
         sRecipeInfoList.add(info);
     }
-
-
 
     public void updateDoc(RecipeInfo info) {
         String documentId = info.getDocId();
@@ -408,7 +413,6 @@ public class RecipeDataStore {
             e.printStackTrace();
         }
     }
-
 
     private void fetchAllInfoData(final RecipeDataStoreListener listener) {
         if (listener != null && sRecipeInfoList.size() > 0) {

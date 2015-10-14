@@ -16,9 +16,12 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.recipe.data.DataUtility;
+import com.example.recipe.data.DownloadDescFromUrl;
 import com.example.recipe.data.RecipeDataStore;
 import com.example.recipe.data.RecipeInfo;
 import com.example.recipe.data.ShoppingListDataStore;
@@ -35,11 +38,19 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class RecipeDetailFragment extends Fragment {
+
+    public interface TaskCompletion {
+        void onTaskCompletionResult(boolean status, String path);
+    }
+
     public static final String RECIPE_DETAIL_KEY = "RECIPE_DETAIL_KEY";
     View rootView;
     public static float MAX_CARD_HEIGHT_PECENTAGE = 0.35f;
     RecipeInfo mRecipeInfo;
     Boolean mItemUpdated;
+    ImageView mRecipeImageView;
+    ProgressBar mProgressBar;
+    RelativeLayout mContent;
 
     public RecipeDetailFragment() {
         // Required empty public constructor
@@ -50,30 +61,88 @@ public class RecipeDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView =  inflater.inflate(R.layout.fragment_recipe2, null, false);
-        mRecipeInfo = (RecipeInfo) getArguments()
-                .getSerializable(RECIPE_DETAIL_KEY);
+        int  recipeInfoId = getArguments().getInt(RECIPE_DETAIL_KEY, -1);
+        mRecipeInfo = RecipeDataStore.getsInstance(getActivity()).getRecipeInfo(recipeInfoId);
         mRecipeInfo.updateLastViewedTime();
-        ImageView recipeImage = (ImageView) rootView.findViewById(R.id.recipe_image);
+        mRecipeImageView = (ImageView) rootView.findViewById(R.id.recipe_image);
+        mProgressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
+        mContent = (RelativeLayout) rootView.findViewById(R.id.content);
+        mContent.setVisibility(View.INVISIBLE);
 
+        setUpBannerSize(rootView);
+        populateImageView();
+        showRecipeDetail();
 
-        if (mRecipeInfo.getImageUrl() != null) {
-            Picasso.with(recipeImage.getContext()).load(
-                    mRecipeInfo.getImageUrl()).into(recipeImage);
+        return rootView;
+    }
+
+    private void showRecipeDetail() {
+        String localdescriptionPath = DataUtility.getInstance(getActivity()).getExternalFilesDirPath()
+                + "/" + "json" + "/" + mRecipeInfo.getRecipeinfoId() + ".json";
+        File decriptionFile = new File(localdescriptionPath);
+
+        if(decriptionFile.exists()) {
+            String json = DataUtility.getInstance(getActivity()).loadJSONFromFile(localdescriptionPath);
+            RecipeInfo recipeInfo = RecipeInfo.getRecipeDescription(json);
+
+            // fill missing data in json
+            recipeInfo.setRecipeinfoId(mRecipeInfo.getRecipeinfoId());
+            recipeInfo.setCategory(mRecipeInfo.getCategory());
+            mRecipeInfo = recipeInfo;
+            populateUI();
+        }else {
+            String cloudDescriptionPath = Config.sRecipeStorageCloudBaseUrl + "/json/"
+                    + mRecipeInfo.getRecipeinfoId() + ".json";
+            downloadRecipeDescription(cloudDescriptionPath);
         }
+    }
 
+    private void populateImageView() {
+        String localImagePath = DataUtility.getInstance(getActivity())
+                .getExternalFilesDirPath() + "/images/" + mRecipeInfo.getRecipeinfoId() + ".jpg";
+        File imageFile = new File(localImagePath);
+
+        if (imageFile.exists()) {
+            Picasso.with(getActivity()).load(imageFile).into(mRecipeImageView);
+        } else {
+            String cloudImagePath = Config.sRecipeStorageCloudBaseUrl + "/images/"
+                    + mRecipeInfo.getRecipeinfoId() + ".jpg";
+
+            Picasso.with(getActivity()).load(cloudImagePath).error(R.mipmap.ic_launcher)
+                    .into(mRecipeImageView);
+        }
+    }
+
+    public void downloadRecipeDescription(String url){
+        String descriptionPath = DataUtility.getInstance(getActivity()).getExternalFilesDirPath()
+                + "/json/" +mRecipeInfo.getRecipeinfoId() + ".json";
+        DownloadDescFromUrl downloadDescFromURL = new DownloadDescFromUrl(new TaskCompletionImpl(),
+                url, descriptionPath);
+        downloadDescFromURL.execute("DownloadFileFromURL Task");
+    }
+
+    private class TaskCompletionImpl implements TaskCompletion {
+        @Override
+        public void onTaskCompletionResult(boolean status, String path) {
+            if (status) {
+                showRecipeDetail();
+            }
+        }
+    }
+
+    private void populateUI() {
         setupShareRecipe(rootView);
         setUpFavouriteRecipe(rootView);
-        setUpBannerSize(rootView);
         setUpTitle(rootView);
         setUpIngredientView(rootView);
         setUpDirection(rootView);
         setUpServesTxt(rootView);
         setUpPrepTimetxt(rootView);
         setUpNutritionView(rootView);
-        return rootView;
+
+        mProgressBar.setVisibility(View.INVISIBLE);
+        mContent.setVisibility(View.VISIBLE);
     }
-
-
 
     public void setUpPrepTimetxt(View rootView) {
         TextView preparationTitle = (TextView) rootView.findViewById(R.id.preparation_title);

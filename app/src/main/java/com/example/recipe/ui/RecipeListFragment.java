@@ -100,9 +100,9 @@ public class RecipeListFragment extends Fragment {
     private class RecipeAdapterListenerImpl implements RecipeAdapter.RecipeAdapterListener {
 
         @Override
-        public void onRecipeAdapterListener(RecipeInfo recipeInfo) {
+        public void onRecipeAdapterListener(int recipeInfoId) {
             if (mMainActivity != null) {
-                mMainActivity.showDetailView(recipeInfo);
+                mMainActivity.showDetailView(recipeInfoId);
             }
         }
     }
