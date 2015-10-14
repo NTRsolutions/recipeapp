@@ -8,8 +8,11 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.recipe.MainActivity;
 import com.example.recipe.R;
+import com.example.recipe.data.Category;
 import com.example.recipe.utility.Config;
+import com.squareup.picasso.Picasso;
 
 /**
  * Created by rajnish on 6/8/15.
@@ -24,12 +27,13 @@ public class CatgoryViewHolder extends RecyclerView.ViewHolder {
     protected ImageView mIcon;
     protected TextView mTitle;
     CategoryViewHolderListener listener;
+    private Category mCategory;
 
     public CatgoryViewHolder(View view, final CategoryViewHolderListener lstr) {
         super(view);
         mIcon = (ImageView) view.findViewById(R.id.icon);
         mTitle = (TextView) view.findViewById(R.id.firstLine);
-        mContent = (RelativeLayout) view.findViewById(R.id.content);
+        mContent = view.findViewById(R.id.content);
         listener = lstr;
 
         ViewGroup.LayoutParams layoutParams = mContent.getLayoutParams();
@@ -42,13 +46,21 @@ public class CatgoryViewHolder extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View v) {
                 if (listener != null) {
-                    listener.onViewHolderClicked("category clicked");
+                    ((MainActivity) v.getContext()).showDetailViewBrowseFragment(
+                            mCategory.getCategory());
+//                    listener.onViewHolderClicked("category clicked");
                     Log.d("TAG","in view holder click");
 
                 }
             }
         });
-
     }
 
+    public void onBind(Category category) {
+        mCategory = category;
+        mTitle.setText(category.getCategory());
+        Picasso.with(mContent.getContext()).load(category.getUrl())
+                .resize(Config.SCREEN_SIZE.x, Config.SCREEN_SIZE.x)
+                .centerCrop().into(mIcon);
+    }
 }

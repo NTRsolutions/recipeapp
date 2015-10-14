@@ -1,5 +1,6 @@
 package com.example.recipe.data;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.example.recipe.R;
@@ -22,7 +23,7 @@ public class CategoryDataStore {
        void onDataFetchComplete(List<Category> list);
     }
 
-    public static void fetchAllCategoryData(final CategoryDataStoreListener listener) {
+    public static void fetchAllCategoryData(Context cntx, final CategoryDataStoreListener listener) {
 
         if (sCategoryList == null) {
             sCategoryList = new ArrayList<>();
@@ -33,20 +34,30 @@ public class CategoryDataStore {
             return;
         }
 
-        ParseQuery<ParseObject> category = ParseQuery.getQuery(Category.class.getSimpleName());
-        category.findInBackground(new FindCallback<ParseObject>() {
-            public void done(List<ParseObject> results, ParseException e) {
-                List<Category> list = new ArrayList<>();
-                for (ParseObject object : results) {
-                    Category category = Category.getCategory(object);
-                    Log.d(TAG, "got result ");
-                    list.add(category);
-                }
-                if (listener != null) {
-                    sCategoryList = list;
-                    listener.onDataFetchComplete(list);
-                }
-            }
-        });
+        ArrayList<String> list = RecipeDataStore.getsInstance(cntx).getRelatedTag();
+        for (String tags : list) {
+            Category category = new Category();
+            category.setCategory(tags);
+            category.setUrl("https://i.ytimg.com/vi/d2teJWH6QQ4/hqdefault.jpg");
+            sCategoryList.add(category);
+        }
+
+        listener.onDataFetchComplete(sCategoryList);
+
+//        ParseQuery<ParseObject> category = ParseQuery.getQuery(Category.class.getSimpleName());
+//        category.findInBackground(new FindCallback<ParseObject>() {
+//            public void done(List<ParseObject> results, ParseException e) {
+//                List<Category> list = new ArrayList<>();
+//                for (ParseObject object : results) {
+//                    Category category = Category.getCategory(object);
+//                    Log.d(TAG, "got result ");
+//                    list.add(category);
+//                }
+//                if (listener != null) {
+//                    sCategoryList = list;
+//                    listener.onDataFetchComplete(list);
+//                }
+//            }
+//        });
     }
 }

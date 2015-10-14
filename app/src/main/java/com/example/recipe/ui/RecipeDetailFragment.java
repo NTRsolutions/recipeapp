@@ -124,7 +124,7 @@ public class RecipeDetailFragment extends Fragment {
     private class TaskCompletionImpl implements TaskCompletion {
         @Override
         public void onTaskCompletionResult(boolean status, String path) {
-            if (status) {
+            if (status && isAdded()) {
                 showRecipeDetail();
             }
         }

@@ -31,7 +31,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CatgoryViewHolder> {
     public CategoryAdapter(Context context, CategoryAdapterListener categoryAdapterListener){
         this.mContext = context;
         this.mCategoryAdapterListener = categoryAdapterListener;
-        CategoryDataStore.fetchAllCategoryData(new CategoryDataStoreListenerImpl());
+        CategoryDataStore.fetchAllCategoryData(mContext, new CategoryDataStoreListenerImpl());
     }
 
     private class CategoryDataStoreListenerImpl implements
@@ -55,13 +55,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CatgoryViewHolder> {
 
     @Override
     public void onBindViewHolder(CatgoryViewHolder myViewHolder, int i) {
-
         Category dataItem = mDataItems.get(i);
-        myViewHolder.mTitle.setText(dataItem.getCategory());
-        myViewHolder.mIcon.setImageResource(R.drawable.strawberry);
-        Picasso.with(mContext).load(dataItem.getUrl())
-                .resize(Config.SCREEN_SIZE.x, Config.SCREEN_SIZE.x)
-                .centerCrop().into(myViewHolder.mIcon);
+        myViewHolder.onBind(dataItem);
     }
 
     @Override
