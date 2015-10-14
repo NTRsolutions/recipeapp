@@ -16,6 +16,7 @@ import com.couchbase.lite.UnsavedRevision;
 import com.couchbase.lite.View;
 import com.example.recipe.utility.AppPreference;
 import com.example.recipe.utility.Config;
+import com.example.recipe.utility.Utility;
 import com.google.gson.Gson;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -25,10 +26,12 @@ import com.parse.ParseQuery;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created by rajnish on 6/8/15.
@@ -44,9 +47,11 @@ public class RecipeDataStore {
     static List<RecipeInfo> sRecipeInfoList;
     static List<RecipeInfo> sFavouriteRecipeInfoList;
     private int singleBatchLimit = 1000;
+    TreeMap mSortedMap;
     private Gson mGson;
     Database mDataBase;
     Context mContext;
+
 
     public enum RecipeCategoryType {
         FEED,
@@ -81,6 +86,7 @@ public class RecipeDataStore {
         }
 
         createViews();
+        computeTagFrequency();
         sFavouriteRecipeInfoList = searchDocuments(Config.sFavouriteTag, 1000);
     }
 
@@ -318,10 +324,6 @@ public class RecipeDataStore {
     }
 
     private void getFeedData(RecipeDataStoreListener listener) {
-        if (sRecipeInfoList.size() == 0) {
-            getAllVideoInfos();
-        }
-
         if (listener != null && sRecipeInfoList.size() > 0) {
             listener.onDataFetchComplete(sRecipeInfoList);
             return;
@@ -360,8 +362,46 @@ public class RecipeDataStore {
         return infoList;
     }
 
+    private void computeTagFrequency() {
+        List<RecipeInfo> list = getAllRecipeInfos();
+        HashMap<String, Integer> tagsFrequency = new HashMap<>();
+        ValueComparator bvc = new ValueComparator(tagsFrequency);
+        for (RecipeInfo info : list) {
+            String[] parts = Utility.getCategories(info.category);
+            for (String category : parts) {
+                Object obj = tagsFrequency.get(category);
+                if (obj == null) {
+                    tagsFrequency.put(category, 0);
+                } else {
+                    tagsFrequency.put(category, (int)obj + 1);
+                }
+            }
+        }
+
+
+        mSortedMap = new TreeMap(bvc);
+        mSortedMap.putAll(tagsFrequency);
+        // logs
+        for (Object category : mSortedMap.keySet()) {
+            Log.d(TAG, "computeTagFrequency " + category  + " : " + mSortedMap.get(category));
+        }
+    }
+
+    public ArrayList<String> getRelatedTag() {
+        ArrayList<String> relatedList = new ArrayList<>();
+        for (Object category : mSortedMap.keySet()) {
+            relatedList.add((String) category);
+        }
+
+        return relatedList;
+    }
+
     // Reads the CB db and returns all the videos.
-    private void getAllVideoInfos() {
+    private List<RecipeInfo> getAllRecipeInfos() {
+        if (sRecipeInfoList.size() > 0) {
+            return sRecipeInfoList;
+        }
+
         Query query = mDataBase.getView(kRecipeInfoView).createQuery();
         query.setDescending(true);
         QueryEnumerator result ;
@@ -369,7 +409,7 @@ public class RecipeDataStore {
             result = query.run();
         } catch (CouchbaseLiteException e) {
             e.printStackTrace();
-            return;
+            return null;
         }
 
         for (Iterator<QueryRow> it = result; it.hasNext();) {
@@ -378,8 +418,10 @@ public class RecipeDataStore {
             Map<String, Object> properties = doc.getProperties();
             RecipeInfo recipeInfo = recipeFromJsonMap(properties);
             Log.d(TAG, row.getKey() + " | " + recipeInfo.getDocId());
-            addVideoInfoToCache(recipeInfo);
+            sRecipeInfoList.add(recipeInfo);
         }
+
+        return sRecipeInfoList;
     }
 
     public RecipeInfo getRecipeInfo(int recipeinfoId) {
@@ -387,10 +429,6 @@ public class RecipeDataStore {
         Map<String, Object> properties = doc.getProperties();
         RecipeInfo recipeInfo = recipeFromJsonMap(properties);
         return recipeInfo;
-    }
-
-    private void addVideoInfoToCache(RecipeInfo info) {
-        sRecipeInfoList.add(info);
     }
 
     public void updateDoc(RecipeInfo info) {
@@ -474,4 +512,20 @@ public class RecipeDataStore {
         sInstance = null;
     }
 
+    class ValueComparator implements Comparator<String> {
+        Map base;
+
+        public ValueComparator(Map base) {
+            this.base = base;
+        }
+
+        @Override
+        public int compare(String lhs, String rhs) {
+            if ((int)base.get(lhs) >= (int)base.get(rhs)) {
+                return -1;
+            } else {
+                return 1;
+            } // returning 0 would merge keys
+        }
+    }
 }

@@ -3,6 +3,7 @@ package com.example.recipe.ui;
 import android.content.Context;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.speech.tts.TextToSpeech;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -19,11 +20,13 @@ import com.example.recipe.data.DownloadDescFromUrl;
 import com.example.recipe.data.DownloadFileFromURL;
 import com.example.recipe.data.RecipeInfo;
 import com.example.recipe.utility.Config;
+import com.example.recipe.utility.Utility;
 import com.example.recipe.widgets.FlowLayout;
 
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * Created by rajnish on 6/8/15.
@@ -39,6 +42,8 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
     private ImageView mFavouriteImage;
     private RecipeInfo mRecipeInfo;
     private FlowLayout mFlowLayout;
+    private ImageView browseButton;
+    private TextToSpeech textToSpeech;
 
     public interface RecipeViewHolderListener {
         void onViewHolderClicked(int recipeInfoId);
@@ -55,6 +60,9 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         mReciepeImageView = (ImageView) view.findViewById(R.id.icon);
         mFlowLayout = (FlowLayout) view.findViewById(R.id.tags);
         mFavouriteImage = (ImageView) view.findViewById(R.id.favourite);
+        browseButton = (ImageView) view.findViewById(R.id.browse_button);
+        browseButton.setColorFilter(mContext.getResources().getColor(R.color.blue));
+
         mListener = lstr;
         ViewGroup.LayoutParams layoutParams = mReciepeImageView.getLayoutParams();
         layoutParams.height = (int) (Config.SCREEN_SIZE.y
@@ -119,6 +127,38 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
 
         setUpFavouriteImage(rootView);
         pupulateCategoryTags();
+
+        textToSpeech = new TextToSpeech(mContext, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+
+            }
+        });
+
+        final StringBuilder sb = new StringBuilder();
+        List<String> list = mRecipeInfo.getDirections();
+
+        if (list != null && list.size() >0) {
+            sb.append(mRecipeInfo.getDescription());
+            for (String s : list)
+            {
+                sb.append(s);
+                sb.append("\t");
+            }
+        }
+
+        browseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                textToSpeech.speak(sb.toString(), TextToSpeech.QUEUE_FLUSH, null);
+            }
+        });
+    }
+
+    public void unBind() {
+        textToSpeech.stop();
+        textToSpeech.shutdown();
+        textToSpeech = null;
     }
 
     public void downloadRecipeImage(String url) {
@@ -131,13 +171,13 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
 
     private void pupulateCategoryTags() {
         mFlowLayout.removeAllViews();
-        String cateroty = mRecipeInfo.getCategory();
+        String categoryStr = mRecipeInfo.getCategory();
 
-        if (cateroty == null || cateroty.equalsIgnoreCase("")) {
+        if (categoryStr == null || categoryStr.equalsIgnoreCase("")) {
             return;
         }
 
-        String[] categories = cateroty.split("\\|");
+        String[] categories = Utility.getCategories(categoryStr);
 
         mFlowLayout.setSpacing(5, 10);
         int numTags = categories.length;

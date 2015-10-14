@@ -50,6 +50,12 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
     }
 
     @Override
+    public void onViewRecycled(RecipeViewHolder holder) {
+        super.onViewRecycled(holder);
+        holder.unBind();
+    }
+
+    @Override
     public int getItemCount() {
         return mDataItems.size();
     }

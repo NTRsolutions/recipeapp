@@ -1,15 +1,9 @@
 package com.example.recipe.utility;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.database.Cursor;
-import android.graphics.Point;
-import android.media.MediaMetadataRetriever;
 import android.net.Uri;
-import android.provider.ContactsContract;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -17,11 +11,8 @@ import com.facebook.rebound.SpringSystem;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.TimeZone;
 
 public class Utility {
@@ -184,6 +175,11 @@ public class Utility {
     public static boolean fileExists(String filePath) {
         File file = new File(filePath);
         return file.exists();
+    }
+
+    public static String[] getCategories(String categoryStr) {
+        String[] categories = categoryStr.split("\\|");
+        return categories;
     }
 }
 
