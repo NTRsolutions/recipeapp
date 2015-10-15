@@ -5,7 +5,7 @@ package com.example.recipe.data;
  */
 public class FoodCategoryList {
 
-    enum FoodCategory{
+    public enum FoodCategory{
         NORTH_INDIAN("NorthIndian"),
         SOUTH_INDIAN("SouthIndian"),
         VEGETARIAN("Vegetarian"),
@@ -64,6 +64,8 @@ public class FoodCategoryList {
         BENGALI("Bengali"),
         KERALA("Kerela"),
 
+        BAKED("baked"),
+
         //Hidden Tags
         DEFAULT("default");
 
@@ -73,6 +75,6 @@ public class FoodCategoryList {
             val = str.toLowerCase();
         };
 
-        String getValue() {return val;}
+        public String getValue() {return val;}
     }
 }
