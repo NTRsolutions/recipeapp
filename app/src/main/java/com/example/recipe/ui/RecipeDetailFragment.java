@@ -3,16 +3,21 @@ package com.example.recipe.ui;
 
 import android.content.Intent;
 import android.content.res.Resources;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.speech.tts.TextToSpeech;
+import android.speech.tts.UtteranceProgressListener;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -25,12 +30,16 @@ import com.example.recipe.data.DownloadDescFromUrl;
 import com.example.recipe.data.RecipeDataStore;
 import com.example.recipe.data.RecipeInfo;
 import com.example.recipe.data.ShoppingListDataStore;
+import com.example.recipe.data.TextToSpeechDesc;
 import com.example.recipe.utility.Config;
 import com.example.recipe.R;
 import com.example.recipe.utility.SpringOnTouchListener;
+import com.example.recipe.utility.Utility;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -38,19 +47,25 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class RecipeDetailFragment extends Fragment {
+    public static final String TAG = "RecipeDetailFragment";
 
     public interface TaskCompletion {
         void onTaskCompletionResult(boolean status, String path);
     }
 
     public static final String RECIPE_DETAIL_KEY = "RECIPE_DETAIL_KEY";
-    View rootView;
+    View mRootView;
     public static float MAX_CARD_HEIGHT_PECENTAGE = 0.35f;
     RecipeInfo mRecipeInfo;
     Boolean mItemUpdated;
     ImageView mRecipeImageView;
     ProgressBar mProgressBar;
     RelativeLayout mContent;
+    ImageView mSpeechButton;
+    private String mAudioFilePathName;
+    private MediaPlayer mMediaPlayer;
+    private boolean mAudioCreated;
+    private boolean mPlayRequested;
 
     public RecipeDetailFragment() {
         // Required empty public constructor
@@ -60,20 +75,18 @@ public class RecipeDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        rootView =  inflater.inflate(R.layout.fragment_recipe2, null, false);
-        int  recipeInfoId = getArguments().getInt(RECIPE_DETAIL_KEY, -1);
+        mRootView = inflater.inflate(R.layout.fragment_recipe2, null, false);
+        int recipeInfoId = getArguments().getInt(RECIPE_DETAIL_KEY, -1);
         mRecipeInfo = RecipeDataStore.getsInstance(getActivity()).getRecipeInfo(recipeInfoId);
         mRecipeInfo.updateLastViewedTime();
-        mRecipeImageView = (ImageView) rootView.findViewById(R.id.recipe_image);
-        mProgressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
-        mContent = (RelativeLayout) rootView.findViewById(R.id.content);
+        mRecipeImageView = (ImageView) mRootView.findViewById(R.id.recipe_image);
+        mProgressBar = (ProgressBar) mRootView.findViewById(R.id.progressBar);
+        mContent = (RelativeLayout) mRootView.findViewById(R.id.content);
         mContent.setVisibility(View.INVISIBLE);
-
-        setUpBannerSize(rootView);
+        setUpBannerSize(mRootView);
         populateImageView();
         showRecipeDetail();
-
-        return rootView;
+        return mRootView;
     }
 
     private void showRecipeDetail() {
@@ -81,7 +94,7 @@ public class RecipeDetailFragment extends Fragment {
                 + "/" + "json" + "/" + mRecipeInfo.getRecipeinfoId() + ".json";
         File decriptionFile = new File(localdescriptionPath);
 
-        if(decriptionFile.exists()) {
+        if (decriptionFile.exists()) {
             String json = DataUtility.getInstance(getActivity()).loadJSONFromFile(localdescriptionPath);
             RecipeInfo recipeInfo = RecipeInfo.getRecipeDescription(json);
 
@@ -90,7 +103,7 @@ public class RecipeDetailFragment extends Fragment {
             recipeInfo.setCategory(mRecipeInfo.getCategory());
             mRecipeInfo = recipeInfo;
             populateUI();
-        }else {
+        } else {
             String cloudDescriptionPath = Config.sRecipeStorageCloudBaseUrl + "/json/"
                     + mRecipeInfo.getRecipeinfoId() + ".json";
             downloadRecipeDescription(cloudDescriptionPath);
@@ -113,9 +126,9 @@ public class RecipeDetailFragment extends Fragment {
         }
     }
 
-    public void downloadRecipeDescription(String url){
+    public void downloadRecipeDescription(String url) {
         String descriptionPath = DataUtility.getInstance(getActivity()).getExternalFilesDirPath()
-                + "/json/" +mRecipeInfo.getRecipeinfoId() + ".json";
+                + "/json/" + mRecipeInfo.getRecipeinfoId() + ".json";
         DownloadDescFromUrl downloadDescFromURL = new DownloadDescFromUrl(new TaskCompletionImpl(),
                 url, descriptionPath);
         downloadDescFromURL.execute("DownloadFileFromURL Task");
@@ -131,17 +144,97 @@ public class RecipeDetailFragment extends Fragment {
     }
 
     private void populateUI() {
-        setupShareRecipe(rootView);
-        setUpFavouriteRecipe(rootView);
-        setUpTitle(rootView);
-        setUpIngredientView(rootView);
-        setUpDirection(rootView);
-        setUpServesTxt(rootView);
-        setUpPrepTimetxt(rootView);
-        setUpNutritionView(rootView);
+        setupShareRecipe(mRootView);
+        setUpFavouriteRecipe(mRootView);
+        setUpTitle(mRootView);
+        setUpIngredientView(mRootView);
+        setUpDirection(mRootView);
+        setUpServesTxt(mRootView);
+        setUpPrepTimetxt(mRootView);
+        setUpNutritionView(mRootView);
+        setUpSpeechButton(mRootView);
 
         mProgressBar.setVisibility(View.INVISIBLE);
         mContent.setVisibility(View.VISIBLE);
+    }
+
+    private void createAudio() {
+        TextToSpeechDesc texttoSpeech = new TextToSpeechDesc();
+        String text = texttoSpeech.convertTextToSpeechDescription(mRecipeInfo);
+        HashMap<String, String> myHashRender = new HashMap();
+        mAudioFilePathName = DataUtility.getInstance(getActivity())
+                .getExternalFilesDirPath() + "/" + "audio.wav";
+
+        File audioFile = new File(mAudioFilePathName);
+        if (audioFile.exists()) {
+            audioFile.delete();
+        }
+
+        Utility.getInstance(getActivity()).getTextToSpeech().setOnUtteranceProgressListener(
+                new UtteranceProgressListener() {
+                    @Override
+                    public void onStart(String utteranceId) {
+                        Log.d(TAG, "UtteranceProgressListener : onStart : " + utteranceId);
+                    }
+
+                    @Override
+                    public void onDone(String utteranceId) {
+                        Log.d(TAG, "UtteranceProgressListener : onDone : " + utteranceId);
+                        mAudioCreated = true;
+                        playMediaPlayer();
+                    }
+
+                    @Override
+                    public void onError(String utteranceId) {
+                        Log.d(TAG, "UtteranceProgressListener : onError : " + utteranceId);
+                    }
+                });
+
+        myHashRender.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, mRecipeInfo.getDocId());
+        Utility.getInstance(getActivity()).getTextToSpeech().synthesizeToFile(
+                text, myHashRender, mAudioFilePathName);
+        Log.d(TAG, "synthesizeToFile complete");
+    }
+
+    private void setUpSpeechButton(View rootView) {
+        mSpeechButton = (ImageView) rootView.findViewById(R.id.speech);
+        mSpeechButton.setVisibility(View.VISIBLE);
+        mSpeechButton.setColorFilter(getResources().getColor(R.color.colorAccent));
+        createAudio();
+
+        mSpeechButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    mPlayRequested = true;
+                    playMediaPlayer();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public void playMediaPlayer() {
+
+        if (mPlayRequested && !mAudioCreated) {
+            TextToSpeechDesc texttoSpeech = new TextToSpeechDesc();
+            String text = texttoSpeech.convertTextToSpeechDescription(mRecipeInfo);
+            Utility.getInstance(getActivity()).getTextToSpeech().speak(text, TextToSpeech.QUEUE_FLUSH,
+                    null);
+            return;
+        }
+
+        if (!mAudioCreated || !mPlayRequested) {
+            return;
+        }
+
+        try {
+            mMediaPlayer = MediaPlayer.create(getActivity(), Uri.fromFile(new File(mAudioFilePathName)));
+            mMediaPlayer.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void setUpPrepTimetxt(View rootView) {
@@ -164,7 +257,7 @@ public class RecipeDetailFragment extends Fragment {
         LinearLayout linearLayoutDirection = (LinearLayout) rootView
                 .findViewById(R.id.direction_list);
         List<String> listDirection = mRecipeInfo.getDirections();
-        for(String direction : listDirection){
+        for (String direction : listDirection) {
             TextView tvDirection = new TextView(getActivity());
             tvDirection.setText(direction);
             tvDirection.setTextSize(Config.TEXT_SIZE_CONTENT);
@@ -184,7 +277,7 @@ public class RecipeDetailFragment extends Fragment {
             return;
         }
 
-        for(String direction : listNutrition){
+        for (String direction : listNutrition) {
             TextView tvNutrition = new TextView(getActivity());
             tvNutrition.setText(direction);
             tvNutrition.setTextSize(Config.TEXT_SIZE_CONTENT);
@@ -197,7 +290,7 @@ public class RecipeDetailFragment extends Fragment {
     }
 
     public void setUpTitle(View rootView) {
-        TextView recipe = (TextView)rootView.findViewById(R.id.recipeId);
+        TextView recipe = (TextView) rootView.findViewById(R.id.recipeId);
         recipe.setText(mRecipeInfo.getTitle());
     }
 
@@ -210,7 +303,7 @@ public class RecipeDetailFragment extends Fragment {
         banner.requestLayout();
     }
 
-    public void setUpIngredientView(final View rootView){
+    public void setUpIngredientView(final View rootView) {
         LinearLayout ingredientListLayout = (LinearLayout) rootView.findViewById(R.id.ingredient_list);
         List<String> list = mRecipeInfo.getIngredients();
         Resources resources = getResources();
@@ -225,11 +318,11 @@ public class RecipeDetailFragment extends Fragment {
             ViewGroup.LayoutParams imageParams = new ViewGroup.LayoutParams(50, 50);
             addImage.setLayoutParams(imageParams);
             addImage.setPadding(0, 3, 10, 3);
-            if(ShoppingListDataStore.checkIfItemPresent(mRecipeInfo,ingredient)){
+            if (ShoppingListDataStore.checkIfItemPresent(mRecipeInfo, ingredient)) {
                 addImage.setImageResource(R.drawable.checkbutton);
                 innerLineaarLayout.addView(addImage);
                 innerLineaarLayout.setSelected(true);
-            }else {
+            } else {
                 innerLineaarLayout.addView(addImage);
                 innerLineaarLayout.setSelected(false);
             }
@@ -270,7 +363,7 @@ public class RecipeDetailFragment extends Fragment {
         }
     }
 
-    public void setUpFavouriteRecipe(View rootView){
+    public void setUpFavouriteRecipe(View rootView) {
         final ImageView favouriteRecipe = (ImageView) rootView.findViewById(R.id.favourite);
         Resources res = rootView.getContext().getResources();
         final int selectedColor = res.getColor(R.color.colorAccent);
@@ -301,12 +394,12 @@ public class RecipeDetailFragment extends Fragment {
         });
     }
 
-    public void setupShareRecipe(View rootView){
+    public void setupShareRecipe(View rootView) {
         final ImageView shareRecipe = (ImageView) rootView.findViewById(R.id.shareicon);
         Resources res = rootView.getContext().getResources();
         final int selectedColor = res.getColor(R.color.colorAccent);
         shareRecipe.setColorFilter(selectedColor);
-        shareRecipe.setOnClickListener(new View.OnClickListener(){
+        shareRecipe.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -321,9 +414,27 @@ public class RecipeDetailFragment extends Fragment {
                 Uri uri = Uri.fromFile(imageFileToShare);
                 shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
 
-               getActivity().startActivity(Intent.createChooser(shareIntent, "SEND"));
+                getActivity().startActivity(Intent.createChooser(shareIntent, "SEND"));
             }
         });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mMediaPlayer != null) {
+            if (mMediaPlayer.isPlaying()) {
+                mMediaPlayer.stop();
+            }
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+        }
+
+        Utility.getInstance(getActivity()).getTextToSpeech().stop();
+        File audioFile = new File(mAudioFilePathName);
+        if (audioFile.exists()) {
+            audioFile.delete();
+        }
     }
 
     @Override

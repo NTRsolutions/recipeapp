@@ -30,6 +30,7 @@ import com.example.recipe.ui.RecipeDetailFragment;
 import com.example.recipe.ui.RecipeListFragment;
 import com.example.recipe.ui.ShoppingListFragment;
 import com.example.recipe.utility.AppPreference;
+import com.example.recipe.utility.Utility;
 
 
 public class MainActivity extends AppCompatActivity implements MainActivityListener {
@@ -79,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         //ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         actionBar.setDisplayHomeAsUpEnabled(true);
         Log.d(TAG, "onCreate ");
+        Utility.getInstance(this).init();
 
 //        RecipeDataStore.getsInstance(this).checkAndDownloadJsonData();
     }

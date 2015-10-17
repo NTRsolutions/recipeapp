@@ -11,8 +11,8 @@ public class TextToSpeechDesc {
     public String convertTextToSpeechDescription(RecipeInfo recipeInfo){
         String convertedString = null;
 
-        convertedString = "The name of the recipe is " + recipeInfo.getTitle() + "It serves around"
-                + recipeInfo.getmServing() + "and preparation time is " +
+        convertedString = "The name of the recipe is " + recipeInfo.getTitle()
+                + recipeInfo.getmServing() + "and is " +
                 recipeInfo.getPreparationTime() + "The ingredients required for this recipe are "
                 + recipeInfo.getIngredients() + "Directions to prepare is as follows "
                 + recipeInfo.getDirections();

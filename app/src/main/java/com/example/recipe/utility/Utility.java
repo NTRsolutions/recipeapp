@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.speech.tts.TextToSpeech;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -16,10 +17,35 @@ import java.util.List;
 import java.util.TimeZone;
 
 public class Utility {
-
     public static String TAG = "Utility";
     private static List<String> mContactsTags = null;
     private static SpringSystem sSpringSystem;
+
+    Context mContext;
+    private TextToSpeech mTextToSpeech;
+    private static Utility sInstance;
+
+    private Utility(Context context) {
+        mContext = context.getApplicationContext();
+    }
+
+    public static Utility getInstance(Context context) {
+        if (sInstance == null) {
+            sInstance = new Utility(context);
+            sInstance.mTextToSpeech = new TextToSpeech(sInstance.mContext,
+                    new TextToSpeech.OnInitListener() {
+                @Override
+                public void onInit(int status) {
+
+                }
+            });
+        }
+        return sInstance;
+    }
+
+    public void init() {
+
+    }
 
     public static int dpToPixels(int dps) {
         final float scale = Config.DEVICE_DENSITY;
@@ -180,6 +206,16 @@ public class Utility {
     public static String[] getCategories(String categoryStr) {
         String[] categories = categoryStr.split("\\|");
         return categories;
+    }
+
+    public TextToSpeech getTextToSpeech() {
+        return mTextToSpeech;
+    }
+
+    void onDestroy() {
+        mTextToSpeech.stop();
+        mTextToSpeech.shutdown();
+        mTextToSpeech = null;
     }
 }
 
