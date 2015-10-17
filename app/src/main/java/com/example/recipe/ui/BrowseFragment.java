@@ -18,6 +18,7 @@ import com.example.recipe.MainActivity;
 import com.example.recipe.R;
 import com.example.recipe.data.RecipeDataStore;
 import com.example.recipe.data.RecipeInfo;
+import com.example.recipe.data.graph.TagsGraph;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,7 @@ public class BrowseFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private MainActivity mMainActivity;
     private RecipeAdapter mAdapter;
-
+    private View rootView;
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -56,13 +57,24 @@ public class BrowseFragment extends Fragment {
 
         mAdapter = new RecipeAdapter(getActivity(), new RecipeAdapterListenerImpl());
         mRecyclerView.setAdapter(mAdapter);
-        ArrayList<String> tagItems =  RecipeDataStore.getsInstance(getActivity()).getRelatedTag();
+
+        populateRelatedView(rootView, query);
+        RecipeDataStore.RecipeCategoryType  recipeCategoryType = RecipeDataStore.RecipeCategoryType.CATEGORY;
+        RecipeDataStore.getsInstance(getActivity()).getRecipeList(
+                recipeCategoryType, new RecipeDataStoreListenerImpl(), query);
+
+        return rootView;
+    }
+
+    private void populateRelatedView(final View rootView, String query) {
+        ArrayList<String> tagItems =  TagsGraph.getsInstance().findRelated(query);
         final TextView queryText = (TextView) rootView.findViewById(R.id.tagText);
         queryText.setText(query);
 
         LinearLayout tagListLayout = (LinearLayout) rootView.findViewById(R.id.tag_list);
+        tagListLayout.removeAllViews();
         for(final String singletag : tagItems){
-            TextView tv = new TextView(getActivity());
+            final TextView tv = new TextView(getActivity());
             tv.setText(singletag);
 
             tv.setBackgroundResource(R.drawable.round_button_drawable);
@@ -77,7 +89,7 @@ public class BrowseFragment extends Fragment {
 
                 @Override
                 public void onClick(View v) {
-                    queryText.setText(singletag);
+                    populateRelatedView(rootView, tv.getText().toString());
                     RecipeDataStore.RecipeCategoryType  recipeCategoryType = RecipeDataStore.RecipeCategoryType.CATEGORY;
                     RecipeDataStore.getsInstance(getActivity()).getRecipeList(
                             recipeCategoryType, new RecipeDataStoreListenerImpl(), singletag);
@@ -100,14 +112,7 @@ public class BrowseFragment extends Fragment {
                 getActivity().onBackPressed();
             }
         });
-
-        RecipeDataStore.RecipeCategoryType  recipeCategoryType = RecipeDataStore.RecipeCategoryType.CATEGORY;
-        RecipeDataStore.getsInstance(getActivity()).getRecipeList(
-                recipeCategoryType, new RecipeDataStoreListenerImpl(), query);
-
-        return rootView;
     }
-
 
     private class RecipeDataStoreListenerImpl implements
             RecipeDataStore.RecipeDataStoreListener {
