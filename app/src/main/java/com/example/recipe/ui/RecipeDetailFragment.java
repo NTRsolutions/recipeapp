@@ -3,10 +3,8 @@ package com.example.recipe.ui;
 
 import android.content.Intent;
 import android.content.res.Resources;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.speech.tts.TextToSpeech;
@@ -16,29 +14,29 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.recipe.R;
 import com.example.recipe.data.DataUtility;
 import com.example.recipe.data.DownloadDescFromUrl;
 import com.example.recipe.data.RecipeDataStore;
 import com.example.recipe.data.RecipeInfo;
 import com.example.recipe.data.ShoppingListDataStore;
 import com.example.recipe.data.TextToSpeechDesc;
+import com.example.recipe.ui.audio.DragToSeekTouchListener;
 import com.example.recipe.utility.Config;
-import com.example.recipe.R;
 import com.example.recipe.utility.SpringOnTouchListener;
 import com.example.recipe.utility.Utility;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -62,7 +60,9 @@ public class RecipeDetailFragment extends Fragment {
     ProgressBar mProgressBar;
     RelativeLayout mContent;
     ImageView mSpeechButton;
+    RelativeLayout mOverlay;
     private String mAudioFilePathName;
+    private int mAudioFileLength;
     private MediaPlayer mMediaPlayer;
     private boolean mAudioCreated;
     private boolean mPlayRequested;
@@ -82,10 +82,28 @@ public class RecipeDetailFragment extends Fragment {
         mRecipeImageView = (ImageView) mRootView.findViewById(R.id.recipe_image);
         mProgressBar = (ProgressBar) mRootView.findViewById(R.id.progressBar);
         mContent = (RelativeLayout) mRootView.findViewById(R.id.content);
+        mOverlay = (RelativeLayout) mRootView.findViewById(R.id.overlay);
+
+        mOverlay.setVisibility(View.INVISIBLE);
         mContent.setVisibility(View.INVISIBLE);
         setUpBannerSize(mRootView);
         populateImageView();
         showRecipeDetail();
+
+        final DragToSeekTouchListener dragToSeekTouchListener =
+                new DragToSeekTouchListener(new DragToSeekUpdateListenerImp());
+
+        mContent.setClickable(true);
+        mContent.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (dragToSeekTouchListener.onTouch(v, event)) {
+                    return true;
+                }
+                return false;
+            }
+        });
+
         return mRootView;
     }
 
@@ -162,6 +180,7 @@ public class RecipeDetailFragment extends Fragment {
         TextToSpeechDesc texttoSpeech = new TextToSpeechDesc();
         String text = texttoSpeech.convertTextToSpeechDescription(mRecipeInfo);
         HashMap<String, String> myHashRender = new HashMap();
+        mAudioFileLength = text.length();
         mAudioFilePathName = DataUtility.getInstance(getActivity())
                 .getExternalFilesDirPath() + "/" + "audio.wav";
 
@@ -181,7 +200,12 @@ public class RecipeDetailFragment extends Fragment {
                     public void onDone(String utteranceId) {
                         Log.d(TAG, "UtteranceProgressListener : onDone : " + utteranceId);
                         mAudioCreated = true;
-                        playMediaPlayer();
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                playMediaPlayer();
+                            }
+                        });
                     }
 
                     @Override
@@ -217,18 +241,18 @@ public class RecipeDetailFragment extends Fragment {
 
     public void playMediaPlayer() {
 
-        if (mPlayRequested && !mAudioCreated) {
-            TextToSpeechDesc texttoSpeech = new TextToSpeechDesc();
-            String text = texttoSpeech.convertTextToSpeechDescription(mRecipeInfo);
-            Utility.getInstance(getActivity()).getTextToSpeech().speak(text, TextToSpeech.QUEUE_FLUSH,
-                    null);
-            return;
-        }
+        if (!mAudioCreated && mPlayRequested) {
+            mOverlay.setVisibility(View.VISIBLE);
+            Snackbar.make(mOverlay, "Preparing speech for you recipe", Snackbar.LENGTH_LONG)
+                    .setAction("show", null)
+                    .show();
 
+        }
         if (!mAudioCreated || !mPlayRequested) {
             return;
         }
 
+        mOverlay.setVisibility(View.INVISIBLE);
         try {
             mMediaPlayer = MediaPlayer.create(getActivity(), Uri.fromFile(new File(mAudioFilePathName)));
             mMediaPlayer.start();
@@ -333,7 +357,7 @@ public class RecipeDetailFragment extends Fragment {
             innerLineaarLayout.addView(tv);
 
             innerLineaarLayout.setOnClickListener(new View.OnClickListener() {
-                FrameLayout parentView = (FrameLayout) rootView.findViewById(R.id.parentView);
+                RelativeLayout parentView = (RelativeLayout) rootView.findViewById(R.id.parentView);
 
                 @Override
                 public void onClick(View v) {
@@ -440,5 +464,32 @@ public class RecipeDetailFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+    }
+
+    private class DragToSeekUpdateListenerImp implements
+            DragToSeekTouchListener.DragToSeekUpdateListener {
+
+        @Override
+        public void onSeekStarted() {
+            Log.d(TAG, "onSeekStarted");
+//            Utility.getInstance(getActivity()).getTextToSpeech().stop();
+//            Utility.getInstance(getActivity()).getTextToSpeech().shutdown();
+        }
+
+        @Override
+        public void onSeekUpdate(float index) {
+            Log.d(TAG, "onSeekUpdate : " + index);
+        }
+
+        @Override
+        public void onSeekCompleted(float seekedToPercent) {
+//            TextToSpeechDesc texttoSpeech = new TextToSpeechDesc();
+//            String text = texttoSpeech.convertTextToSpeechDescription(mRecipeInfo);
+//
+//            String subText = text.substring((int)((seekedToPercent/100) * text.length()));
+//            Utility.getInstance(getActivity()).getTextToSpeech().speak(subText, TextToSpeech.QUEUE_FLUSH,
+//                    null);
+            Log.d(TAG, "onSeekCompleted");
+        }
     }
 }

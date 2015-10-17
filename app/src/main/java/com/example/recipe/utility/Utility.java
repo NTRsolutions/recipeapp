@@ -212,7 +212,7 @@ public class Utility {
         return mTextToSpeech;
     }
 
-    void onDestroy() {
+    public void onDestroy() {
         mTextToSpeech.stop();
         mTextToSpeech.shutdown();
         mTextToSpeech = null;
