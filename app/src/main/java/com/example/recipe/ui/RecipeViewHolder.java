@@ -22,7 +22,6 @@ import com.example.recipe.widgets.FlowLayout;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.util.List;
 
 /**
  * Created by rajnish on 6/8/15.
@@ -117,7 +116,8 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         }
 
         setUpFavouriteImage(rootView);
-        pupulateCategoryTags();
+        populateCategoryTags();
+
     }
 
     public void unBind() {
@@ -131,7 +131,7 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         downloadFileFromURL.execute("DownloadFileFromURL Task");
     }
 
-    private void pupulateCategoryTags() {
+    private void populateCategoryTags() {
         mFlowLayout.removeAllViews();
         String categoryStr = mRecipeInfo.getCategory();
 

@@ -1,8 +1,10 @@
 package com.example.recipe;
 
 
+import android.app.Activity;
 import android.os.Bundle;
 
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 
 import android.support.v4.util.Pair;
@@ -17,6 +19,9 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.recipe.R;
+import com.example.recipe.data.RecipeDataStore;
+import com.example.recipe.data.RecipeInfo;
+import com.example.recipe.utility.Utility;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,10 +30,14 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SearchFragment extends Fragment implements SearchView.OnQueryTextListener {
+public class SearchFragment extends Fragment {
     SearchView mSearchView;
     ListView mListView;
     ArrayAdapter  mAdapter;
+    Handler mHandler;
+    int UPDATE_TIME = 1000;
+    String mLastQuery;
+    List<RecipeInfo> mInfoList;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -42,14 +51,10 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
         mSearchView = (SearchView) root.findViewById(R.id.search_view);
         mListView = (ListView) root.findViewById(R.id.list_view);
 
-        String[] values = new String[] { "Vanilla", "Chocochip", "chocolate",
-                "blackcurrent", "strawberry","JellyBean", "fudge"};
-
-        final ArrayList<String> list = new ArrayList(Arrays.asList(values));
-
+        final ArrayList<String> list = new ArrayList(Arrays.asList());
         final CharSequence text = "Hello toast!";
 
-        mAdapter = new ArrayAdapter<String>(getActivity(),
+        mAdapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1,
                 list);
 
@@ -57,37 +62,66 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(getActivity(),text,Toast.LENGTH_SHORT).show();
+                RecipeInfo info = mInfoList.get(i);
+                if (getActivity() instanceof MainActivity) {
+                    Utility.hideKeyboard(mSearchView);
+                    MainActivity mainActivity = (MainActivity) getActivity();
+                    mainActivity.showDetailView(Integer.parseInt(info.getDocId()));
+                }
             }
         });
+
         setupSearchView();
+        mHandler = new Handler();
+        mHandler.postDelayed(mRunnable, UPDATE_TIME);
+
         return root;
+    }
+
+    Runnable mRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mSearchView != null) {
+                mHandler.postDelayed(mRunnable, UPDATE_TIME);
+            }
+
+            String query = mSearchView.getQuery().toString();
+            if (query == null || query.isEmpty() || query.length() <= 2) {
+                return;
+            }
+
+            if (!query.equalsIgnoreCase(mLastQuery)) {
+                mLastQuery = query;
+                mInfoList = RecipeDataStore.getsInstance(getActivity()).
+                        searchDocumentBasedOnTitle(query, 200);
+                List<String> titleList = getTitles(mInfoList);
+                mAdapter.clear();
+                mAdapter.addAll(titleList);
+                mAdapter.notifyDataSetChanged();
+            }
+        }
+    };
+
+
+    List<String> getTitles(List<RecipeInfo> infoList) {
+        ArrayList<String> retList = new ArrayList<>(infoList.size());
+        for (RecipeInfo info : infoList) {
+            retList.add(info.getTitle());
+        }
+
+        return retList;
     }
 
     private void setupSearchView() {
         mSearchView.setIconifiedByDefault(false);
-        mSearchView.setOnQueryTextListener(this);
-        mSearchView.setSubmitButtonEnabled(true);
+        mSearchView.setSubmitButtonEnabled(false);
         mSearchView.setQueryHint("Search Here");
+        Utility.showKeyboard(mSearchView);
     }
 
     @Override
-    public boolean onQueryTextSubmit(String newText) {
-        return false;
-    }
-
-    private void setUpListView() {
-
-    }
-
-
-    @Override
-    public boolean onQueryTextChange(String newText) {
-        if (TextUtils.isEmpty(newText)) {
-            mAdapter.getFilter().filter("");
-        } else {
-            mAdapter.getFilter().filter(newText.toString());
-        }
-        return true;
+    public void onDestroy() {
+        super.onDestroy();
+        mHandler.removeCallbacks(mRunnable);
     }
 }
