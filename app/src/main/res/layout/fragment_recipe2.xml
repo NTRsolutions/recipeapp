@@ -71,7 +71,6 @@
 
             </RelativeLayout>
 
-
             <RelativeLayout
                 android:id="@+id/contentParent"
                 android:layout_width="match_parent"
@@ -267,6 +266,38 @@
             android:layout_centerHorizontal="true"
             />
     </RelativeLayout>
+
+    <android.support.percent.PercentRelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/soundOverlay"
+        android:visibility="gone"
+        android:background="@color/lightgrey"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <SeekBar
+            android:id="@+id/audioSeekBar"
+            android:max="100"
+            android:padding="0dp"
+            android:layout_height="wrap_content"
+            app:layout_widthPercent="100%"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentTop="true"
+            android:layout_width="wrap_content"/>
+
+        <ImageView
+            android:id="@+id/audioControls"
+            android:layout_below="@+id/audioSeekBar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="10dp"
+            android:src="@drawable/pause_volume"
+            android:layout_centerHorizontal="true"
+            />
+    </android.support.percent.PercentRelativeLayout>
+
 
 </RelativeLayout>
 

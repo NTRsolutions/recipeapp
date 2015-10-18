@@ -20,7 +20,7 @@
     <item name="lightgreen" type="color">#A0CCFFFF</item>
     <item name="lightred" type="color">#A0FBBBB9</item>
     <item name="black" type="color">#AA000000</item>
-
+    <item name="lightgrey" type="color">#FFEEEEEE</item>
 
 
 </resources>
