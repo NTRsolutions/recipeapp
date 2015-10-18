@@ -93,7 +93,7 @@ public class SearchFragment extends Fragment {
             if (!query.equalsIgnoreCase(mLastQuery)) {
                 mLastQuery = query;
                 mInfoList = RecipeDataStore.getsInstance(getActivity()).
-                        searchDocumentBasedOnTitle(query, 100);
+                        searchDocumentBasedOnTitle(query, 200);
                 List<String> titleList = getTitles(mInfoList);
                 mAdapter.clear();
                 mAdapter.addAll(titleList);

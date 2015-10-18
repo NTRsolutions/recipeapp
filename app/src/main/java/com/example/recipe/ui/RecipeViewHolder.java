@@ -15,7 +15,6 @@ import com.example.recipe.MainActivity;
 import com.example.recipe.R;
 import com.example.recipe.data.DataUtility;
 import com.example.recipe.data.DownloadFileFromURL;
-import com.example.recipe.data.RecipeDataStore;
 import com.example.recipe.data.RecipeInfo;
 import com.example.recipe.utility.Config;
 import com.example.recipe.utility.Utility;
@@ -23,7 +22,6 @@ import com.example.recipe.widgets.FlowLayout;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.util.List;
 
 /**
  * Created by rajnish on 6/8/15.
@@ -118,9 +116,8 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         }
 
         setUpFavouriteImage(rootView);
-        pupulateCategoryTags();
+        populateCategoryTags();
 
-        RecipeDataStore.getsInstance(mContext).searchDocumentBasedOnTitle("chicken", 1000);
     }
 
     public void unBind() {
@@ -134,7 +131,7 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         downloadFileFromURL.execute("DownloadFileFromURL Task");
     }
 
-    private void pupulateCategoryTags() {
+    private void populateCategoryTags() {
         mFlowLayout.removeAllViews();
         String categoryStr = mRecipeInfo.getCategory();
 
