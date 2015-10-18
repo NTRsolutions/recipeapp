@@ -51,7 +51,7 @@ public class AppCouchBaseImpl {
         Database database = null;
         switch (type) {
             case RECIPE_DATA_STORE:
-                if ((this.mTagsDatabase == null) && (this.manager != null)) {
+                if ((this.mTagsDatabase == null)) {
                     this.mTagsDatabase = manager.getDatabase(type.name().toLowerCase());
                 }
                 database = mTagsDatabase;

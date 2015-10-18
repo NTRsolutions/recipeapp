@@ -15,6 +15,7 @@ import com.example.recipe.MainActivity;
 import com.example.recipe.R;
 import com.example.recipe.data.DataUtility;
 import com.example.recipe.data.DownloadFileFromURL;
+import com.example.recipe.data.RecipeDataStore;
 import com.example.recipe.data.RecipeInfo;
 import com.example.recipe.utility.Config;
 import com.example.recipe.utility.Utility;
@@ -118,6 +119,8 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
 
         setUpFavouriteImage(rootView);
         pupulateCategoryTags();
+
+        RecipeDataStore.getsInstance(mContext).searchDocumentBasedOnTitle("chicken", 1000);
     }
 
     public void unBind() {

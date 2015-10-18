@@ -42,6 +42,7 @@ public class RecipeDataStore {
     public static final String kRecipeInfoView = "kRecipeInfoView";
     public static final String kSearchTagsView = "kSearchTagsView";
     public static final String kJsonDownloadedKey = "kJsonDownloadedKey";
+    public  static final String kSearchTitleRecipeView = "kSearchTitleRecipeView";
     private boolean isJsonZipDownloaded;
     private static RecipeDataStore sInstance;
     static List<RecipeInfo> sRecipeInfoList;
@@ -95,6 +96,7 @@ public class RecipeDataStore {
         createRecipeInfoView();
         createRecipeInfoTimeLapseView();
         createSearchView();
+        createRecipeSearchView();
     }
 
     private void createSearchView() {
@@ -142,7 +144,7 @@ public class RecipeDataStore {
             }
         }, "1"  /*version. Increment me after each change in this map function*/);
     }
-
+    //for recent history
     private void createRecipeInfoTimeLapseView() {
         View searchView = mDataBase.getView(kRecipeInfoTimeLapseView);
         searchView.setMap(new Mapper() {
@@ -155,6 +157,25 @@ public class RecipeDataStore {
                 emitter.emit(dateTaken, jsonMapFromRecipeInfo(info));
             }
         }, "1"  /*version. Increment me after each change in this map function*/);
+    }
+
+
+    public void createRecipeSearchView(){
+        View searchRecipeView = mDataBase.getView(kSearchTitleRecipeView);
+
+        searchRecipeView.setMap(new Mapper() {
+            @Override
+            public void map(Map<String, Object> document, Emitter emitter) {
+                RecipeInfo info = recipeFromJsonMap(document);
+                String title = info.getTitle().toLowerCase();
+                String[] split = title.split(" ");
+                for (String str : split) {
+                    emitter.emit(str, jsonMapFromRecipeInfo(info));
+                }
+                // this is done for querying all videos in sorted order during load time
+                emitter.emit(title, jsonMapFromRecipeInfo(info));
+            }
+        }, "2");
     }
 
     public List<RecipeInfo> searchDocuments(String searchTag, int num) {
@@ -184,6 +205,44 @@ public class RecipeDataStore {
 
         Log.v(TAG, "Searched for docs with tag: " + searchTag + ". Found docs: " + infoList);
         return infoList;
+    }
+
+    public List<RecipeInfo> searchDocumentBasedOnTitle(String searchTag,int num){
+        // bump last char
+        char lastChar = searchTag.charAt(searchTag.length() - 1);
+        lastChar++;
+        String updatedEndKey = searchTag.substring(0, searchTag.length() - 1) + lastChar;
+
+        searchTag = searchTag.toLowerCase();
+        Query query = mDataBase.getView(kSearchTitleRecipeView).createQuery();
+        query.setStartKey(searchTag);
+        query.setEndKey(updatedEndKey);
+        query.setLimit(num);
+        query.setMapOnly(true);
+        QueryEnumerator result;
+
+        try {
+            result = query.run();
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        List<RecipeInfo> searchRecipe = new ArrayList<>();
+        for (Iterator<QueryRow> it = result; it.hasNext();) {
+            QueryRow row = it.next();
+            Log.d(TAG, row.getDocumentId());
+            Document doc = row.getDocument();
+            Map<String, Object> properties = doc.getProperties();
+            RecipeInfo recipeInfo = recipeFromJsonMap(properties);
+            searchRecipe.add(recipeInfo);
+            Log.v(TAG, "Searched for docs with tag: " + searchTag + ". Found docs: "
+                    + recipeInfo.getDocId() + " : "+ recipeInfo.getTitle());
+        }
+
+
+        return searchRecipe;
+
     }
 
     public void addFavouriteTextTags(RecipeInfo info) {
@@ -321,6 +380,10 @@ public class RecipeDataStore {
     private void getHistoryData(RecipeDataStoreListener listener) {
         List<RecipeInfo>  list = getRecenetRecipeInfos();
         listener.onDataFetchComplete(list);
+    }
+
+    private void getsearchRecipeData(String searchTag){
+        List<RecipeInfo> searchItem = searchDocumentBasedOnTitle(searchTag,1000);
     }
 
     private void getFeedData(RecipeDataStoreListener listener) {

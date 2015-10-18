@@ -393,7 +393,6 @@ public class RecipeDetailFragment extends Fragment {
             }
         });
     }
-
     public void setupShareRecipe(View rootView) {
         final ImageView shareRecipe = (ImageView) rootView.findViewById(R.id.shareicon);
         Resources res = rootView.getContext().getResources();
@@ -431,9 +430,11 @@ public class RecipeDetailFragment extends Fragment {
         }
 
         Utility.getInstance(getActivity()).getTextToSpeech().stop();
-        File audioFile = new File(mAudioFilePathName);
-        if (audioFile.exists()) {
-            audioFile.delete();
+        if (mAudioFilePathName != null) {
+            File audioFile = new File(mAudioFilePathName);
+            if (audioFile.exists()) {
+                audioFile.delete();
+            }
         }
     }
 
