@@ -11,10 +11,10 @@ public class TextToSpeechDesc {
     public String convertTextToSpeechDescription(RecipeInfo recipeInfo){
         String convertedString = null;
 
-        convertedString = "The name of the recipe is " + recipeInfo.getTitle()
-                + recipeInfo.getmServing() + "and is " +
-                recipeInfo.getPreparationTime() + "The ingredients required for this recipe are "
-                + recipeInfo.getIngredients() + "Directions to prepare is as follows "
+        convertedString = "The name of the recipe is " + recipeInfo.getTitle() + "\n"
+                + recipeInfo.getmServing() + "\n and is " +
+                recipeInfo.getPreparationTime() + "\n The ingredients required for this recipe are \n "
+                + recipeInfo.getIngredients() + " \n Directions to prepare is as follows \n"
                 + recipeInfo.getDirections();
 
         Log.d(TAG, convertedString);
