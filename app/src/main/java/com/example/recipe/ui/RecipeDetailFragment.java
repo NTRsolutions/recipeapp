@@ -30,6 +30,7 @@ import com.example.recipe.data.RecipeDataStore;
 import com.example.recipe.data.RecipeInfo;
 import com.example.recipe.data.ShoppingListDataStore;
 import com.example.recipe.data.TextToSpeechDesc;
+import com.example.recipe.data.UserInfo;
 import com.example.recipe.ui.audio.DragToSeekTouchListener;
 import com.example.recipe.utility.Config;
 import com.example.recipe.utility.SpringOnTouchListener;
@@ -79,6 +80,7 @@ public class RecipeDetailFragment extends Fragment {
         int recipeInfoId = getArguments().getInt(RECIPE_DETAIL_KEY, -1);
         mRecipeInfo = RecipeDataStore.getsInstance(getActivity()).getRecipeInfo(recipeInfoId);
         mRecipeInfo.updateLastViewedTime();
+        UserInfo.getInstance(getActivity()).logRecipeViewedInfo(mRecipeInfo);
         mRecipeImageView = (ImageView) mRootView.findViewById(R.id.recipe_image);
         mProgressBar = (ProgressBar) mRootView.findViewById(R.id.progressBar);
         mContent = (RelativeLayout) mRootView.findViewById(R.id.content);

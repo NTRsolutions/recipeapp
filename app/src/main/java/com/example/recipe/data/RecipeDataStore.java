@@ -46,9 +46,10 @@ public class RecipeDataStore {
     private boolean isJsonZipDownloaded;
     private static RecipeDataStore sInstance;
     static List<RecipeInfo> sRecipeInfoList;
+    static List<RecipeInfo> sRecipeFeedList;
     static List<RecipeInfo> sFavouriteRecipeInfoList;
     private int singleBatchLimit = 1000;
-    TreeMap mSortedMap;
+    TreeMap <String, Integer> mSortedMap;
     private Gson mGson;
     Database mDataBase;
     Context mContext;
@@ -81,6 +82,7 @@ public class RecipeDataStore {
                     .getDatabaseInstance(AppCouchBaseImpl.DatabaseType.RECIPE_DATA_STORE);
             mGson = new Gson();
             sRecipeInfoList = new ArrayList<>();
+            sRecipeFeedList = new ArrayList<>();
         } catch (CouchbaseLiteException e) {
             e.printStackTrace();
             return;
@@ -237,7 +239,7 @@ public class RecipeDataStore {
             RecipeInfo recipeInfo = recipeFromJsonMap(properties);
             searchRecipe.add(recipeInfo);
             Log.v(TAG, "Searched for docs with tag: " + searchTag + ". Found docs: "
-                    + recipeInfo.getDocId() + " : "+ recipeInfo.getTitle());
+                    + recipeInfo.getDocId() + " : " + recipeInfo.getTitle());
         }
 
 
@@ -383,17 +385,39 @@ public class RecipeDataStore {
     }
 
     private void getsearchRecipeData(String searchTag){
-        List<RecipeInfo> searchItem = searchDocumentBasedOnTitle(searchTag,1000);
+        List<RecipeInfo> searchItem = searchDocumentBasedOnTitle(searchTag, 1000);
     }
 
     private void getFeedData(RecipeDataStoreListener listener) {
-        if (listener != null && sRecipeInfoList.size() > 0) {
-            listener.onDataFetchComplete(sRecipeInfoList);
+        if (listener != null && sRecipeFeedList.size() > 0) {
+            listener.onDataFetchComplete(sRecipeFeedList);
             return;
         }
 
-        // DB is empty, fetch from cloud
-        fetchAllInfoData(listener);
+        //TODO to remove and implement sequential download's
+        fetchAllInfoData(null);
+
+        TreeMap<String, Integer> map = UserInfo.getInstance(mContext).fetchDataForFeed();
+        List<RecipeInfo> finalList = new ArrayList<>();
+
+        int seedPoint =  Config.TOTAL_FEED_SEED_COUNT;;
+        int index = 0 ;
+        for (String tag : map.keySet()) {
+            index ++;
+            double decayFunction = seedPoint * Math.pow(0.5f, index);
+            if (decayFunction <= 1) {
+                break;
+            }
+            List<RecipeInfo>  infos = searchDocuments(tag, (int)decayFunction);
+            finalList.addAll(infos);
+
+        }
+
+        sRecipeFeedList = finalList;
+        if (listener != null && sRecipeFeedList.size() > 0) {
+            listener.onDataFetchComplete(sRecipeFeedList);
+            return;
+        }
     }
 
     // Reads the CB db and returns getRecenetInfos
@@ -428,13 +452,13 @@ public class RecipeDataStore {
     private void computeTagFrequency() {
         List<RecipeInfo> list = getAllRecipeInfos();
         HashMap<String, Integer> tagsFrequency = new HashMap<>();
-        ValueComparator bvc = new ValueComparator(tagsFrequency);
+        Utility.ValueComparator bvc = new Utility.ValueComparator(tagsFrequency);
         for (RecipeInfo info : list) {
-            String[] parts = Utility.getCategories(info.category);
+            String[] parts = Utility.getCategories(info);
             for (String category : parts) {
                 Object obj = tagsFrequency.get(category);
                 if (obj == null) {
-                    tagsFrequency.put(category, 0);
+                    tagsFrequency.put(category, 1);
                 } else {
                     tagsFrequency.put(category, (int)obj + 1);
                 }
@@ -444,10 +468,19 @@ public class RecipeDataStore {
 
         mSortedMap = new TreeMap(bvc);
         mSortedMap.putAll(tagsFrequency);
+
         // logs
         for (Object category : mSortedMap.keySet()) {
             Log.d(TAG, "computeTagFrequency " + category  + " : " + mSortedMap.get(category));
         }
+    }
+
+    public ArrayList<String> getUniqueTags() {
+        ArrayList<String> tagsList = new ArrayList<>(mSortedMap.size());
+        for (String tag : mSortedMap.keySet()) {
+            tagsList.add(tag);
+        }
+         return tagsList;
     }
 
     public ArrayList<String> getRelatedTag() {
@@ -516,8 +549,10 @@ public class RecipeDataStore {
     }
 
     private void fetchAllInfoData(final RecipeDataStoreListener listener) {
-        if (listener != null && sRecipeInfoList.size() > 0) {
-            listener.onDataFetchComplete(sRecipeInfoList);
+        if (sRecipeInfoList.size() > 0) {
+            if (listener != null) {
+                listener.onDataFetchComplete(sRecipeInfoList);
+            }
             return;
         }
 
@@ -527,10 +562,10 @@ public class RecipeDataStore {
             public void done(List<ParseObject> results, ParseException e) {
                 List<RecipeInfo> list = new ArrayList<>();
                 for (ParseObject object : results) {
-                    RecipeInfo category = RecipeInfo.getRecipeInfo(object);
-                    updateDoc(category);
+                    RecipeInfo info = RecipeInfo.getRecipeInfo(object);
+                    updateDoc(info);
                     Log.d(TAG, "got result ");
-                    list.add(category);
+                    list.add(info);
                 }
                 if (listener != null) {
                     sRecipeInfoList = list;
@@ -575,20 +610,4 @@ public class RecipeDataStore {
         sInstance = null;
     }
 
-    class ValueComparator implements Comparator<String> {
-        Map base;
-
-        public ValueComparator(Map base) {
-            this.base = base;
-        }
-
-        @Override
-        public int compare(String lhs, String rhs) {
-            if ((int)base.get(lhs) >= (int)base.get(rhs)) {
-                return -1;
-            } else {
-                return 1;
-            } // returning 0 would merge keys
-        }
-    }
 }

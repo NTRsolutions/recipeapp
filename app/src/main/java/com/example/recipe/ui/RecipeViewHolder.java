@@ -133,13 +133,11 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
 
     private void populateCategoryTags() {
         mFlowLayout.removeAllViews();
-        String categoryStr = mRecipeInfo.getCategory();
 
-        if (categoryStr == null || categoryStr.equalsIgnoreCase("")) {
+        String[] categories = Utility.getCategories(mRecipeInfo);
+        if (categories == null) {
             return;
         }
-
-        String[] categories = Utility.getCategories(categoryStr);
 
         mFlowLayout.setSpacing(5, 10);
         int numTags = categories.length;

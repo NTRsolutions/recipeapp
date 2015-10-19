@@ -25,6 +25,19 @@ public class AppPreference {
         return sInstance;
     }
 
+
+    public void putInteger(String key, int value){
+        SharedPreferences.Editor editor = mPref.edit();
+        editor.putInt(key, value);
+        editor.commit();
+    }
+
+    public int getInteger(String key,int value){
+        int returnValue = mPref.getInt(key, value);
+        return returnValue;
+    }
+
+
     public void putString(String key, String value){
         SharedPreferences.Editor editor = mPref.edit();
         editor.putString(key, value);

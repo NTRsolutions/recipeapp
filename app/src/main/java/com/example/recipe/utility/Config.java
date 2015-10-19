@@ -25,7 +25,7 @@ public class Config {
     public static String sBaseUrl = "http://virtualcook.parseapp.com";
     public static String sRecipeInfoBaseUrl = "http://virtualcook.parseapp.com/media/recipeinfo";
     public static String sRecipeStorageCloudBaseUrl = "https://storage.googleapis.com/recipeapp";
-
+    public static int TOTAL_FEED_SEED_COUNT = 100;
     public static String sFavouriteTag = "favourite";
 
     public static void initialize(Context context){

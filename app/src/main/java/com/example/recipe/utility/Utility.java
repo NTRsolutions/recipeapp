@@ -8,12 +8,15 @@ import android.speech.tts.TextToSpeech;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.example.recipe.data.RecipeInfo;
 import com.facebook.rebound.SpringSystem;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 
 public class Utility {
@@ -203,8 +206,19 @@ public class Utility {
         return file.exists();
     }
 
-    public static String[] getCategories(String categoryStr) {
+    private static String[] getCategories(String categoryStr) {
         String[] categories = categoryStr.split("\\|");
+        return categories;
+    }
+
+    public static String[] getCategories(RecipeInfo info) {
+        String categoryStr = info.getCategory();
+
+        if (categoryStr == null || categoryStr.equalsIgnoreCase("")) {
+            return null;
+        }
+
+        String[] categories = Utility.getCategories(categoryStr);
         return categories;
     }
 
@@ -216,6 +230,23 @@ public class Utility {
         mTextToSpeech.stop();
         mTextToSpeech.shutdown();
         mTextToSpeech = null;
+    }
+
+    public static class ValueComparator implements Comparator<String> {
+        Map base;
+
+        public ValueComparator(Map base) {
+            this.base = base;
+        }
+
+        @Override
+        public int compare(String lhs, String rhs) {
+            if ((int)base.get(lhs) >= (int)base.get(rhs)) {
+                return -1;
+            } else {
+                return 1;
+            } // returning 0 would merge keys
+        }
     }
 }
 
