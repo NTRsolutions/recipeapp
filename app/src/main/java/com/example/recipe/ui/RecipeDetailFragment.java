@@ -7,6 +7,8 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.support.design.widget.Snackbar;
@@ -21,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.recipe.R;
@@ -53,6 +56,8 @@ public class RecipeDetailFragment extends Fragment {
     }
 
     public static final String RECIPE_DETAIL_KEY = "RECIPE_DETAIL_KEY";
+    private static final int UPDATE_TIME = 1;
+    private MessageHandler mMessageHandler = new MessageHandler();
     View mRootView;
     public static float MAX_CARD_HEIGHT_PECENTAGE = 0.35f;
     RecipeInfo mRecipeInfo;
@@ -62,6 +67,9 @@ public class RecipeDetailFragment extends Fragment {
     RelativeLayout mContent;
     ImageView mSpeechButton;
     RelativeLayout mOverlay;
+    SeekBar mSeekBar;
+    RelativeLayout mSoundOverlay;
+    ImageView mAudioControls;
     private String mAudioFilePathName;
     private int mAudioFileLength;
     private MediaPlayer mMediaPlayer;
@@ -85,6 +93,10 @@ public class RecipeDetailFragment extends Fragment {
         mProgressBar = (ProgressBar) mRootView.findViewById(R.id.progressBar);
         mContent = (RelativeLayout) mRootView.findViewById(R.id.content);
         mOverlay = (RelativeLayout) mRootView.findViewById(R.id.overlay);
+        mSeekBar = (SeekBar) mRootView.findViewById(R.id.audioSeekBar);
+        mSoundOverlay = (RelativeLayout) mRootView.findViewById(R.id.soundOverlay);
+        mAudioControls = (ImageView) mRootView.findViewById(R.id.audioControls);
+        mAudioControls.setColorFilter(getResources().getColor(R.color.colorAccent));
 
         mOverlay.setVisibility(View.INVISIBLE);
         mContent.setVisibility(View.INVISIBLE);
@@ -261,6 +273,50 @@ public class RecipeDetailFragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        updateRemainingTime();
+        mSoundOverlay.setVisibility(View.VISIBLE);
+        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                Log.d(TAG, "onProgressChanged : " + fromUser + progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                Log.d(TAG, "onStartTrackingTouch : ");
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+                    Log.d(TAG, "onStopTrackingTouch : ");
+                    mMediaPlayer.seekTo((int) ((seekBar.getProgress() * 1.0f / seekBar.getMax()) * mMediaPlayer.getDuration()));
+                    if (!mMediaPlayer.isPlaying()) {
+                        mMediaPlayer.start();
+                    }
+                }
+            }
+        });
+
+        mAudioControls.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAudioControls.setSelected(!mAudioControls.isSelected());
+
+                if (mAudioControls.isSelected()) {
+                    mAudioControls.setImageResource(R.drawable.ic_play_arrow);
+                    if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+                        mMediaPlayer.pause();
+                    }
+                } else {
+                    mAudioControls.setImageResource(R.drawable.pause_volume);
+                    if (mMediaPlayer != null && !mMediaPlayer.isPlaying()) {
+                        mMediaPlayer.start();
+                    }
+                }
+            }
+        });
     }
 
     public void setUpPrepTimetxt(View rootView) {
@@ -495,4 +551,34 @@ public class RecipeDetailFragment extends Fragment {
             Log.d(TAG, "onSeekCompleted");
         }
     }
+
+    private void updateRemainingTime() {
+        if (mMediaPlayer == null || !mMediaPlayer.isPlaying()) {
+            mMessageHandler.removeMessages(UPDATE_TIME);
+            return;
+        }
+
+        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+            RecipeDetailFragment.this.mSeekBar.setProgress((int)
+                    (mMediaPlayer.getCurrentPosition() * 100.0f/ mMediaPlayer.getDuration()));
+
+            if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+                mMessageHandler.sendEmptyMessageDelayed(UPDATE_TIME, 1000);
+            }
+        }
+    }
+
+
+    private class MessageHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case UPDATE_TIME: {
+                    updateRemainingTime();
+                    break;
+                }
+            }
+        }
+    }
+
 }

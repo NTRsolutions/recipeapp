@@ -40,5 +40,6 @@ dependencies {
     compile 'com.mcxiaoke.volley:library:1.0.15'
     compile 'com.facebook.rebound:rebound:0.3.8'
     compile 'de.hdodenhof:circleimageview:2.0.0'
+    compile 'com.android.support:percent:22.2.0'
 
 }
