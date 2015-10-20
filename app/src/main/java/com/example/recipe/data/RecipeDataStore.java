@@ -397,23 +397,8 @@ public class RecipeDataStore {
         //TODO to remove and implement sequential download's
         fetchAllInfoData(null);
 
-        TreeMap<String, Integer> map = UserInfo.getInstance(mContext).fetchDataForFeed();
-        List<RecipeInfo> finalList = new ArrayList<>();
+        sRecipeFeedList = FeedDataGenerator.getInstance(mContext).getFeedData(mContext);
 
-        int seedPoint =  Config.TOTAL_FEED_SEED_COUNT;;
-        int index = 0 ;
-        for (String tag : map.keySet()) {
-            index ++;
-            double decayFunction = seedPoint * Math.pow(0.5f, index);
-            if (decayFunction <= 1) {
-                break;
-            }
-            List<RecipeInfo>  infos = searchDocuments(tag, (int)decayFunction);
-            finalList.addAll(infos);
-
-        }
-
-        sRecipeFeedList = finalList;
         if (listener != null && sRecipeFeedList.size() > 0) {
             listener.onDataFetchComplete(sRecipeFeedList);
             return;
