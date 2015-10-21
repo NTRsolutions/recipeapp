@@ -23,6 +23,7 @@ import android.widget.Button;
 
 import com.example.recipe.data.RecipeDataStore;
 import com.example.recipe.data.ShoppingListDataStore;
+import com.example.recipe.rateus.AppRate;
 import com.example.recipe.ui.BrowseFragment;
 import com.example.recipe.ui.CategoryFragment;
 import com.example.recipe.ui.RecipeDetailFragment;
@@ -79,7 +80,17 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         actionBar.setDisplayHomeAsUpEnabled(true);
         Log.d(TAG, "onCreate ");
 
+        setUpRateAppPopUp();
+
 //        RecipeDataStore.getsInstance(this).checkAndDownloadJsonData();
+    }
+
+    void setUpRateAppPopUp() {
+        new AppRate(this)
+                .setShowIfAppHasCrashed(false)
+                .setMinDaysUntilPrompt(0)
+                .setMinLaunchesUntilPrompt(0)
+                .init();
     }
 
     @Override
