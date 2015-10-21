@@ -227,9 +227,11 @@ public class Utility {
     }
 
     public void onDestroy() {
-        mTextToSpeech.stop();
-        mTextToSpeech.shutdown();
-        mTextToSpeech = null;
+        if (mTextToSpeech != null) {
+            mTextToSpeech.stop();
+            mTextToSpeech.shutdown();
+            mTextToSpeech = null;
+        }
     }
 
     public static class ValueComparator implements Comparator<String> {
