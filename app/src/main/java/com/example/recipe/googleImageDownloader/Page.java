@@ -1,5 +1,5 @@
 
-package com.example.recipe.GoogleImageDownloader;
+package com.example.recipe.googleImageDownloader;
 
 import java.util.HashMap;
 import java.util.Map;

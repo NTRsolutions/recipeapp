@@ -9,8 +9,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.recipe.GoogleImageDownloader.GoolgeImageJsonResponse;
-import com.example.recipe.GoogleImageDownloader.Result;
+import com.example.recipe.googleImageDownloader.GoolgeImageJsonResponse;
+import com.example.recipe.googleImageDownloader.Result;
 import com.google.gson.Gson;
 
 import org.json.JSONObject;

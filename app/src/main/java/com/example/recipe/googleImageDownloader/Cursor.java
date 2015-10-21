@@ -1,5 +1,5 @@
 
-package com.example.recipe.GoogleImageDownloader;
+package com.example.recipe.googleImageDownloader;
 
 import java.util.ArrayList;
 import java.util.HashMap;
