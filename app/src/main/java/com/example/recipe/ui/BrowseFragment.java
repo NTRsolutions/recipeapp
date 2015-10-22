@@ -18,7 +18,7 @@ import com.example.recipe.MainActivity;
 import com.example.recipe.R;
 import com.example.recipe.data.RecipeDataStore;
 import com.example.recipe.data.RecipeInfo;
-import com.example.recipe.data.graph.TagsGraph;
+import com.example.recipe.data.graph.Graph;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +67,7 @@ public class BrowseFragment extends Fragment {
     }
 
     private void populateRelatedView(final View rootView, String query) {
-        ArrayList<String> tagItems =  TagsGraph.getsInstance().findRelated(query);
+        ArrayList<String> tagItems =  Graph.getsInstance().findRelated(query);
         final TextView queryText = (TextView) rootView.findViewById(R.id.tagText);
         queryText.setText(query);
 
