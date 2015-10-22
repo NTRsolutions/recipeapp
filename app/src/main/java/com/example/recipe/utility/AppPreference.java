@@ -32,6 +32,7 @@ public class AppPreference {
         editor.commit();
     }
 
+
     public int getInteger(String key,int value){
         int returnValue = mPref.getInt(key, value);
         return returnValue;
