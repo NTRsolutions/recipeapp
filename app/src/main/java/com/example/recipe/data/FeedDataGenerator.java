@@ -19,7 +19,7 @@ public class FeedDataGenerator {
 
     private static FeedDataGenerator sInstance;
     Context mContext;
-    private int MIN_SLICING_PER_WINDOW = 3;
+    private int MIN_SLICING_PER_WINDOW = 10;
 
     private FeedDataGenerator(Context context) {
         mContext = context;
@@ -50,17 +50,28 @@ public class FeedDataGenerator {
             distribution.put((int) decayFunction, new LinkedList<>(infos));
         }
 
+        // Trying to do y = a * (x - x0) ^ 2;
+        float x_0 = distribution.descendingKeySet().size() * (0.55f);
+        float a = (float) ((MIN_SLICING_PER_WINDOW * 1.0f)  / Math.pow(x_0, 2));
+
         while (true) {
             boolean toBreak = true;
             List<RecipeInfo> tempList = new ArrayList<>();
-            for(int key :distribution.descendingKeySet()) {
+
+            int counter = 0 ;
+            for(int key : distribution.descendingKeySet()) {
                 Queue<RecipeInfo> list = distribution.get(key);
-                int toRemoveSize = list.size() >= MIN_SLICING_PER_WINDOW ? MIN_SLICING_PER_WINDOW : list.size();
+
+                float y = (float) (a * Math.pow((counter - x_0), 2));
+                y = y < 1 ? 1 : y;
+                int toRemoveSize = list.size() >= y ? (int) y : list.size();
 
                 for (int i = 0 ; i < toRemoveSize; i++) {
                     tempList.add(list.remove());
                     toBreak = false;
                 }
+
+                counter ++;
             }
 
             if (tempList.size() > 0) {

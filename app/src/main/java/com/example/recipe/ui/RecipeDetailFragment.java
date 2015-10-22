@@ -294,6 +294,7 @@ public class RecipeDetailFragment extends Fragment {
                     mMediaPlayer.seekTo((int) ((seekBar.getProgress() * 1.0f / seekBar.getMax()) * mMediaPlayer.getDuration()));
                     if (!mMediaPlayer.isPlaying()) {
                         mMediaPlayer.start();
+                        updateRemainingTime();
                     }
                 }
             }
@@ -313,6 +314,7 @@ public class RecipeDetailFragment extends Fragment {
                     mAudioControls.setImageResource(R.drawable.pause_volume);
                     if (mMediaPlayer != null && !mMediaPlayer.isPlaying()) {
                         mMediaPlayer.start();
+                        updateRemainingTime();
                     }
                 }
             }

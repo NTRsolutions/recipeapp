@@ -30,18 +30,18 @@ public class Utility {
 
     private Utility(Context context) {
         mContext = context.getApplicationContext();
+        mTextToSpeech = new TextToSpeech(mContext,
+                new TextToSpeech.OnInitListener() {
+                    @Override
+                    public void onInit(int status) {
+                    }
+                }
+        );
     }
 
     public static Utility getInstance(Context context) {
         if (sInstance == null) {
             sInstance = new Utility(context);
-            sInstance.mTextToSpeech = new TextToSpeech(sInstance.mContext,
-                    new TextToSpeech.OnInitListener() {
-                @Override
-                public void onInit(int status) {
-
-                }
-            });
         }
         return sInstance;
     }
