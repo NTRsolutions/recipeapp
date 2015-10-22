@@ -8,6 +8,11 @@ import android.util.Log;
 
 import com.example.recipe.utility.AppPreference;
 import com.example.recipe.utility.Utility;
+import com.parse.FindCallback;
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,6 +57,75 @@ public class UserInfo {
             int value = AppPreference.getInstance(mContext).getInteger(key, 0);
             AppPreference.getInstance(mContext).putInteger(key, ++value);
         }
+
+        updateRecipeInfoViewCount(info);
+    }
+
+
+    private void updateRecipeInfoViewCount(final RecipeInfo info) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(RecipeInfoStats.class.getSimpleName());
+        query.whereEqualTo(RecipeInfoStats.Keys.RECIPEINFO_ID.getValue(), info.getRecipeinfoId());
+        query.setLimit(1);
+        query.findInBackground(new FindCallback<ParseObject>() {
+               public void done(List<ParseObject> results, ParseException e) {
+                   if (results == null || e != null) {
+                       return;
+                   }
+
+                   if (results != null && results.size() == 0) {
+                       ParseObject gameScore = new ParseObject(
+                               RecipeInfoStats.class.getSimpleName());
+                       gameScore.put(RecipeInfoStats.Keys.RECIPEINFO_ID.getValue()
+                               , info.getRecipeinfoId());
+                       gameScore.put(RecipeInfoStats.Keys.TITLE.getValue(), info.getTitle());
+                       gameScore.put(RecipeInfoStats.Keys.FAVOURATE_COUNT.getValue(), 0);
+                       gameScore.put(RecipeInfoStats.Keys.VIEW_COUNT.getValue(), 1);
+                       gameScore.saveInBackground();
+                       Log.d(TAG, "zero Result , Creating new Object");
+                       return;
+                   }
+
+                   ParseObject recipeInfoStats = results.get(0);
+                   recipeInfoStats.increment(RecipeInfoStats.Keys.VIEW_COUNT.getValue());
+                   recipeInfoStats.saveInBackground();
+
+               }
+           }
+        );
+    }
+
+    public void updateRecipeInfoFavorateCount(final RecipeInfo info, final boolean increment) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(RecipeInfoStats.class.getSimpleName());
+        query.whereEqualTo(RecipeInfoStats.Keys.RECIPEINFO_ID.getValue(), info.getRecipeinfoId());
+        query.setLimit(1);
+        query.findInBackground(new FindCallback<ParseObject>() {
+               public void done(List<ParseObject> results, ParseException e) {
+                   if (results == null || e != null) {
+                       return;
+                   }
+
+                   if (results != null && results.size() == 0 ) {
+                       ParseObject gameScore = new ParseObject(RecipeInfoStats.class.getSimpleName());
+                       gameScore.put(RecipeInfoStats.Keys.RECIPEINFO_ID.getValue(), info.getRecipeinfoId());
+                       gameScore.put(RecipeInfoStats.Keys.TITLE.getValue(), info.getTitle());
+                       gameScore.put(RecipeInfoStats.Keys.FAVOURATE_COUNT.getValue(), 1);
+                       gameScore.put(RecipeInfoStats.Keys.VIEW_COUNT.getValue(), 1);
+                       gameScore.saveInBackground();
+                       Log.d(TAG, "zero Result , Creating new Object");
+                       return;
+                   }
+
+
+                   ParseObject recipeInfoStats = results.get(0);
+                   if (increment) {
+                       recipeInfoStats .increment(RecipeInfoStats.Keys.FAVOURATE_COUNT.getValue());
+                   } else {
+                       recipeInfoStats .increment(RecipeInfoStats.Keys.FAVOURATE_COUNT.getValue(), -1);
+                   }
+                   recipeInfoStats .saveInBackground();
+               }
+           }
+        );
     }
 
     public TreeMap fetchDataForFeed() {

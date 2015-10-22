@@ -257,6 +257,7 @@ public class RecipeDataStore {
 
         RecipeDataStore.getsInstance(mContext).addFreeTextTag(
                 info, Config.sFavouriteTag);
+        UserInfo.getInstance(mContext).updateRecipeInfoFavorateCount(info, true);
         sFavouriteRecipeInfoList.add(info);
     }
 
@@ -271,6 +272,7 @@ public class RecipeDataStore {
 
         RecipeDataStore.getsInstance(mContext).removeFreeTextTag(
                 info, Config.sFavouriteTag);
+        UserInfo.getInstance(mContext).updateRecipeInfoFavorateCount(info, false);
         sFavouriteRecipeInfoList.remove(info);
     }
 

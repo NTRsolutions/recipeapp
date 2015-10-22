@@ -54,6 +54,7 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         mReciepeImageView = (ImageView) view.findViewById(R.id.icon);
         mFlowLayout = (FlowLayout) view.findViewById(R.id.tags);
         mFavouriteImage = (ImageView) view.findViewById(R.id.favourite);
+        mFavouriteImage.setVisibility(View.GONE);
 
         mListener = lstr;
         ViewGroup.LayoutParams layoutParams = mReciepeImageView.getLayoutParams();
