@@ -23,6 +23,7 @@ import android.widget.Button;
 
 import com.example.recipe.data.RecipeDataStore;
 import com.example.recipe.data.ShoppingListDataStore;
+import com.example.recipe.data.UserInfo;
 import com.example.recipe.rateus.AppRate;
 import com.example.recipe.ui.BrowseFragment;
 import com.example.recipe.ui.CategoryFragment;
@@ -79,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         //ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         actionBar.setDisplayHomeAsUpEnabled(true);
         Log.d(TAG, "onCreate ");
+        Log.d(TAG,"location is " + UserInfo.getInstance(this).GetUserLocation());
 
         setUpRateAppPopUp();
 
