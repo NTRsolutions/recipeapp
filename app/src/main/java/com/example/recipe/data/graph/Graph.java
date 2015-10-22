@@ -16,6 +16,7 @@ import java.util.NoSuchElementException;
 import java.util.Queue;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
 
 import static com.example.recipe.data.FoodCategoryList.FoodCategory;
 
@@ -469,51 +470,56 @@ public class Graph {
     }
 
     private void constructGraph() {
-        addEdge(FoodCategory.NON_VEGETARIAN.getValue(), FoodCategory.CHICKEN.getValue());
-        addEdge(FoodCategory.NON_VEGETARIAN.getValue(), FoodCategory.MUTTON.getValue());
-        addEdge(FoodCategory.NON_VEGETARIAN.getValue(), FoodCategory.LAMB.getValue());
-        addEdge(FoodCategory.NON_VEGETARIAN.getValue(), FoodCategory.FISH.getValue());
-        addEdge(FoodCategory.NON_VEGETARIAN.getValue(), FoodCategory.EGG.getValue());
-        addEdge(FoodCategory.NON_VEGETARIAN.getValue(), FoodCategory.PRAWN.getValue());
-        addEdge(FoodCategory.NON_VEGETARIAN.getValue(), FoodCategory.PORK.getValue());
-        addEdge(FoodCategory.NON_VEGETARIAN.getValue(), FoodCategory.BEEF.getValue());
+        addEdge(FoodCategory.NON_VEGETARIAN.getValue(), FoodCategory.CHICKEN.getValue(), 1000);
+        addEdge(FoodCategory.NON_VEGETARIAN.getValue(), FoodCategory.MUTTON.getValue(), 1000);
+        addEdge(FoodCategory.NON_VEGETARIAN.getValue(), FoodCategory.LAMB.getValue(), 1000);
+        addEdge(FoodCategory.NON_VEGETARIAN.getValue(), FoodCategory.FISH.getValue(), 1000);
+        addEdge(FoodCategory.NON_VEGETARIAN.getValue(), FoodCategory.EGG.getValue(), 1500);
+        addEdge(FoodCategory.NON_VEGETARIAN.getValue(), FoodCategory.PRAWN.getValue(), 1000);
+        addEdge(FoodCategory.NON_VEGETARIAN.getValue(), FoodCategory.PORK.getValue(), 1000);
+        addEdge(FoodCategory.NON_VEGETARIAN.getValue(), FoodCategory.BEEF.getValue(), 1000);
 
-        addEdge(FoodCategory.VEGETARIAN.getValue(), FoodCategory.PANEER.getValue());
-        addEdge(FoodCategory.VEGETARIAN.getValue(), FoodCategory.CHUTNEY.getValue());
-        addEdge(FoodCategory.VEGETARIAN.getValue(), FoodCategory.BEVERAGE.getValue());
-        addEdge(FoodCategory.VEGETARIAN.getValue(), FoodCategory.DRINKS.getValue());
-        addEdge(FoodCategory.VEGETARIAN.getValue(), FoodCategory.MILKSHAKES.getValue());
-        addEdge(FoodCategory.VEGETARIAN.getValue(), FoodCategory.SAUCE.getValue());
-        addEdge(FoodCategory.VEGETARIAN.getValue(), FoodCategory.SALAD.getValue());
-        addEdge(FoodCategory.VEGETARIAN.getValue(), FoodCategory.PARATHA.getValue());
-        addEdge(FoodCategory.VEGETARIAN.getValue(), FoodCategory.HEALTHY.getValue());
-        addEdge(FoodCategory.VEGETARIAN.getValue(), FoodCategory.SOUTH_INDIAN.getValue());
+        addEdge(FoodCategory.VEGETARIAN.getValue(), FoodCategory.PANEER.getValue(), 1000);
+        addEdge(FoodCategory.VEGETARIAN.getValue(), FoodCategory.CHUTNEY.getValue(), 1000);
+        addEdge(FoodCategory.VEGETARIAN.getValue(), FoodCategory.BEVERAGE.getValue(), 1000);
+        addEdge(FoodCategory.VEGETARIAN.getValue(), FoodCategory.DRINKS.getValue(), 1000);
+        addEdge(FoodCategory.VEGETARIAN.getValue(), FoodCategory.MILKSHAKES.getValue(), 1000);
+        addEdge(FoodCategory.VEGETARIAN.getValue(), FoodCategory.SAUCE.getValue(), 1200);
+        addEdge(FoodCategory.VEGETARIAN.getValue(), FoodCategory.SALAD.getValue(), 1000);
+        addEdge(FoodCategory.VEGETARIAN.getValue(), FoodCategory.PARATHA.getValue(), 1200);
+        addEdge(FoodCategory.VEGETARIAN.getValue(), FoodCategory.HEALTHY.getValue(), 1000);
+        addEdge(FoodCategory.VEGETARIAN.getValue(), FoodCategory.SOUTH_INDIAN.getValue(), 1200);
 
-        addEdge(FoodCategory.BREAKFAST.getValue(), FoodCategory.SANDWHICH.getValue());
-        addEdge(FoodCategory.BREAKFAST.getValue(), FoodCategory.DRINKS.getValue());
-        addEdge(FoodCategory.BREAKFAST.getValue(), FoodCategory.BEVERAGE.getValue());
+        addEdge(FoodCategory.BREAKFAST.getValue(), FoodCategory.SANDWHICH.getValue(), 1000);
+        addEdge(FoodCategory.BREAKFAST.getValue(), FoodCategory.DRINKS.getValue(), 1000);
+        addEdge(FoodCategory.BREAKFAST.getValue(), FoodCategory.BEVERAGE.getValue(), 1500);
 
-        addEdge(FoodCategory.SOUP.getValue(), FoodCategory.VEGETARIAN.getValue());
-        addEdge(FoodCategory.SOUP.getValue(), FoodCategory.NON_VEGETARIAN.getValue());
+        addEdge(FoodCategory.DESSERTS.getValue(), FoodCategory.VEGETARIAN.getValue(), 1000);
+        addEdge(FoodCategory.DESSERTS.getValue(), FoodCategory.NON_VEGETARIAN.getValue(), 1500);
+        addEdge(FoodCategory.DESSERTS.getValue(), FoodCategory.EGG.getValue(), 1200);
 
-        addEdge(FoodCategory.RAJASTHANI.getValue(), FoodCategory.VEGETARIAN.getValue());
-        addEdge(FoodCategory.RAJASTHANI.getValue(), FoodCategory.NON_VEGETARIAN.getValue());
+        addEdge(FoodCategory.SOUP.getValue(), FoodCategory.VEGETARIAN.getValue(), 1500);
+        addEdge(FoodCategory.SOUP.getValue(), FoodCategory.NON_VEGETARIAN.getValue(), 1500);
 
-        addEdge(FoodCategory.BENGALI.getValue(), FoodCategory.VEGETARIAN.getValue());
-        addEdge(FoodCategory.BENGALI.getValue(), FoodCategory.FISH.getValue());
-        addEdge(FoodCategory.BENGALI.getValue(), FoodCategory.NON_VEGETARIAN.getValue());
+        addEdge(FoodCategory.RAJASTHANI.getValue(), FoodCategory.VEGETARIAN.getValue(), 1500);
+        addEdge(FoodCategory.RAJASTHANI.getValue(), FoodCategory.NON_VEGETARIAN.getValue(), 1500);
 
-        addEdge(FoodCategory.PUNJABI.getValue(), FoodCategory.VEGETARIAN.getValue());
-        addEdge(FoodCategory.PUNJABI.getValue(), FoodCategory.NON_VEGETARIAN.getValue());
+        addEdge(FoodCategory.BENGALI.getValue(), FoodCategory.VEGETARIAN.getValue(), 1500);
+        addEdge(FoodCategory.BENGALI.getValue(), FoodCategory.FISH.getValue(), 500);
+        addEdge(FoodCategory.BENGALI.getValue(), FoodCategory.NON_VEGETARIAN.getValue(), 1200);
 
-        addEdge(FoodCategory.GUJRATI.getValue(), FoodCategory.VEGETARIAN.getValue());
-        addEdge(FoodCategory.GUJRATI.getValue(), FoodCategory.NON_VEGETARIAN.getValue());
+        addEdge(FoodCategory.PUNJABI.getValue(), FoodCategory.VEGETARIAN.getValue(), 1500);
+        addEdge(FoodCategory.PUNJABI.getValue(), FoodCategory.NON_VEGETARIAN.getValue(), 1000);
 
-        addEdge(FoodCategory.KERALA.getValue(), FoodCategory.VEGETARIAN.getValue());
-        addEdge(FoodCategory.KERALA.getValue(), FoodCategory.NON_VEGETARIAN.getValue());
+        addEdge(FoodCategory.GUJRATI.getValue(), FoodCategory.VEGETARIAN.getValue(), 1000);
+        addEdge(FoodCategory.GUJRATI.getValue(), FoodCategory.NON_VEGETARIAN.getValue(), 1500);
 
-        addEdge(FoodCategory.BAKED.getValue(), FoodCategory.VEGETARIAN.getValue());
-        addEdge(FoodCategory.BAKED.getValue(), FoodCategory.NON_VEGETARIAN.getValue());
+        addEdge(FoodCategory.KERALA.getValue(), FoodCategory.VEGETARIAN.getValue(), 1500);
+        addEdge(FoodCategory.KERALA.getValue(), FoodCategory.FISH.getValue(), 500);
+        addEdge(FoodCategory.KERALA.getValue(), FoodCategory.NON_VEGETARIAN.getValue(), 1000);
+
+        addEdge(FoodCategory.BAKED.getValue(), FoodCategory.VEGETARIAN.getValue(), 1500);
+        addEdge(FoodCategory.BAKED.getValue(), FoodCategory.NON_VEGETARIAN.getValue(), 1500);
     }
 
     public ArrayList<String> findRelated(String startNode) {
@@ -531,7 +537,13 @@ public class Graph {
             System.out.println(node);
             resultVertext.add(node);
             LinkedList<Edge> list = (LinkedList) node.adj;
+            TreeMap<String, Edge> treeMap = new TreeMap<>();
             for (Edge element : list) {
+                treeMap.put(element.cost + element.dest.name, element);
+            }
+
+            for (String key : treeMap.keySet()) {
+                Edge element  = treeMap.get(key);
                 if (!processed.contains(element.dest) && !queue.contains(element.dest)) {
                     queue.add(element.dest);
                 }
@@ -543,6 +555,8 @@ public class Graph {
         for (Vertex vertx : resultVertext) {
             resultList.add(vertx.name);
         }
+
+        resultList.remove(startNode);
         return resultList;
     }
 }
