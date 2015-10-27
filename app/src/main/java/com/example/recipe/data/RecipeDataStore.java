@@ -26,7 +26,6 @@ import com.parse.ParseQuery;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -55,9 +54,11 @@ public class RecipeDataStore {
     Context mContext;
 
 
-    public enum RecipeCategoryType {
+    public enum RecipeDataType {
         FEED,
-        CATEGORY,
+        TAGS,
+        TAGS_PROBABILITY_LIST,
+        TAGS_LIST,
         FAVOURITE,
         HISTORY
     }
@@ -354,13 +355,19 @@ public class RecipeDataStore {
         removeFreeTextTags(info, Collections.singleton(freeTextTag));
     }
 
-    public void getRecipeList(RecipeCategoryType type, RecipeDataStoreListener listener, String extraParam) {
+    public void getRecipeList(RecipeDataType type, RecipeDataStoreListener listener, String extraParam) {
         switch (type) {
             case FEED:
                 getFeedData(listener);
                 break;
-            case CATEGORY:
-                getCategoryData(extraParam, listener);
+            case TAGS:
+                getTagData(extraParam, listener);
+                break;
+            case TAGS_PROBABILITY_LIST:
+                getTagProbabilityListData(extraParam, listener);
+                break;
+            case TAGS_LIST:
+                getTagListData(extraParam, listener);
                 break;
             case FAVOURITE:
                 getFavouriteData(listener);
@@ -371,7 +378,47 @@ public class RecipeDataStore {
         }
     }
 
-    private void getCategoryData(String searchTag, RecipeDataStoreListener listener) {
+    private void getTagProbabilityListData(String extraParam, RecipeDataStoreListener listener) {
+        try {
+            int totalItem = 500;
+            // vegeterian:40,gujrati:90,bengali:30
+            String []tagProbablity = extraParam.split(",");
+            ArrayList<RecipeInfo> infoList = new ArrayList<>();
+            int totalDistributionSum = 0;
+            for (String item : tagProbablity) {
+                totalDistributionSum += Integer.parseInt(item.split(":")[1]);
+            }
+
+            for (String item : tagProbablity) {
+                String tag = item.split(":")[0];
+                int limit = (int) ((Integer.parseInt(item.split(":")[1]) * 1.0f
+                        / totalDistributionSum) * totalItem);
+                List<RecipeInfo> list = searchDocuments(tag, limit);
+                infoList.addAll(list);
+            }
+
+            Collections.shuffle(infoList);
+            listener.onDataFetchComplete(infoList);
+
+        } catch (Exception ex) {
+            Log.e(TAG, "getTagProbabilityListData non compatible data for parsing");
+            listener.onDataFetchComplete(new ArrayList<RecipeInfo>());
+        }
+    }
+
+    private void getTagListData(String extraParam, RecipeDataStoreListener listener) {
+        int totalItem = 500;
+        String []tagsList = extraParam.split(",");
+        ArrayList<RecipeInfo> infoList = new ArrayList<>();
+        for (String tag : tagsList) {
+            List<RecipeInfo> list = searchDocuments(tag, totalItem / tagsList.length);
+            infoList.addAll(list);
+        }
+        Collections.shuffle(infoList);
+        listener.onDataFetchComplete(infoList);
+    }
+
+    private void getTagData(String searchTag, RecipeDataStoreListener listener) {
         List<RecipeInfo> list = searchDocuments(searchTag, 1000);
         listener.onDataFetchComplete(list);
     }

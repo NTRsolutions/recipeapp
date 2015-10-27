@@ -3,7 +3,6 @@ package com.example.recipe.data;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.recipe.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -11,6 +10,7 @@ import com.parse.ParseQuery;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 
 /**
  * Created by rajnish on 6/8/15.
@@ -21,6 +21,28 @@ public class CategoryDataStore {
 
     public interface CategoryDataStoreListener {
        void onDataFetchComplete(List<Category> list);
+    }
+
+    public enum CategoryType {
+        TAGS,
+        TAGS_LIST,
+        TAGS_DISTRIBUTION_LIST,
+        DOCID_LIST,
+        UNRESOLVED;
+
+        public String getValue() {
+            String name = name().replace("_", "");
+            return name.toLowerCase();
+        }
+
+        public static CategoryType getTypeFromString(String str) {
+            for (CategoryType type : CategoryType.values()) {
+                if (str.equalsIgnoreCase(type.getValue())) {
+                    return type;
+                }
+            }
+            return UNRESOLVED;
+        }
     }
 
     public static void fetchAllCategoryData(Context cntx, final CategoryDataStoreListener listener) {
@@ -34,30 +56,35 @@ public class CategoryDataStore {
             return;
         }
 
-        ArrayList<String> list = RecipeDataStore.getsInstance(cntx).getRelatedTag();
-        for (String tags : list) {
-            Category category = new Category();
-            category.setCategory(tags);
-            category.setUrl("https://i.ytimg.com/vi/d2teJWH6QQ4/hqdefault.jpg");
-            sCategoryList.add(category);
-        }
+        ParseQuery<ParseObject> category = ParseQuery.getQuery(Category.class.getSimpleName());
+        category.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> results, ParseException exception) {
+                if (exception != null) {
+                    Log.d(TAG, exception.getCause().toString());
+                    return;
+                }
 
-        listener.onDataFetchComplete(sCategoryList);
+                List<Category> list = new ArrayList<>();
+                TreeMap<Integer, Category> orderMap = new TreeMap<>();
+                for (ParseObject object : results) {
+                    Category category = Category.getCategory(object);
+                    Log.d(TAG, "got result ");
+                    if (category.priority > 0) {
+                        orderMap.put(category.priority, category);
+                    }
+                }
 
-//        ParseQuery<ParseObject> category = ParseQuery.getQuery(Category.class.getSimpleName());
-//        category.findInBackground(new FindCallback<ParseObject>() {
-//            public void done(List<ParseObject> results, ParseException e) {
-//                List<Category> list = new ArrayList<>();
-//                for (ParseObject object : results) {
-//                    Category category = Category.getCategory(object);
-//                    Log.d(TAG, "got result ");
-//                    list.add(category);
-//                }
-//                if (listener != null) {
-//                    sCategoryList = list;
-//                    listener.onDataFetchComplete(list);
-//                }
-//            }
-//        });
+                for (int index : orderMap.descendingKeySet()) {
+                    Category category = orderMap.get(index);
+                    list.add(category);
+                }
+
+                if (listener != null) {
+                    sCategoryList = list;
+                    listener.onDataFetchComplete(list);
+                }
+            }
+        });
+
     }
 }

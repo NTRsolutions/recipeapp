@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,17 +18,28 @@ import android.widget.TextView;
 import com.example.recipe.MainActivity;
 import com.example.recipe.R;
 import com.example.recipe.data.RecipeDataStore;
+import com.example.recipe.data.RecipeDataStore.RecipeDataType;
 import com.example.recipe.data.RecipeInfo;
 import com.example.recipe.data.graph.Graph;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.recipe.data.CategoryDataStore.*;
+import static com.example.recipe.data.RecipeDataStore.RecipeDataType.TAGS;
+import static com.example.recipe.data.RecipeDataStore.RecipeDataType.TAGS_LIST;
+import static com.example.recipe.data.RecipeDataStore.RecipeDataType.TAGS_PROBABILITY_LIST;
+
 /**
  * A simple {@link Fragment} subclass.
  */
 public class BrowseFragment extends Fragment {
+    public static final String SOURCE_KEY = "SOURCE_KEY";
+    public static final String ORIGIN_FROM_TAGS = "ORIGIN_FROM_TAGS";
+    public static final String ORIGIN_FROM_CATEGORY = "ORIGIN_FROM_CATEGORY";
     public static final String SEARCH_QUERY_KEY = "SEARCH_QUERY_KEY";
+    public static final String CATEGORY_TYPE_KEY = "CATEGORY_TYPE_KEY";
+    public static final String CATEGORY_METADATA_KEY = "CATEGORY_METADATA_KEY";
     public BrowseFragment() {
         // Required empty public constructor
     }
@@ -36,6 +48,7 @@ public class BrowseFragment extends Fragment {
     private MainActivity mMainActivity;
     private RecipeAdapter mAdapter;
     private View rootView;
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -47,8 +60,8 @@ public class BrowseFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        String query = getArguments().getString(SEARCH_QUERY_KEY, null);
-        View rootView = inflater.inflate(R.layout.fragment_browse, container,
+
+        rootView = inflater.inflate(R.layout.fragment_browse, container,
                 false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.my_recycler_view);
 
@@ -57,16 +70,66 @@ public class BrowseFragment extends Fragment {
 
         mAdapter = new RecipeAdapter(getActivity(), new RecipeAdapterListenerImpl());
         mRecyclerView.setAdapter(mAdapter);
-
-        populateRelatedView(rootView, query);
-        RecipeDataStore.RecipeCategoryType  recipeCategoryType = RecipeDataStore.RecipeCategoryType.CATEGORY;
-        RecipeDataStore.getsInstance(getActivity()).getRecipeList(
-                recipeCategoryType, new RecipeDataStoreListenerImpl(), query);
+        
+        
+        String originType  = getArguments().getString(SOURCE_KEY, null);
+        switch (originType) {
+            case ORIGIN_FROM_TAGS:
+                String query = getArguments().getString(SEARCH_QUERY_KEY, null);
+                handleTagOriginDataPopulation(query, true);
+                break;
+            case ORIGIN_FROM_CATEGORY:
+                rootView.findViewById(R.id.card_view).setVisibility(View.GONE);
+                rootView.findViewById(R.id.card_view_button).setVisibility(View.GONE);
+                handleCategoryOriginDataPopulation();
+                break;
+        }
 
         return rootView;
     }
 
-    private void populateRelatedView(final View rootView, String query) {
+    private void handleCategoryOriginDataPopulation() {
+        String categoryType = getArguments().getString(CATEGORY_TYPE_KEY, null);
+        String metaData = getArguments().getString(CATEGORY_METADATA_KEY, null);
+        RecipeDataType recipeDataType = null;
+        CategoryType type = CategoryType.getTypeFromString(categoryType);
+        switch (type) {
+            case TAGS:
+                handleTagOriginDataPopulation(metaData, false);
+                break;
+            case TAGS_LIST:
+                recipeDataType = TAGS_LIST;
+                RecipeDataStore.getsInstance(getActivity()).getRecipeList(
+                        recipeDataType, new RecipeDataStoreListenerImpl(), metaData);
+                break;
+            case TAGS_DISTRIBUTION_LIST:
+                recipeDataType = TAGS_PROBABILITY_LIST;
+                RecipeDataStore.getsInstance(getActivity()).getRecipeList(
+                        recipeDataType, new RecipeDataStoreListenerImpl(), metaData);
+                break;
+            case DOCID_LIST:
+
+                break;
+            case UNRESOLVED:
+                // DO Nothing
+                Log.d(TAG, "Category Type UNRESOLVED");
+                break;
+
+        }
+
+    }
+
+    private void handleTagOriginDataPopulation(String query, boolean showRelated) {
+        if (showRelated) {
+            populateRelatedView(query);
+        }
+
+        RecipeDataType recipeDataType = TAGS;
+        RecipeDataStore.getsInstance(getActivity()).getRecipeList(
+                recipeDataType, new RecipeDataStoreListenerImpl(), query);
+    }
+
+    private void populateRelatedView(String query) {
         ArrayList<String> tagItems =  Graph.getsInstance().findRelated(query);
         final TextView queryText = (TextView) rootView.findViewById(R.id.tagText);
         queryText.setText(query);
@@ -89,10 +152,10 @@ public class BrowseFragment extends Fragment {
 
                 @Override
                 public void onClick(View v) {
-                    populateRelatedView(rootView, tv.getText().toString());
-                    RecipeDataStore.RecipeCategoryType  recipeCategoryType = RecipeDataStore.RecipeCategoryType.CATEGORY;
+                    populateRelatedView(tv.getText().toString());
+                    RecipeDataType recipeDataType = TAGS;
                     RecipeDataStore.getsInstance(getActivity()).getRecipeList(
-                            recipeCategoryType, new RecipeDataStoreListenerImpl(), singletag);
+                            recipeDataType, new RecipeDataStoreListenerImpl(), singletag);
                 }
             });
         }
