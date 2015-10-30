@@ -11,9 +11,7 @@ import com.example.recipe.utility.Utility;
 import com.parse.Parse;
 import com.parse.ParseCrashReporting;
 
-/**
- * Created by saurabh on 07/08/15.
- */
+
 public class ApplicationImpl extends Application {
     public static final String TAG = ApplicationImpl.class.getSimpleName();
     private MyActivityLifecycleCallbacks mCallbacks;
