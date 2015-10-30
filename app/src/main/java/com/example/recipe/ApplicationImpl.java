@@ -6,10 +6,12 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.example.recipe.utility.Config;
 import com.example.recipe.utility.Utility;
 import com.parse.Parse;
 import com.parse.ParseCrashReporting;
+import io.fabric.sdk.android.Fabric;
 
 
 public class ApplicationImpl extends Application {
@@ -19,6 +21,7 @@ public class ApplicationImpl extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
 
         // Enable Local Datastore.
         Parse.enableLocalDatastore(this);
