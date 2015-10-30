@@ -24,6 +24,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -59,6 +60,7 @@ public class RecipeDataStore {
         TAGS,
         TAGS_PROBABILITY_LIST,
         TAGS_LIST,
+        TAGS_DOCID_LIST,
         FAVOURITE,
         HISTORY
     }
@@ -147,6 +149,7 @@ public class RecipeDataStore {
             }
         }, "1"  /*version. Increment me after each change in this map function*/);
     }
+
     //for recent history
     private void createRecipeInfoTimeLapseView() {
         View searchView = mDataBase.getView(kRecipeInfoTimeLapseView);
@@ -208,6 +211,65 @@ public class RecipeDataStore {
 
         Log.v(TAG, "Searched for docs with tag: " + searchTag + ". Found docs: " + infoList);
         return infoList;
+    }
+
+    public ArrayList<RecipeInfo> searchDocumentsBasedOnDocIds(List<String> docIds) {
+        Query query = mDataBase.getView(kRecipeInfoView).createQuery();
+        List<Object> keys = new ArrayList<>();
+        for (String docId: docIds) {
+            keys.add(docId);
+        }
+
+        query.setKeys(keys);
+        query.setMapOnly(true);
+        QueryEnumerator result;
+        try {
+            result = query.run();
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        ArrayList<RecipeInfo> recipeInfos = new ArrayList<>();
+        for (Iterator<QueryRow> it = result; it.hasNext();) {
+            QueryRow row = it.next();
+            Log.d(TAG, row.getDocumentId());
+            Document doc = row.getDocument();
+            Map<String, Object> properties = doc.getProperties();
+            RecipeInfo recipeInfo = recipeFromJsonMap(properties);
+            Log.v(TAG, "Searched for docs with tag: " + recipeInfo.getDocId() +
+                    ". Found docs: " + recipeInfo);
+            recipeInfos.add(recipeInfo);
+        }
+
+        return recipeInfos;
+    }
+
+    public RecipeInfo searchDocumentsBasedOnDocId(String docId) {
+        Query query = mDataBase.getView(kRecipeInfoView).createQuery();
+        List<Object> keys = new ArrayList<>();
+        keys.add(docId);
+        query.setKeys(keys);
+        query.setMapOnly(true);
+        QueryEnumerator result;
+        try {
+            result = query.run();
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        RecipeInfo recipeInfo = null;
+        for (Iterator<QueryRow> it = result; it.hasNext();) {
+            QueryRow row = it.next();
+            Log.d(TAG, row.getDocumentId());
+            Document doc = row.getDocument();
+            Map<String, Object> properties = doc.getProperties();
+            recipeInfo = recipeFromJsonMap(properties);
+        }
+
+        Log.v(TAG, "Searched for docs with tag: " + docId + ". Found docs: " + recipeInfo);
+        return recipeInfo;
     }
 
     public List<RecipeInfo> searchDocumentBasedOnTitle(String searchTag,int num){
@@ -369,6 +431,9 @@ public class RecipeDataStore {
             case TAGS_LIST:
                 getTagListData(extraParam, listener);
                 break;
+            case TAGS_DOCID_LIST:
+                getDocIdbasedList(extraParam,listener);
+                break;
             case FAVOURITE:
                 getFavouriteData(listener);
                 break;
@@ -376,6 +441,16 @@ public class RecipeDataStore {
                 getHistoryData(listener);
                 break;
         }
+    }
+
+    private void getDocIdbasedList(String extraParam,RecipeDataStoreListener listener){
+        String []docIdList = extraParam.split(",");
+        List<String> docIdArrayList = Arrays.asList(docIdList);
+        ArrayList<RecipeInfo> infoList = searchDocumentsBasedOnDocIds(docIdArrayList);
+
+        Collections.shuffle(infoList);
+        listener.onDataFetchComplete(infoList);
+
     }
 
     private void getTagProbabilityListData(String extraParam, RecipeDataStoreListener listener) {

@@ -27,7 +27,7 @@ public class CategoryDataStore {
         TAGS,
         TAGS_LIST,
         TAGS_DISTRIBUTION_LIST,
-        DOCID_LIST,
+        TAGS_DOCID_LIST,
         UNRESOLVED;
 
         public String getValue() {

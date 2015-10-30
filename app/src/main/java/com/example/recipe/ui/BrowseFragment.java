@@ -27,6 +27,7 @@ import java.util.List;
 
 import static com.example.recipe.data.CategoryDataStore.*;
 import static com.example.recipe.data.RecipeDataStore.RecipeDataType.TAGS;
+import static com.example.recipe.data.RecipeDataStore.RecipeDataType.TAGS_DOCID_LIST;
 import static com.example.recipe.data.RecipeDataStore.RecipeDataType.TAGS_LIST;
 import static com.example.recipe.data.RecipeDataStore.RecipeDataType.TAGS_PROBABILITY_LIST;
 
@@ -91,6 +92,11 @@ public class BrowseFragment extends Fragment {
     private void handleCategoryOriginDataPopulation() {
         String categoryType = getArguments().getString(CATEGORY_TYPE_KEY, null);
         String metaData = getArguments().getString(CATEGORY_METADATA_KEY, null);
+
+        if (metaData == null || metaData.equalsIgnoreCase("")) {
+            return;
+        }
+
         RecipeDataType recipeDataType = null;
         CategoryType type = CategoryType.getTypeFromString(categoryType);
         switch (type) {
@@ -107,8 +113,10 @@ public class BrowseFragment extends Fragment {
                 RecipeDataStore.getsInstance(getActivity()).getRecipeList(
                         recipeDataType, new RecipeDataStoreListenerImpl(), metaData);
                 break;
-            case DOCID_LIST:
-
+            case TAGS_DOCID_LIST:
+                recipeDataType = TAGS_DOCID_LIST;
+                RecipeDataStore.getsInstance(getActivity()).getRecipeList(
+                        recipeDataType, new RecipeDataStoreListenerImpl(), metaData);
                 break;
             case UNRESOLVED:
                 // DO Nothing
