@@ -155,6 +155,7 @@ public class UserInfo {
                     addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
                 } catch (IOException e) {
                     e.printStackTrace();
+                    return ;
                 }
 
                 if (addresses.size() > 0) {
