@@ -1,12 +1,9 @@
-package com.example.recipe.crawler;
+package com.foodie.recipe.crawler;
 
-import java.awt.List;
 import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.example.recipe.crawler.MySQLAccess.COLUMNS;
+import com.foodie.recipe.crawler.MySQLAccess.COLUMNS;
 
 import au.com.bytecode.opencsv.CSVReader;
 public class CSVParserUtil {

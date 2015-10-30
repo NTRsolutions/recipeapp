@@ -1,4 +1,4 @@
-package com.example.recipe.crawler;
+package com.foodie.recipe.crawler;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -6,13 +6,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.example.recipe.crawler.MySQLAccess.COLUMNS;
+import com.foodie.recipe.crawler.MySQLAccess.COLUMNS;
 
 public class ImageDownloader {
 	private static int MAX_IMAGE_COUNT_PER_ITEM = 8;

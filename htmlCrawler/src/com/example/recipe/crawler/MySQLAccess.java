@@ -1,4 +1,4 @@
-package com.example.recipe.crawler;
+package com.foodie.recipe.crawler;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;

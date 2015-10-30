@@ -1,4 +1,4 @@
-package com.example.recipe.crawler;
+package com.foodie.recipe.crawler;
 
 import java.util.ArrayList;
 

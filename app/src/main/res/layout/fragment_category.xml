@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.recipe.ui.CategoryFragment">
+    tools:context="com.foodie.recipe.ui.CategoryFragment">
 
     <!-- A RecyclerView with some commonly used attributes -->
 
