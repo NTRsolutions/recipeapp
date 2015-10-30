@@ -59,24 +59,24 @@ public class RecipeListFragment extends Fragment {
         mAdapter = new RecipeAdapter(getActivity(), new RecipeAdapterListenerImpl());
         mRecyclerView.setAdapter(mAdapter);
 
-        RecipeDataStore.RecipeCategoryType recipeCategoryType = null;
+        RecipeDataStore.RecipeDataType recipeDataType = null;
         switch (mPage) {
             case FEED:
-                recipeCategoryType =  RecipeDataStore.RecipeCategoryType.FEED;
+                recipeDataType =  RecipeDataStore.RecipeDataType.FEED;
                 break;
             case RECENT:
-                recipeCategoryType =  RecipeDataStore.RecipeCategoryType.HISTORY;
+                recipeDataType =  RecipeDataStore.RecipeDataType.HISTORY;
                 break;
             case FAVOURITE:
-                recipeCategoryType =  RecipeDataStore.RecipeCategoryType.FAVOURITE;
+                recipeDataType =  RecipeDataStore.RecipeDataType.FAVOURITE;
                 break;
             case CATEGORIES:
-                recipeCategoryType =  RecipeDataStore.RecipeCategoryType.CATEGORY;
+                recipeDataType =  RecipeDataStore.RecipeDataType.TAGS;
                 break;
         }
 
         RecipeDataStore.getsInstance(getActivity()).getRecipeList(
-                recipeCategoryType, new RecipeDataStoreListenerImpl(), null);
+                recipeDataType, new RecipeDataStoreListenerImpl(), null);
         return rootView;
     }
 

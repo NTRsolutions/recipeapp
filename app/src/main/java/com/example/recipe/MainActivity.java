@@ -190,6 +190,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
     public void showDetailViewBrowseFragment(String query){
         BrowseFragment rFragment = new BrowseFragment();
         Bundle bundle = new Bundle();
+        bundle.putString(BrowseFragment.SOURCE_KEY, BrowseFragment.ORIGIN_FROM_TAGS);
         bundle.putString(BrowseFragment.SEARCH_QUERY_KEY, query);
         rFragment.setArguments(bundle);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -200,6 +201,25 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
 
         transaction.replace(R.id.full_screen_view, rFragment, "TAG").
                     addToBackStack("TAG");;
+
+        transaction.commit();
+    }
+
+    public void showCategoryBrowseFragment(String categoryType, String metaData){
+        BrowseFragment rFragment = new BrowseFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(BrowseFragment.SOURCE_KEY, BrowseFragment.ORIGIN_FROM_CATEGORY);
+        bundle.putString(BrowseFragment.CATEGORY_TYPE_KEY, categoryType);
+        bundle.putString(BrowseFragment.CATEGORY_METADATA_KEY, metaData);
+        rFragment.setArguments(bundle);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        if (rFragment == null) {
+            rFragment = new BrowseFragment();
+        }
+
+        transaction.replace(R.id.full_screen_view, rFragment, "TAG").
+                addToBackStack("TAG");;
 
         transaction.commit();
     }

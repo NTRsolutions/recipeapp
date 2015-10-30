@@ -14,6 +14,9 @@ import com.example.recipe.data.Category;
 import com.example.recipe.utility.Config;
 import com.squareup.picasso.Picasso;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by rajnish on 6/8/15.
  */
@@ -41,15 +44,14 @@ public class CatgoryViewHolder extends RecyclerView.ViewHolder {
                 * Config.MAX_CATEGORY_CARD_HEIGHT_PECENTAGE);
         mContent.setLayoutParams(layoutParams);
         mContent.requestLayout();
-
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (listener != null) {
-                    ((MainActivity) v.getContext()).showDetailViewBrowseFragment(
-                            mCategory.getCategory());
+                    ((MainActivity) v.getContext()).showCategoryBrowseFragment(mCategory.getCategoryType(),
+                            mCategory.getMetaData());
 //                    listener.onViewHolderClicked("category clicked");
-                    Log.d("TAG","in view holder click");
+                    Log.d("TAG", "in view holder click");
 
                 }
             }
@@ -63,4 +65,5 @@ public class CatgoryViewHolder extends RecyclerView.ViewHolder {
                 .resize(Config.SCREEN_SIZE.x, Config.SCREEN_SIZE.x)
                 .centerCrop().into(mIcon);
     }
+
 }

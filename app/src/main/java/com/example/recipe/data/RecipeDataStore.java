@@ -24,9 +24,9 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -55,9 +55,12 @@ public class RecipeDataStore {
     Context mContext;
 
 
-    public enum RecipeCategoryType {
+    public enum RecipeDataType {
         FEED,
-        CATEGORY,
+        TAGS,
+        TAGS_PROBABILITY_LIST,
+        TAGS_LIST,
+        TAGS_DOCID_LIST,
         FAVOURITE,
         HISTORY
     }
@@ -146,6 +149,7 @@ public class RecipeDataStore {
             }
         }, "1"  /*version. Increment me after each change in this map function*/);
     }
+
     //for recent history
     private void createRecipeInfoTimeLapseView() {
         View searchView = mDataBase.getView(kRecipeInfoTimeLapseView);
@@ -207,6 +211,65 @@ public class RecipeDataStore {
 
         Log.v(TAG, "Searched for docs with tag: " + searchTag + ". Found docs: " + infoList);
         return infoList;
+    }
+
+    public ArrayList<RecipeInfo> searchDocumentsBasedOnDocIds(List<String> docIds) {
+        Query query = mDataBase.getView(kRecipeInfoView).createQuery();
+        List<Object> keys = new ArrayList<>();
+        for (String docId: docIds) {
+            keys.add(docId);
+        }
+
+        query.setKeys(keys);
+        query.setMapOnly(true);
+        QueryEnumerator result;
+        try {
+            result = query.run();
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        ArrayList<RecipeInfo> recipeInfos = new ArrayList<>();
+        for (Iterator<QueryRow> it = result; it.hasNext();) {
+            QueryRow row = it.next();
+            Log.d(TAG, row.getDocumentId());
+            Document doc = row.getDocument();
+            Map<String, Object> properties = doc.getProperties();
+            RecipeInfo recipeInfo = recipeFromJsonMap(properties);
+            Log.v(TAG, "Searched for docs with tag: " + recipeInfo.getDocId() +
+                    ". Found docs: " + recipeInfo);
+            recipeInfos.add(recipeInfo);
+        }
+
+        return recipeInfos;
+    }
+
+    public RecipeInfo searchDocumentsBasedOnDocId(String docId) {
+        Query query = mDataBase.getView(kRecipeInfoView).createQuery();
+        List<Object> keys = new ArrayList<>();
+        keys.add(docId);
+        query.setKeys(keys);
+        query.setMapOnly(true);
+        QueryEnumerator result;
+        try {
+            result = query.run();
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        RecipeInfo recipeInfo = null;
+        for (Iterator<QueryRow> it = result; it.hasNext();) {
+            QueryRow row = it.next();
+            Log.d(TAG, row.getDocumentId());
+            Document doc = row.getDocument();
+            Map<String, Object> properties = doc.getProperties();
+            recipeInfo = recipeFromJsonMap(properties);
+        }
+
+        Log.v(TAG, "Searched for docs with tag: " + docId + ". Found docs: " + recipeInfo);
+        return recipeInfo;
     }
 
     public List<RecipeInfo> searchDocumentBasedOnTitle(String searchTag,int num){
@@ -354,13 +417,22 @@ public class RecipeDataStore {
         removeFreeTextTags(info, Collections.singleton(freeTextTag));
     }
 
-    public void getRecipeList(RecipeCategoryType type, RecipeDataStoreListener listener, String extraParam) {
+    public void getRecipeList(RecipeDataType type, RecipeDataStoreListener listener, String extraParam) {
         switch (type) {
             case FEED:
                 getFeedData(listener);
                 break;
-            case CATEGORY:
-                getCategoryData(extraParam, listener);
+            case TAGS:
+                getTagData(extraParam, listener);
+                break;
+            case TAGS_PROBABILITY_LIST:
+                getTagProbabilityListData(extraParam, listener);
+                break;
+            case TAGS_LIST:
+                getTagListData(extraParam, listener);
+                break;
+            case TAGS_DOCID_LIST:
+                getDocIdbasedList(extraParam,listener);
                 break;
             case FAVOURITE:
                 getFavouriteData(listener);
@@ -371,7 +443,57 @@ public class RecipeDataStore {
         }
     }
 
-    private void getCategoryData(String searchTag, RecipeDataStoreListener listener) {
+    private void getDocIdbasedList(String extraParam,RecipeDataStoreListener listener){
+        String []docIdList = extraParam.split(",");
+        List<String> docIdArrayList = Arrays.asList(docIdList);
+        ArrayList<RecipeInfo> infoList = searchDocumentsBasedOnDocIds(docIdArrayList);
+
+        Collections.shuffle(infoList);
+        listener.onDataFetchComplete(infoList);
+
+    }
+
+    private void getTagProbabilityListData(String extraParam, RecipeDataStoreListener listener) {
+        try {
+            int totalItem = 500;
+            // vegeterian:40,gujrati:90,bengali:30
+            String []tagProbablity = extraParam.split(",");
+            ArrayList<RecipeInfo> infoList = new ArrayList<>();
+            int totalDistributionSum = 0;
+            for (String item : tagProbablity) {
+                totalDistributionSum += Integer.parseInt(item.split(":")[1]);
+            }
+
+            for (String item : tagProbablity) {
+                String tag = item.split(":")[0];
+                int limit = (int) ((Integer.parseInt(item.split(":")[1]) * 1.0f
+                        / totalDistributionSum) * totalItem);
+                List<RecipeInfo> list = searchDocuments(tag, limit);
+                infoList.addAll(list);
+            }
+
+            Collections.shuffle(infoList);
+            listener.onDataFetchComplete(infoList);
+
+        } catch (Exception ex) {
+            Log.e(TAG, "getTagProbabilityListData non compatible data for parsing");
+            listener.onDataFetchComplete(new ArrayList<RecipeInfo>());
+        }
+    }
+
+    private void getTagListData(String extraParam, RecipeDataStoreListener listener) {
+        int totalItem = 500;
+        String []tagsList = extraParam.split(",");
+        ArrayList<RecipeInfo> infoList = new ArrayList<>();
+        for (String tag : tagsList) {
+            List<RecipeInfo> list = searchDocuments(tag, totalItem / tagsList.length);
+            infoList.addAll(list);
+        }
+        Collections.shuffle(infoList);
+        listener.onDataFetchComplete(infoList);
+    }
+
+    private void getTagData(String searchTag, RecipeDataStoreListener listener) {
         List<RecipeInfo> list = searchDocuments(searchTag, 1000);
         listener.onDataFetchComplete(list);
     }
