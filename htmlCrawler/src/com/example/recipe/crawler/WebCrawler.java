@@ -1,4 +1,4 @@
-package com.example.recipe.crawler;
+package com.foodie.recipe.crawler;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -6,18 +6,15 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 
-import com.example.recipe.crawler.MySQLAccess.COLUMNS;
+import com.foodie.recipe.crawler.MySQLAccess.COLUMNS;
 import com.google.gson.Gson;
 import com.mrp.testSuite.MappingMenuRating;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**

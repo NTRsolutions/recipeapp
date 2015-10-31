@@ -36,24 +36,13 @@
             android:textStyle="bold"
             android:typeface="normal" />
 
-        <ImageView
-            android:id="@+id/browse_button"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_marginRight="20dp"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/ic_volume_up"
-            android:text="browse"
-            android:layout_below="@+id/firstLine"
-            android:background="@color/white"/>
-
-        <com.example.recipe.widgets.FlowLayout
+        <com.foodie.recipe.widgets.FlowLayout
             android:id="@+id/tags"
             android:layout_below="@+id/firstLine"
             android:padding="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        </com.example.recipe.widgets.FlowLayout>
+        </com.foodie.recipe.widgets.FlowLayout>
 
 
         <RelativeLayout
