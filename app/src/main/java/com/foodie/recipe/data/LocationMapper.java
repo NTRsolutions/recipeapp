@@ -45,10 +45,10 @@ public class LocationMapper {
         ParseQuery<ParseObject> category = ParseQuery.getQuery(LocationMapper.class.getSimpleName());
         category.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> results, ParseException e) {
-                fillLocationMapper(results);
 
                 // Boiler Plate Code
                 try {
+                    fillLocationMapper(results);
                     boostPromotedTags(mContext);
                 } catch (Exception ex) {
                 }

@@ -29,7 +29,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
 
         // Gets Geo Location
-        UserInfo.getInstance(this).GetUserLocation();
+        UserInfo.getInstance(this).getUserLocation();
 
         SplashAsyncTask task = new SplashAsyncTask(this);
         task.execute("SplashAsyncTask");

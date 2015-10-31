@@ -4,6 +4,7 @@ import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
 import android.util.Log;
 
 import com.foodie.recipe.utility.AppPreference;
@@ -68,30 +69,30 @@ public class UserInfo {
         query.whereEqualTo(RecipeInfoStats.Keys.RECIPEINFO_ID.getValue(), info.getRecipeinfoId());
         query.setLimit(1);
         query.findInBackground(new FindCallback<ParseObject>() {
-               public void done(List<ParseObject> results, ParseException e) {
-                   if (results == null || e != null) {
-                       return;
-                   }
+                                   public void done(List<ParseObject> results, ParseException e) {
+                                       if (results == null || e != null) {
+                                           return;
+                                       }
 
-                   if (results != null && results.size() == 0) {
-                       ParseObject gameScore = new ParseObject(
-                               RecipeInfoStats.class.getSimpleName());
-                       gameScore.put(RecipeInfoStats.Keys.RECIPEINFO_ID.getValue()
-                               , info.getRecipeinfoId());
-                       gameScore.put(RecipeInfoStats.Keys.TITLE.getValue(), info.getTitle());
-                       gameScore.put(RecipeInfoStats.Keys.FAVOURATE_COUNT.getValue(), 0);
-                       gameScore.put(RecipeInfoStats.Keys.VIEW_COUNT.getValue(), 1);
-                       gameScore.saveInBackground();
-                       Log.d(TAG, "zero Result , Creating new Object");
-                       return;
-                   }
+                                       if (results != null && results.size() == 0) {
+                                           ParseObject gameScore = new ParseObject(
+                                                   RecipeInfoStats.class.getSimpleName());
+                                           gameScore.put(RecipeInfoStats.Keys.RECIPEINFO_ID.getValue()
+                                                   , info.getRecipeinfoId());
+                                           gameScore.put(RecipeInfoStats.Keys.TITLE.getValue(), info.getTitle());
+                                           gameScore.put(RecipeInfoStats.Keys.FAVOURATE_COUNT.getValue(), 0);
+                                           gameScore.put(RecipeInfoStats.Keys.VIEW_COUNT.getValue(), 1);
+                                           gameScore.saveInBackground();
+                                           Log.d(TAG, "zero Result , Creating new Object");
+                                           return;
+                                       }
 
-                   ParseObject recipeInfoStats = results.get(0);
-                   recipeInfoStats.increment(RecipeInfoStats.Keys.VIEW_COUNT.getValue());
-                   recipeInfoStats.saveInBackground();
+                                       ParseObject recipeInfoStats = results.get(0);
+                                       recipeInfoStats.increment(RecipeInfoStats.Keys.VIEW_COUNT.getValue());
+                                       recipeInfoStats.saveInBackground();
 
-               }
-           }
+                                   }
+                               }
         );
     }
 
@@ -144,40 +145,76 @@ public class UserInfo {
         return sortedMap;
     }
 
-    public boolean GetUserLocation(){
-        MyLocation.LocationResult locationResult = new MyLocation.LocationResult(){
-            @Override
-            public void gotLocation(Location location){
-                //Got the location!
-                Log.d(TAG, location.getLatitude() + " : " + location.getLongitude());
-                Geocoder gcd = new Geocoder(mContext, Locale.getDefault());
-                List<Address> addresses = null;
-                try {
-                    addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return ;
-                }
+    public Location getLastKnownLocation() {
+        Location location = null;
+        try {
+            LocationManager locationManager = (LocationManager) mContext.getSystemService(
+                    mContext.LOCATION_SERVICE);
 
-                if (addresses.size() > 0) {
-                    Log.d(TAG, addresses.get(0).getLocality());
-                    Log.d(TAG, addresses.get(0).getAdminArea());
-                    AppPreference.getInstance(mContext).putString(
-                            GEO_ADMIN_AREA, addresses.get(0).getAdminArea());
-                    AppPreference.getInstance(mContext).putString(
-                            GEO_LOCATION, addresses.get(0).getLocality());
-                    AppPreference.getInstance(mContext).putString(
-                            GEO_LATITUDE, String.valueOf(location.getLatitude()));
-                    AppPreference.getInstance(mContext).putString(
-                            GEO_LONGITUDE, String.valueOf(location.getLatitude()));
-                }
+            if (locationManager == null) {
+                return null;
             }
-        };
 
-        MyLocation myLocation = new MyLocation();
-        boolean foundLocation = myLocation.getLocation(mContext, locationResult);
+            boolean isNetworkEnabled = locationManager.isProviderEnabled(
+                    LocationManager.NETWORK_PROVIDER);
+            boolean isGPSEnabled = locationManager.isProviderEnabled(
+                    LocationManager.GPS_PROVIDER);
 
+            if (!isGPSEnabled && !isNetworkEnabled) {
+                return null;
+            }
 
-        return foundLocation;
+            if (isNetworkEnabled) {
+                Log.d(TAG, "Network Location");
+                location = locationManager
+                        .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                return location;
+            }
+
+            // if GPS Enabled get lat/long using GPS Services
+            if (isGPSEnabled) {
+                Log.d(TAG, "GPS Location Location");
+                location = locationManager
+                        .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                return location;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return location;
+    }
+
+    public boolean getUserLocation(){
+        Location location = getLastKnownLocation();
+        if (location == null) {
+            return false;
+        }
+
+        //Got the location!
+        Log.d(TAG, location.getLatitude() + " : " + location.getLongitude());
+        Geocoder gcd = new Geocoder(mContext, Locale.getDefault());
+        List<Address> addresses = null;
+        try {
+            addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        if (addresses.size() > 0) {
+            Log.d(TAG, addresses.get(0).getLocality());
+            Log.d(TAG, addresses.get(0).getAdminArea());
+            AppPreference.getInstance(mContext).putString(
+                    GEO_ADMIN_AREA, addresses.get(0).getAdminArea());
+            AppPreference.getInstance(mContext).putString(
+                    GEO_LOCATION, addresses.get(0).getLocality());
+            AppPreference.getInstance(mContext).putString(
+                    GEO_LATITUDE, String.valueOf(location.getLatitude()));
+            AppPreference.getInstance(mContext).putString(
+                    GEO_LONGITUDE, String.valueOf(location.getLatitude()));
+        }
+
+        return true;
     }
 }
