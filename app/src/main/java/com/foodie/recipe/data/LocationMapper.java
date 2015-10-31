@@ -1,7 +1,6 @@
 package com.foodie.recipe.data;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.foodie.recipe.utility.AppPreference;
 import com.parse.FindCallback;
@@ -9,7 +8,6 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
@@ -48,7 +46,13 @@ public class LocationMapper {
         category.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> results, ParseException e) {
                 fillLocationMapper(results);
-                updatePromotedTags(mContext);
+
+                // Boiler Plate Code
+                try {
+                    boostPromotedTags(mContext);
+                } catch (Exception ex) {
+                }
+
                 if (listener != null) {
                     listener.onLocationMapperComplete();
                 }
@@ -64,7 +68,7 @@ public class LocationMapper {
         }
     }
 
-    public void updatePromotedTags(Context context) {
+    public void boostPromotedTags(Context context) {
         boolean isReturningUser = AppPreference.getInstance(context).getBoolean(
                 UserInfo.IS_RETURNING_USER_KEY, false);
 
