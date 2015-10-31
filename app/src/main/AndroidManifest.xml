@@ -26,6 +26,8 @@
 
         <activity android:name=".MainActivity"></activity>
 
+        <service android:enabled="true" android:name=".data.ParseDataFetcherService" />
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="55c00a3eccaa592b0ee078fef827d0ad79e05262" />

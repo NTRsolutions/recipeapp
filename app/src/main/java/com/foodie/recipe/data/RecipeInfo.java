@@ -25,6 +25,15 @@ public class RecipeInfo implements Serializable{
     List<String> mTags;
     String category;
     Long lastViewedTime;
+    long addedAt;
+
+    public long getAddedAt() {
+        return addedAt;
+    }
+
+    public void setAddedAt(long addedAt) {
+        this.addedAt = addedAt;
+    }
 
     // dynamically generated, dont serialise
     public transient Uri imageUrl;
@@ -151,6 +160,7 @@ public class RecipeInfo implements Serializable{
         recipeInfo.setDescription(parseObject.getString("description"));
         recipeInfo.setPreparationTime(parseObject.getString("cooking_time"));
         recipeInfo.setCategory(parseObject.getString("category"));
+        recipeInfo.setAddedAt(parseObject.getInt("added_at"));
 //        recipeInfo.setImageUrl(Config.sRecipeInfoBaseUrl + "/" + recipeInfo.recipeinfo_id + ".jpg");
         return recipeInfo;
     }

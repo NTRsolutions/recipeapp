@@ -10,6 +10,7 @@ import android.view.MenuItem;
 
 import com.foodie.recipe.data.LocationMapper;
 import com.foodie.recipe.data.LocationMapper.LocationMapperUpdate;
+import com.foodie.recipe.data.ParseDataFetcherService;
 import com.foodie.recipe.data.RecipeDataStore;
 import com.foodie.recipe.data.RecipeDataStore.RecipeDataStoreListener;
 import com.foodie.recipe.data.RecipeInfo;
@@ -36,6 +37,9 @@ public class SplashScreenActivity extends AppCompatActivity {
     }
 
     void onDataFetchComplete() {
+        Intent BackgroundDataFetcherIntent = new Intent(this, ParseDataFetcherService.class);
+        startService(BackgroundDataFetcherIntent);
+
         AppPreference.getInstance(this).putBoolean(UserInfo.IS_RETURNING_USER_KEY, true);
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
@@ -84,10 +88,15 @@ public class SplashScreenActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(String... params) {
 
-            //TODO to remove and implement sequential download's
-            RecipeDataStore.getsInstance(mContext).fetchAllInfoData(
-                    new RecipeDataStoreListenerImpl(this));
-
+            // first hit Db and chk data is available
+            List<RecipeInfo> list =  RecipeDataStore.getsInstance(mContext).getAllRecipeInfos(1);
+            if (list == null || list.size() == 0) {
+                //TODO to remove and implement sequential download's
+                RecipeDataStore.getsInstance(mContext).fetchAllInfoData(
+                        new RecipeDataStoreListenerImpl(this), 500);
+            } else {
+                dataFetchComplete = true;
+            }
 
             LocationMapper.getInstance(mContext).fetchLocationMapperData(
                     new LocationMapperUpdateImpl(this));
