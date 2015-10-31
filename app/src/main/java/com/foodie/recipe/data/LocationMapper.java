@@ -17,6 +17,7 @@ import java.util.TreeMap;
  */
 
 public class LocationMapper {
+    public static final String DEFAULT_KEY = "default";
 
     public interface LocationMapperUpdate {
         void onLocationMapperComplete();
@@ -76,21 +77,13 @@ public class LocationMapper {
         if(isReturningUser) {
           return;
         }
-
-        String currentLocation = AppPreference.getInstance(mContext).getString(
-                UserInfo.GEO_ADMIN_AREA, "");
-
-        if (currentLocation == null || currentLocation.equalsIgnoreCase("")) {
+        
+        // southindian:100,bengali:90
+        String metaData = getMetaData();
+        if (metaData == null || metaData.equalsIgnoreCase("")) {
             return;
         }
 
-        String location = currentLocation.toLowerCase();
-        if (mMapper == null || mMapper.size() == 0 || mMapper.get(location) == null) {
-            return ;
-        }
-
-        // southindian:100,bengali:90
-        String metaData = mMapper.get(location);
         String[] tagProbabilityList = metaData.split(",");
 
         TreeMap<Integer, String > treeMap = new TreeMap<>();
@@ -110,5 +103,26 @@ public class LocationMapper {
             int value = AppPreference.getInstance(context).getInteger(prefKey, 0);
             AppPreference.getInstance(context).putInteger(prefKey, value + normalizedBoost);
         }
+    }
+
+    String getMetaData() {
+        if (mMapper == null || mMapper.size() == 0) {
+            return null;
+        }
+
+        String metaData = mMapper.get(DEFAULT_KEY);
+        String currentLocation = AppPreference.getInstance(mContext).getString(
+                UserInfo.GEO_ADMIN_AREA, "");
+
+        if (currentLocation == null || currentLocation.equalsIgnoreCase("")) {
+            return metaData;
+        }
+
+        String location = currentLocation.toLowerCase();
+        if (mMapper.get(location) == null) {
+            return metaData;
+        }
+
+        return mMapper.get(location);
     }
 }
