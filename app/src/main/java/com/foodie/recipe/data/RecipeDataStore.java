@@ -75,6 +75,9 @@ public class RecipeDataStore {
             sInstance = new RecipeDataStore(cntx);
         }
 
+        if (sInstance.mSortedMap == null || sInstance.mSortedMap.size() == 0) {
+            sInstance.computeTagFrequency();
+        }
         return sInstance;
     }
 
@@ -92,7 +95,6 @@ public class RecipeDataStore {
         }
 
         createViews();
-        computeTagFrequency();
         sFavouriteRecipeInfoList = searchDocuments(Config.sFavouriteTag, 1000);
     }
 
@@ -512,16 +514,13 @@ public class RecipeDataStore {
         List<RecipeInfo> searchItem = searchDocumentBasedOnTitle(searchTag, 1000);
     }
 
-    private void getFeedData(RecipeDataStoreListener listener) {
+    public void getFeedData(RecipeDataStoreListener listener) {
         if (listener != null && sRecipeFeedList.size() > 0) {
             listener.onDataFetchComplete(sRecipeFeedList);
             return;
         }
 
-        //TODO to remove and implement sequential download's
-        fetchAllInfoData(null);
-
-        sRecipeFeedList = FeedDataGenerator.getInstance(mContext).getFeedData(mContext);
+        sRecipeFeedList = FeedDataGenerator.getInstance(mContext).getFeedData();
 
         if (listener != null && sRecipeFeedList.size() > 0) {
             listener.onDataFetchComplete(sRecipeFeedList);
@@ -657,7 +656,7 @@ public class RecipeDataStore {
         }
     }
 
-    private void fetchAllInfoData(final RecipeDataStoreListener listener) {
+    public void fetchAllInfoData(final RecipeDataStoreListener listener) {
         if (sRecipeInfoList.size() > 0) {
             if (listener != null) {
                 listener.onDataFetchComplete(sRecipeInfoList);
@@ -682,7 +681,6 @@ public class RecipeDataStore {
                 }
             }
         });
-
     }
 
     public void checkAndDownloadJsonData() {

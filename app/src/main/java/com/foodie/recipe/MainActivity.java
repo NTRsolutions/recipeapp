@@ -80,8 +80,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         //ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         actionBar.setDisplayHomeAsUpEnabled(true);
         Log.d(TAG, "onCreate ");
-        Log.d(TAG,"location is " + UserInfo.getInstance(this).GetUserLocation());
-
         setUpRateAppPopUp();
 
 //        RecipeDataStore.getsInstance(this).checkAndDownloadJsonData();

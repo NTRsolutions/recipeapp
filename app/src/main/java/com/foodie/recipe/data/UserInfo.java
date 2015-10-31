@@ -26,7 +26,9 @@ import java.util.TreeMap;
 
 public class UserInfo {
     public static final String TAG = UserInfo.class.getSimpleName();
+    public static final String IS_RETURNING_USER_KEY = "IS_RETURNING_USER_KEY";
     public static final String USER_INFO_PREFIX = "USER_INFO_PREFIX_";
+    public static final String GEO_ADMIN_AREA = "GEO_ADMIN_AREA";
     public static final String GEO_LOCATION = "GEO_LOCATION";
     public static final String GEO_LATITUDE = "GEO_LATITUDE";
     public static final String GEO_LONGITUDE = "GEO_LONGITUDE";
@@ -159,13 +161,16 @@ public class UserInfo {
 
                 if (addresses.size() > 0) {
                     Log.d(TAG, addresses.get(0).getLocality());
+                    Log.d(TAG, addresses.get(0).getAdminArea());
+                    AppPreference.getInstance(mContext).putString(
+                            GEO_ADMIN_AREA, addresses.get(0).getAdminArea());
+                    AppPreference.getInstance(mContext).putString(
+                            GEO_LOCATION, addresses.get(0).getLocality());
+                    AppPreference.getInstance(mContext).putString(
+                            GEO_LATITUDE, String.valueOf(location.getLatitude()));
+                    AppPreference.getInstance(mContext).putString(
+                            GEO_LONGITUDE, String.valueOf(location.getLatitude()));
                 }
-
-                AppPreference.getInstance(mContext).putString(GEO_LOCATION, addresses.get(0).getLocality());
-                AppPreference.getInstance(mContext).putString(GEO_LATITUDE, String.valueOf(location.getLatitude()));
-                AppPreference.getInstance(mContext).putString(GEO_LONGITUDE, String.valueOf(location.getLatitude()));
-
-
             }
         };
 

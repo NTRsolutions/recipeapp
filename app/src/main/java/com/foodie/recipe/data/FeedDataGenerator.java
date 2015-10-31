@@ -31,8 +31,8 @@ public class FeedDataGenerator {
         return sInstance;
     }
 
-    public List<RecipeInfo>  getFeedData(Context context) {
-        TreeMap<String, Integer> map = UserInfo.getInstance(context).fetchDataForFeed();
+    public List<RecipeInfo>  getFeedData() {
+        TreeMap<String, Integer> map = UserInfo.getInstance(mContext).fetchDataForFeed();
         List<RecipeInfo> finalList = new ArrayList<>();
         TreeMap<Integer, Queue<RecipeInfo>> distribution = new TreeMap<>();
         int seedPoint =  Config.TOTAL_FEED_SEED_COUNT;;
@@ -43,7 +43,7 @@ public class FeedDataGenerator {
             if (decayFunction <= 1) {
                 break;
             }
-            List<RecipeInfo>  infos = RecipeDataStore.getsInstance(context).searchDocuments(
+            List<RecipeInfo>  infos = RecipeDataStore.getsInstance(mContext).searchDocuments(
                     tag, (int)decayFunction);
 
             distribution.put((int) decayFunction, new LinkedList<>(infos));
