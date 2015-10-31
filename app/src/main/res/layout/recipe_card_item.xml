@@ -83,13 +83,13 @@
             android:layout_height="wrap_content"
             android:text="Category" />
 
-        <com.example.recipe.widgets.FlowLayout
+        <com.foodie.recipe.widgets.FlowLayout
             android:id="@+id/category"
             android:layout_below="@+id/categoryButton"
             android:padding="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        </com.example.recipe.widgets.FlowLayout>
+        </com.foodie.recipe.widgets.FlowLayout>
 
     </RelativeLayout>
 

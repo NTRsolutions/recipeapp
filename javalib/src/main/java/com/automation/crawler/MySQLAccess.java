@@ -20,7 +20,7 @@ public class MySQLAccess {
 
 	public enum COLUMNS {
 		RECIPEINFO_ID, URL, DONE, DIRTY, SOURCE, JSON, TITLE, 
-		DESCRIPTION, COOKING_TIME, SERVING, IMAGE_DOWNLOADED, CATEGORY
+		DESCRIPTION, COOKING_TIME, SERVING, IMAGE_DOWNLOADED, CATEGORY, ADDED_AT
 	}
 
 	public void setUpDB() throws ClassNotFoundException, SQLException {
@@ -38,6 +38,7 @@ public class MySQLAccess {
 		try {
 			setUpDB();
 			String setSegment = "";
+            list.put(COLUMNS.ADDED_AT.toString().toLowerCase(), System.currentTimeMillis()/1000 + "");
 			for (String key : list.keySet()) {
 				setSegment += (key + " = \"" + list.get(key)) + "\",";
 			}
