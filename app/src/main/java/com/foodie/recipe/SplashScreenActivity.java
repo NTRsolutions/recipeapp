@@ -40,8 +40,8 @@ public class SplashScreenActivity extends AppCompatActivity {
     }
 
     void onDataFetchComplete() {
-        Intent BackgroundDataFetcherIntent = new Intent(this, ParseDataFetcherService.class);
-        startService(BackgroundDataFetcherIntent);
+        Intent backgroundDataFetcherIntent = new Intent(this, ParseDataFetcherService.class);
+        startService(backgroundDataFetcherIntent);
 
         AppPreference.getInstance(this).putBoolean(UserInfo.IS_RETURNING_USER_KEY, true);
         Intent intent = new Intent(this, MainActivity.class);

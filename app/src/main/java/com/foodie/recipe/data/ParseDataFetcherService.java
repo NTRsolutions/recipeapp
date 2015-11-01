@@ -40,12 +40,12 @@ public class ParseDataFetcherService extends IntentService {
     public int fetchAllInfoData() {
         int lastDataFetchedUpto = AppPreference.getInstance(this).getInteger(LAST_DATA_FETCHED_UPTO_KEY, 0);
         List<ParseObject> results = new ArrayList<>();
-        ParseQuery<ParseObject> category = ParseQuery.getQuery(RecipeInfo.class.getSimpleName());
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(RecipeInfo.class.getSimpleName());
         try {
-            category.setLimit(sSingleBatchLimit);
-            category.orderByAscending("added_at");
-            category.whereGreaterThan("added_at", lastDataFetchedUpto);
-            results = category.find();
+            query.setLimit(sSingleBatchLimit);
+            query.orderByAscending("added_at");
+            query.whereGreaterThan("added_at", lastDataFetchedUpto);
+            results = query.find();
             for (ParseObject object : results) {
                 RecipeInfo info = RecipeInfo.getRecipeInfo(object);
                 RecipeDataStore.getsInstance(ParseDataFetcherService.this).updateDoc(info);
