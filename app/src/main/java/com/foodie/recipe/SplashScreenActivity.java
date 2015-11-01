@@ -16,6 +16,7 @@ import com.foodie.recipe.data.RecipeDataStore.RecipeDataStoreListener;
 import com.foodie.recipe.data.RecipeInfo;
 import com.foodie.recipe.data.UserInfo;
 import com.foodie.recipe.utility.AppPreference;
+import com.foodie.recipe.utility.Utility;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -30,7 +31,9 @@ public class SplashScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
 
         // Gets Geo Location
-        UserInfo.getInstance(this).getUserLocation();
+        if (Utility.isNetworkAvailable(this)) {
+            UserInfo.getInstance(this).getUserLocation();
+        }
 
         SplashAsyncTask task = new SplashAsyncTask(this);
         task.execute("SplashAsyncTask");
