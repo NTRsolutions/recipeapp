@@ -186,6 +186,15 @@ public class UserInfo {
     }
 
     public boolean getUserLocation(){
+
+        String currentLocation = AppPreference.getInstance(mContext).getString(
+                UserInfo.GEO_ADMIN_AREA, "");
+
+        // Location already set
+        if (currentLocation != null && currentLocation.equalsIgnoreCase("")) {
+            return true;
+        }
+
         Location location = getLastKnownLocation();
         if (location == null) {
             return false;

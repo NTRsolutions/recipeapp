@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.foodie.recipe.data.AnalyticsHandler;
 import com.foodie.recipe.data.RecipeDataStore;
 import com.foodie.recipe.data.ShoppingListDataStore;
 import com.foodie.recipe.data.UserInfo;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        AnalyticsHandler.getInstance(this).sendScreenName(this.getClass().getSimpleName());
         mviewPager = (ViewPager) findViewById(R.id.pager);
         mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         mviewPager.setAdapter(mPagerAdapter);
@@ -125,6 +127,14 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
             int id = menuItem.getItemId();
             // The action bar home/up action should open or close the drawer.
             switch (menuItem.getItemId()) {
+                case R.id.menu_favorite:
+                    mDrawer.closeDrawer(Gravity.LEFT);
+                    showFavoriteFragment();
+                    return true;
+                case R.id.menu_recent:
+                    mDrawer.closeDrawer(Gravity.LEFT);
+                    showRecentFragment();
+                    return true;
                 case R.id.shoppingList:
                     mDrawer.closeDrawer(Gravity.LEFT);
                     showShoppingList();
@@ -158,6 +168,25 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    private void showRecentFragment() {
+        Log.d("TAG", "showRecentFragment");
+        RecipeListFragment fragment = RecipeListFragment.getInstance(Pages.RECENT);
+        getSupportFragmentManager().beginTransaction().add(
+                R.id.full_screen_view, fragment, "Recent History Fragment")
+                .addToBackStack(RecipeListFragment.class.getSimpleName())
+                .commit();
+    }
+
+    private void showFavoriteFragment() {
+        Log.d("TAG", "showFavoriteFragment");
+        RecipeListFragment fragment = RecipeListFragment.getInstance(Pages.FAVOURITE);
+        getSupportFragmentManager().beginTransaction().add(
+                R.id.full_screen_view, fragment, "Favorite Fragment")
+                .addToBackStack(RecipeListFragment.class.getSimpleName())
+                .commit();
     }
 
     private void showShoppingList() {
@@ -268,7 +297,9 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
 
         @Override
         public int getCount() {
-            return Pages.values().length;
+            // disabled Favourate and Recent for now as it was very slow
+            return 2;
+//          return Pages.values().length;
         }
 
         @Override

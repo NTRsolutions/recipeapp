@@ -4,5 +4,6 @@
     <item name="colorPrimaryDark">#0097A7</item>
     <item name="colorPrimary">#00BCD4</item>
     <item name="colorAccent">#CDDC39</item>
+    <item name="android:icon">@drawable/ic_menu</item>
 </style>
 </resources>

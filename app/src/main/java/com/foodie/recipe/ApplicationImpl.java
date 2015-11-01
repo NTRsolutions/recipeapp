@@ -9,6 +9,8 @@ import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 import com.foodie.recipe.utility.Config;
 import com.foodie.recipe.utility.Utility;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 import com.parse.Parse;
 import com.parse.ParseCrashReporting;
 import io.fabric.sdk.android.Fabric;
@@ -17,6 +19,8 @@ import io.fabric.sdk.android.Fabric;
 public class ApplicationImpl extends Application {
     public static final String TAG = ApplicationImpl.class.getSimpleName();
     private MyActivityLifecycleCallbacks mCallbacks;
+    private Tracker mTracker;
+    private static final String PROPERTY_ID = "UA-40303534-2";
 
     @Override
     public void onCreate() {
@@ -34,6 +38,15 @@ public class ApplicationImpl extends Application {
         mCallbacks = new MyActivityLifecycleCallbacks(this);
         registerActivityLifecycleCallbacks(mCallbacks);
 
+    }
+
+    synchronized public Tracker getDefaultTracker() {
+        if (mTracker == null) {
+            GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+            // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
+            mTracker = analytics.newTracker(PROPERTY_ID);
+        }
+        return mTracker;
     }
 
     @Override

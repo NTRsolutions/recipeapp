@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.foodie.recipe.MainActivity;
 import com.foodie.recipe.R;
+import com.foodie.recipe.data.AnalyticsHandler;
 
 
 /**
@@ -36,6 +37,7 @@ public class CategoryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        AnalyticsHandler.getInstance(getActivity()).sendScreenName(this.getClass().getSimpleName());
         View rootView = inflater.inflate(R.layout.fragment_category, container,
                 false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.my_recycler_view);

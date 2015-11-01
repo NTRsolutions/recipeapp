@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.foodie.recipe.MainActivity;
 import com.foodie.recipe.R;
+import com.foodie.recipe.data.AnalyticsHandler;
 import com.foodie.recipe.data.DataUtility;
 import com.foodie.recipe.data.DownloadFileFromURL;
 import com.foodie.recipe.data.FoodCategoryList;
@@ -361,6 +362,8 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         @Override
         public void onClick(View v) {
             mSerachSrting = mSerachSrting.replace("#", "");
+            AnalyticsHandler.getInstance(mContext).logAppEvent(
+                    AnalyticsHandler.CATEGORY_TAG_STR, "Clicked", mSerachSrting);
             ((MainActivity) v.getContext()).showDetailViewBrowseFragment(mSerachSrting);
         }
     }

@@ -27,6 +27,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.foodie.recipe.R;
+import com.foodie.recipe.data.AnalyticsHandler;
 import com.foodie.recipe.data.DataUtility;
 import com.foodie.recipe.data.DownloadDescFromUrl;
 import com.foodie.recipe.data.RecipeDataStore;
@@ -83,6 +84,7 @@ public class RecipeDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        AnalyticsHandler.getInstance(getActivity()).sendScreenName(this.getClass().getSimpleName());
         // Inflate the layout for this fragment
         mRootView = inflater.inflate(R.layout.fragment_recipe2, null, false);
         int recipeInfoId = getArguments().getInt(RECIPE_DETAIL_KEY, -1);

@@ -1,5 +1,6 @@
 package com.foodie.recipe.data;
 
+import com.foodie.recipe.utility.Config;
 import com.google.gson.Gson;
 
 import java.io.Serializable;
@@ -44,6 +45,8 @@ public class ShoppingListDataStore implements Serializable {
     }
 
     public static boolean updateShoppingList(RecipeInfo recipeInfo, String ingredientItem) {
+        AnalyticsHandler.getInstance(Config.APPLICATION_CONTEXT).logAppEvent(
+                AnalyticsHandler.CATEGORY_SHOPPING_LIST_STR, "item_added");
         String title = recipeInfo.getTitle();
         List<String> recipeIngredientList = recipeInfo.getIngredients();
         ShoppingListDataStore listInstance = ShoppingListDataStore.getInstance();
@@ -95,6 +98,8 @@ public class ShoppingListDataStore implements Serializable {
 
     public static boolean deleteShoppingIngredientItem(
             RecipeInfo recipeInfo, String ingredientItem) {
+        AnalyticsHandler.getInstance(Config.APPLICATION_CONTEXT).logAppEvent(
+                AnalyticsHandler.CATEGORY_SHOPPING_LIST_STR, "item_deleted");
         Boolean removeItem = false;
 
         ShoppingListDataStore listInstance = ShoppingListDataStore.getInstance();

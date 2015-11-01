@@ -10,11 +10,13 @@ import android.view.MenuItem;
 
 import com.foodie.recipe.data.LocationMapper;
 import com.foodie.recipe.data.LocationMapper.LocationMapperUpdate;
+import com.foodie.recipe.data.ParseDataFetcherService;
 import com.foodie.recipe.data.RecipeDataStore;
 import com.foodie.recipe.data.RecipeDataStore.RecipeDataStoreListener;
 import com.foodie.recipe.data.RecipeInfo;
 import com.foodie.recipe.data.UserInfo;
 import com.foodie.recipe.utility.AppPreference;
+import com.foodie.recipe.utility.Utility;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -29,13 +31,18 @@ public class SplashScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
 
         // Gets Geo Location
-        UserInfo.getInstance(this).getUserLocation();
+        if (Utility.isNetworkAvailable(this)) {
+            UserInfo.getInstance(this).getUserLocation();
+        }
 
         SplashAsyncTask task = new SplashAsyncTask(this);
         task.execute("SplashAsyncTask");
     }
 
     void onDataFetchComplete() {
+        Intent BackgroundDataFetcherIntent = new Intent(this, ParseDataFetcherService.class);
+        startService(BackgroundDataFetcherIntent);
+
         AppPreference.getInstance(this).putBoolean(UserInfo.IS_RETURNING_USER_KEY, true);
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
@@ -84,10 +91,15 @@ public class SplashScreenActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(String... params) {
 
-            //TODO to remove and implement sequential download's
-            RecipeDataStore.getsInstance(mContext).fetchAllInfoData(
-                    new RecipeDataStoreListenerImpl(this));
-
+            // first hit Db and chk data is available
+            int totalDocumentCount =  RecipeDataStore.getsInstance(mContext).getAllRecipeInfoCount();
+            if (totalDocumentCount > 0) {
+                dataFetchComplete = true;
+            } else {
+                //TODO to remove and implement sequential download's
+                RecipeDataStore.getsInstance(mContext).fetchAllInfoData(
+                        new RecipeDataStoreListenerImpl(this), 500);
+            }
 
             LocationMapper.getInstance(mContext).fetchLocationMapperData(
                     new LocationMapperUpdateImpl(this));
