@@ -560,6 +560,10 @@ public class RecipeDataStore {
          return tagsList;
     }
 
+    public int getAllRecipeInfoCount() {
+        return mDataBase.getDocumentCount();
+    }
+
     // Reads the CB db and returns all the videos.
     public List<RecipeInfo> getAllRecipeInfos(int limit) {
         Query query = mDataBase.getView(kRecipeInfoView).createQuery();

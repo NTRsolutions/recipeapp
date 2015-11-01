@@ -89,13 +89,13 @@ public class SplashScreenActivity extends AppCompatActivity {
         protected Boolean doInBackground(String... params) {
 
             // first hit Db and chk data is available
-            List<RecipeInfo> list =  RecipeDataStore.getsInstance(mContext).getAllRecipeInfos(1);
-            if (list == null || list.size() == 0) {
+            int totalDocumentCount =  RecipeDataStore.getsInstance(mContext).getAllRecipeInfoCount();
+            if (totalDocumentCount > 0) {
+                dataFetchComplete = true;
+            } else {
                 //TODO to remove and implement sequential download's
                 RecipeDataStore.getsInstance(mContext).fetchAllInfoData(
                         new RecipeDataStoreListenerImpl(this), 500);
-            } else {
-                dataFetchComplete = true;
             }
 
             LocationMapper.getInstance(mContext).fetchLocationMapperData(
