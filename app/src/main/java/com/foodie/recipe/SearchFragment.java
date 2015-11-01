@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.foodie.recipe.data.AnalyticsHandler;
 import com.foodie.recipe.data.RecipeDataStore;
 import com.foodie.recipe.data.RecipeInfo;
 import com.foodie.recipe.utility.Utility;
@@ -42,6 +43,7 @@ public class SearchFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        AnalyticsHandler.getInstance(getActivity()).sendScreenName(this.getClass().getSimpleName());
         View root = inflater.inflate(R.layout.fragment_search, container, false);
         mSearchView = (SearchView) root.findViewById(R.id.search_view);
         mListView = (ListView) root.findViewById(R.id.list_view);

@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.foodie.recipe.MainActivity;
 import com.foodie.recipe.R;
+import com.foodie.recipe.data.AnalyticsHandler;
 import com.foodie.recipe.data.RecipeDataStore;
 import com.foodie.recipe.data.RecipeDataStore.RecipeDataType;
 import com.foodie.recipe.data.RecipeInfo;
@@ -62,6 +63,7 @@ public class BrowseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        AnalyticsHandler.getInstance(getActivity()).sendScreenName(this.getClass().getSimpleName());
         rootView = inflater.inflate(R.layout.fragment_browse, container,
                 false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.my_recycler_view);

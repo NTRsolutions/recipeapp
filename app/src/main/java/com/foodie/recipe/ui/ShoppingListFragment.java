@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.foodie.recipe.R;
+import com.foodie.recipe.data.AnalyticsHandler;
 import com.foodie.recipe.data.RecipeInfo;
 import com.foodie.recipe.data.ShoppingListDataStore;
 
@@ -32,6 +33,7 @@ public class ShoppingListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        AnalyticsHandler.getInstance(getActivity()).sendScreenName(this.getClass().getSimpleName());
         mShoppingListDataStore = (ShoppingListDataStore) getArguments()
                 .getSerializable(ShoppingListDataStore.SHOPPING_IST_DATA_STORE_KEY);
 

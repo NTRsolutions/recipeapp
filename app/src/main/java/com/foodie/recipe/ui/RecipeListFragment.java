@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.foodie.recipe.MainActivity;
 import com.foodie.recipe.R;
+import com.foodie.recipe.data.AnalyticsHandler;
 import com.foodie.recipe.data.RecipeDataStore;
 import com.foodie.recipe.data.RecipeInfo;
 
@@ -48,6 +49,7 @@ public class RecipeListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        AnalyticsHandler.getInstance(getActivity()).sendScreenName(this.getClass().getSimpleName());
         mPage = (MainActivity.Pages) getArguments().getSerializable(EXTRA_RECIPE_LIST_TYPE);
         View rootView = inflater.inflate(R.layout.fragment_feed, container,
                 false);
