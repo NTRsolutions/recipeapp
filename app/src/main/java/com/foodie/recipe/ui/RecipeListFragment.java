@@ -9,6 +9,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.foodie.recipe.MainActivity;
 import com.foodie.recipe.R;
@@ -55,6 +58,7 @@ public class RecipeListFragment extends Fragment {
                 false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.my_recycler_view);
 
+        setUpHeader(rootView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(layoutManager);
 
@@ -82,6 +86,32 @@ public class RecipeListFragment extends Fragment {
         return rootView;
     }
 
+    void setUpHeader(View rootView) {
+        RelativeLayout headerBar = (RelativeLayout) rootView.findViewById(R.id.headerBar);
+        TextView title = (TextView) rootView.findViewById(R.id.title);
+        ImageView backButton = (ImageView) rootView.findViewById(R.id.backButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getSupportFragmentManager().beginTransaction().remove(
+                        RecipeListFragment.this).commit();
+            }
+        });
+
+        switch (mPage) {
+            case FEED:
+            case CATEGORIES:
+                headerBar.setVisibility(View.GONE);
+                break;
+            case RECENT:
+                title.setText("History");
+                break;
+            case FAVOURITE:
+                title.setText("Favourite");
+                break;
+        }
+
+    }
     private class RecipeDataStoreListenerImpl implements
             RecipeDataStore.RecipeDataStoreListener {
 

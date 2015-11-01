@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -40,12 +41,22 @@ public class ShoppingListFragment extends Fragment {
         rootView =  inflater.inflate(R.layout.fragment_shoppinglist, null, false);
         shoppingListRootView = (LinearLayout) rootView.findViewById(R.id.shoppingingredient_list);
         refreshShoppingListUi();
-
+        setUpHeader();
         interceptTouchEvent(rootView);
         return rootView;
 
      }
 
+    private void setUpHeader() {
+        ImageView backButton = (ImageView) rootView.findViewById(R.id.backButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getSupportFragmentManager().beginTransaction().remove(
+                        ShoppingListFragment.this).commit();
+            }
+        });
+    }
     private void refreshShoppingListUi() {
         shoppingListRootView.removeAllViews();
         List<ShoppingListDataStore.ShoppingItemInfo> shoppingList=  mShoppingListDataStore.getList();
