@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.foodie.recipe.data.AnalyticsHandler;
 import com.foodie.recipe.data.RecipeDataStore;
 import com.foodie.recipe.data.ShoppingListDataStore;
 import com.foodie.recipe.data.UserInfo;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        AnalyticsHandler.getInstance(this).sendScreenName(this.getClass().getSimpleName());
         mviewPager = (ViewPager) findViewById(R.id.pager);
         mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         mviewPager.setAdapter(mPagerAdapter);

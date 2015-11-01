@@ -31,6 +31,44 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="55c00a3eccaa592b0ee078fef827d0ad79e05262" />
+
+        <!-- GoogleAnalytics -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <!--
+             meta-data
+            android:name="com.google.android.gms.analytics.globalConfigResource"
+            android:resource="@xml/analytics_global_config" /
+        -->
+
+        <receiver
+            android:name="com.google.android.gms.analytics.AnalyticsReceiver"
+            android:enabled="true" >
+            <intent-filter>
+                <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name="com.google.android.gms.analytics.AnalyticsService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <!--
+        receiver
+            android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver
+        -->
+
+        <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
+        <!-- /GoogleAnalytics -->
+
     </application>
 
 </manifest>
