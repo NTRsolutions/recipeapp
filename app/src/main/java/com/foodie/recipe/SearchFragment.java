@@ -62,6 +62,8 @@ public class SearchFragment extends Fragment {
                 RecipeInfo info = mInfoList.get(i);
                 if (getActivity() instanceof MainActivity) {
                     Utility.hideKeyboard(mSearchView);
+                    AnalyticsHandler.getInstance(getActivity()).logAppEvent(
+                            AnalyticsHandler.CATEGORY_SEARCH_STR, "Searched", info.getTitle());
                     MainActivity mainActivity = (MainActivity) getActivity();
                     mainActivity.showDetailView(Integer.parseInt(info.getDocId()));
                 }

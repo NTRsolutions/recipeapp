@@ -314,6 +314,8 @@ public class RecipeDataStore {
             }
         }
 
+        AnalyticsHandler.getInstance(mContext).logAppEvent(AnalyticsHandler.CATEGORY_FAVORITE_STR,
+                "item_added", info.getTitle(), Long.parseLong(info.getDocId()));
         RecipeDataStore.getsInstance(mContext).addFreeTextTag(
                 info, Config.sFavouriteTag);
         UserInfo.getInstance(mContext).updateRecipeInfoFavorateCount(info, true);
@@ -328,6 +330,9 @@ public class RecipeDataStore {
                 break;
             }
         }
+
+        AnalyticsHandler.getInstance(mContext).logAppEvent(AnalyticsHandler.CATEGORY_FAVORITE_STR
+                , "item_deleted", info.getTitle(),  Long.parseLong(info.getDocId()));
 
         RecipeDataStore.getsInstance(mContext).removeFreeTextTag(
                 info, Config.sFavouriteTag);

@@ -15,6 +15,11 @@ public class AnalyticsHandler {
     private static AnalyticsHandler sInstance;
     private Tracker mTracker;
 
+    public static final String CATEGORY_TAG_STR = "TAGS";
+    public static final String CATEGORY_SEARCH_STR = "SEARCH";
+    public static final String CATEGORY_SHOPPING_LIST_STR = "SHOPPING_LIST";
+    public static final String CATEGORY_FAVORITE_STR = "FAVORITE";
+
     private AnalyticsHandler(Context context) {
 
         ApplicationImpl application =  (ApplicationImpl)(context);
