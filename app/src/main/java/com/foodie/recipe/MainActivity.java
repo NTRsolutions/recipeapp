@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
 
         // Set the menu icon instead of the launcher icon.
         final ActionBar actionBar = getSupportActionBar();
-        //ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
         actionBar.setDisplayHomeAsUpEnabled(true);
         Log.d(TAG, "onCreate ");
         setUpRateAppPopUp();

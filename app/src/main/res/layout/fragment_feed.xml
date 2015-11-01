@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,11 +7,40 @@
 
     <!-- A RecyclerView with some commonly used attributes -->
 
+    <RelativeLayout
+        android:id="@+id/headerBar"
+        android:background="@color/colorPrimary"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_centerVertical="true"
+            android:src="@drawable/arrow_back_white"
+            android:layout_marginLeft="10dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"/>
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_toRightOf="@+id/backButton"
+            android:layout_marginLeft="10dp"
+            android:padding="5dp"
+            android:textStyle="bold"
+            android:textSize="18dp"
+            android:layout_centerVertical="true"
+            android:textColor="@color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </RelativeLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/my_recycler_view"
+        android:layout_below="@+id/headerBar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical" />
 
 
-</FrameLayout>
+</RelativeLayout>

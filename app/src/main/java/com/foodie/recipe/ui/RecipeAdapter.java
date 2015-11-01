@@ -37,7 +37,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
     public RecipeViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(
                 R.layout.recipe_card_item,viewGroup, false);
-        RecipeViewHolder mh = new RecipeViewHolder(mContext, v, new ClickResolver(this));
+        RecipeViewHolder mh = new RecipeViewHolder(mContext, v, new ClickResolver(this), this);
         return mh;
 
     }
@@ -46,7 +46,12 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
     public void onBindViewHolder(RecipeViewHolder myViewHolder, int i) {
         Log.d(TAG, "onBindViewHolder ");
         RecipeInfo dataItem = mDataItems.get(i);
-        myViewHolder.onBindView(dataItem);
+        myViewHolder.onBindView(dataItem, i);
+    }
+
+    public void removeItem(int index) {
+        mDataItems.remove(index);
+        notifyItemChanged(index);
     }
 
     @Override

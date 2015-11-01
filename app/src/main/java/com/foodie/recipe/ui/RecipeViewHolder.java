@@ -44,13 +44,17 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
     private ImageView mFavouriteImage;
     private RecipeInfo mRecipeInfo;
     private FlowLayout mFlowLayout;
+    private RecipeAdapter mAdapter;
+    private boolean mImageDownloaded;
+    private int mCurrentIndex;
 
     public interface RecipeViewHolderListener {
         void onViewHolderClicked(int recipeInfoId);
         void onTagClicked(String tag);
     }
 
-    public RecipeViewHolder(Context context, View view, final RecipeViewHolderListener lstr) {
+    public RecipeViewHolder(Context context, View view, final RecipeViewHolderListener lstr,
+                            RecipeAdapter adapter) {
         super(view);
         mContext = context;
         rootView = view.findViewById(R.id.rootView);
@@ -62,6 +66,7 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         mFavouriteImage = (ImageView) view.findViewById(R.id.favourite);
         mFavouriteImage.setVisibility(View.GONE);
 
+        mAdapter = adapter;
         mListener = lstr;
         ViewGroup.LayoutParams layoutParams = mReciepeImageView.getLayoutParams();
         layoutParams.height = (int) (Config.SCREEN_SIZE.y
@@ -106,6 +111,10 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
     //// TODO: 19/9/15  (rkumar) Debug code to remove later
     private void setUpCategoryButton(View rootView) {
         Button categoryButton = (Button) rootView.findViewById(R.id.categoryButton);
+
+        // Removed for now
+        categoryButton.setVisibility(View.GONE);
+
         categoryButton.setSelected(false);
         categoryButton.setText("Select Category");
         final FlowLayout addCategoryContainer = (FlowLayout) rootView.findViewById(R.id.category);
@@ -268,10 +277,21 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void unBind() {
+        if (mImageDownloaded) {
+            rootView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mAdapter.removeItem(mCurrentIndex);
+                }
+            }, 100);
+        }
     }
 
 
-    public void onBindView(RecipeInfo dataItem) {
+    public void onBindView(RecipeInfo dataItem, int index) {
+        mImageDownloaded = false;
+        mCurrentIndex = index;
+
         mRecipeInfo = dataItem;
         Resources resources = mContext.getResources();
         mCardView.setCardBackgroundColor(resources.getColor(R.color.white));
@@ -287,6 +307,7 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
             mImageUri = Uri.fromFile(imageFile);
             Picasso.with(mContext).load(imageFile).into(mReciepeImageView);
             mCardView.setCardBackgroundColor(resources.getColor(R.color.lightgreen));
+            mImageDownloaded = true;
         } else {
             String cloudImagePath = Config.sRecipeStorageCloudBaseUrl + "/images/"
                     + mRecipeInfo.getRecipeinfoId() + ".jpg";

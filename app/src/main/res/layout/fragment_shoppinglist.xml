@@ -4,16 +4,35 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <TextView
+
+    <RelativeLayout
+        android:id="@+id/headerBar"
+        android:background="@color/colorPrimary"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Shopping List"
-        android:textStyle="bold"
-        android:fontFamily="sans-serif-thin"
-        android:padding="20dp"
-        android:textSize="25dp"
-        android:textColor="@color/white"
-        android:background="@color/colorPrimary"/>
+        android:layout_height="50dp">
+
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_centerVertical="true"
+            android:src="@drawable/arrow_back_white"
+            android:layout_marginLeft="10dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"/>
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_toRightOf="@+id/backButton"
+            android:layout_marginLeft="10dp"
+            android:padding="5dp"
+            android:textStyle="bold"
+            android:textSize="18dp"
+            android:text="Shopping List"
+            android:layout_centerVertical="true"
+            android:textColor="@color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/shoppingingredient_list"
