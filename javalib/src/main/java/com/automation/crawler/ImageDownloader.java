@@ -9,21 +9,28 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 
 public class ImageDownloader {
-	private static int MAX_IMAGE_COUNT_PER_ITEM = 16;
+	private static int MAX_IMAGE_COUNT_PER_ITEM = 12;
 	public static void downloadImageFromUrl(String urlStr, String detination) 
 			throws IOException {
 	 URL url = new URL(urlStr);
-	 InputStream in = new BufferedInputStream(url.openStream());
-	 
+
+        URLConnection connection = url.openConnection();
+        connection.setConnectTimeout(2000);
+        connection.setReadTimeout(4000);
+        System.out.println("Download start for : " + urlStr);
+	 InputStream in = new BufferedInputStream(connection.getInputStream());
+
 	 ByteArrayOutputStream out = new ByteArrayOutputStream();
-	 byte[] buf = new byte[1024];
+	 byte[] buf = new byte[2048];
 	 int n = 0;
 	 while (-1!=(n=in.read(buf)))
 	 {
@@ -40,11 +47,12 @@ public class ImageDownloader {
 	 FileOutputStream fos = new FileOutputStream(file.getAbsolutePath());
 	 fos.write(response);
 	 fos.close();
+        System.out.println("Download Complete for : " + urlStr);
 	 
 	}
 	
 	public static void main(String args[]) {
-		int batch_size_to_process = 2000;
+		int batch_size_to_process = 5000;
 		MySQLAccess mDatabaseManager = new MySQLAccess();
 		String whereClause = " where title is not null and image_downloaded = 0 ";
 		try {
@@ -77,7 +85,7 @@ public class ImageDownloader {
 			}
 		}
 		
-		String destinationBasePath = "/home/rajnish/Desktop/file_server/" + id + "/";
+		String destinationBasePath = "~/Desktop/file_server/" + id + "/";
 		 File file = new File(destinationBasePath);
 		 if (!file.exists()) {
 			 file.mkdirs();
@@ -87,7 +95,13 @@ public class ImageDownloader {
 		for(String imageUrl : imageUrlList) {
 			try {
 				String destination = destinationBasePath + counter + "";
-				ImageDownloader.downloadImageFromUrl(imageUrl, destination);
+
+                try {
+                    ImageDownloader.downloadImageFromUrl(imageUrl, destination);
+                }catch (Exception ex) {
+                    continue;
+                }
+
 				String type = imageDownloader.identifyFileTypeUsingFilesProbeContentType(destination);
                 if (type == null) {
                     continue;
@@ -102,7 +116,7 @@ public class ImageDownloader {
 				if (counter > MAX_IMAGE_COUNT_PER_ITEM) {
 					break;
 				}
-			} catch (IOException e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

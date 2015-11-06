@@ -37,7 +37,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
     public RecipeViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(
                 R.layout.recipe_card_item,viewGroup, false);
-        RecipeViewHolder mh = new RecipeViewHolder(mContext, v, new ClickResolver(this), this);
+        RecipeViewHolder mh = new RecipeViewHolder(mContext, v, new ClickResolver(this));
         return mh;
 
     }

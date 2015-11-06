@@ -19,6 +19,7 @@ import com.foodie.recipe.data.DataUtility;
 import com.foodie.recipe.data.DownloadFileFromURL;
 import com.foodie.recipe.data.FoodCategoryList;
 import com.foodie.recipe.data.FoodCategoryList.FoodCategory;
+import com.foodie.recipe.data.ImageDownloadHelper;
 import com.foodie.recipe.data.RecipeInfo;
 import com.foodie.recipe.utility.Config;
 import com.foodie.recipe.utility.Utility;
@@ -44,17 +45,17 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
     private ImageView mFavouriteImage;
     private RecipeInfo mRecipeInfo;
     private FlowLayout mFlowLayout;
-    private RecipeAdapter mAdapter;
     private boolean mImageDownloaded;
     private int mCurrentIndex;
+    private Button mDoneButton;
+    private Button mDirtyButton;
 
     public interface RecipeViewHolderListener {
         void onViewHolderClicked(int recipeInfoId);
         void onTagClicked(String tag);
     }
 
-    public RecipeViewHolder(Context context, View view, final RecipeViewHolderListener lstr,
-                            RecipeAdapter adapter) {
+    public RecipeViewHolder(Context context, View view, final RecipeViewHolderListener lstr) {
         super(view);
         mContext = context;
         rootView = view.findViewById(R.id.rootView);
@@ -66,13 +67,29 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         mFavouriteImage = (ImageView) view.findViewById(R.id.favourite);
         mFavouriteImage.setVisibility(View.GONE);
 
-        mAdapter = adapter;
         mListener = lstr;
         ViewGroup.LayoutParams layoutParams = mReciepeImageView.getLayoutParams();
         layoutParams.height = (int) (Config.SCREEN_SIZE.y
                 * Config.MAX_CATEGORY_CARD_HEIGHT_PECENTAGE);
         mReciepeImageView.setLayoutParams(layoutParams);
         mReciepeImageView.requestLayout();
+
+        mDoneButton = (Button) view.findViewById(R.id.image_download_complete);
+        mDoneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ImageDownloadHelper.updateImageDownloadHelper(mRecipeInfo);
+            }
+        });
+
+        mDirtyButton = (Button) view.findViewById(R.id.image_download_dirty);
+        mDirtyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ImageDownloadHelper.markDownloadImageAsDirty(mRecipeInfo);
+            }
+        });
+
         final Button downloadButton = (Button) view.findViewById(R.id.download);
         final Button nextButton = (Button) view.findViewById(R.id.next);
         final Button previousButton =(Button) view.findViewById(R.id.previous);
@@ -273,18 +290,11 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         DownloadFileFromURL downloadFileFromURL = new DownloadFileFromURL(
                 mContext, url, finalPath);
         downloadFileFromURL.execute("DownloadFileFromURL Task");
-
+        ImageDownloadHelper.updateImageDownloadHelper(mRecipeInfo);
     }
 
     public void unBind() {
-        if (mImageDownloaded) {
-            rootView.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mAdapter.removeItem(mCurrentIndex);
-                }
-            }, 100);
-        }
+
     }
 
 
@@ -337,7 +347,7 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         int imagePerItem = 9;
         ArrayList<String>  imageUrlArray = new ArrayList<>();
         int recipeId = mRecipeInfo.getRecipeinfoId();
-        String baseUrl = String.format("http://192.168.1.106:8000/file_server/%d/", recipeId);
+        String baseUrl = String.format("http://192.168.1.105:8000/file_server/%d/", recipeId);
         for (int i = 0; i < imagePerItem; i++) {
             imageUrlArray.add(baseUrl + i);
         }

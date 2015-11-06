@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import com.foodie.recipe.data.LocationMapper;
 import com.foodie.recipe.data.LocationMapper.LocationMapperUpdate;
 import com.foodie.recipe.data.ParseDataFetcherService;
+import com.foodie.recipe.data.ParseImageDownloadHelper;
 import com.foodie.recipe.data.RecipeDataStore;
 import com.foodie.recipe.data.RecipeDataStore.RecipeDataStoreListener;
 import com.foodie.recipe.data.RecipeInfo;
@@ -42,6 +43,9 @@ public class SplashScreenActivity extends AppCompatActivity {
     void onDataFetchComplete() {
         Intent BackgroundDataFetcherIntent = new Intent(this, ParseDataFetcherService.class);
         startService(BackgroundDataFetcherIntent);
+
+        Intent parseImageDownloadHelper = new Intent(this, ParseImageDownloadHelper.class);
+        startService(parseImageDownloadHelper);
 
         AppPreference.getInstance(this).putBoolean(UserInfo.IS_RETURNING_USER_KEY, true);
         Intent intent = new Intent(this, MainActivity.class);

@@ -28,7 +28,7 @@ public class MySQLAccess {
 		Class.forName("com.mysql.jdbc.Driver");
 		// Setup the connection with the DB
 		connect = DriverManager.getConnection("jdbc:mysql://localhost/recipe?"
-				+ "user=sqluser&password=sqluserpw");
+				+ "user=root&password=root");
 
 		statement = connect.createStatement();
 	}

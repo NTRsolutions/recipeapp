@@ -76,6 +76,29 @@
 
         </RelativeLayout>
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageSelection"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/image_download_complete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:text="Finished" />
+
+            <Button
+                android:id="@+id/image_download_dirty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="Dirty Flag" />
+
+        </LinearLayout>
+
+
         <Button
             android:id="@+id/categoryButton"
             android:layout_below="@+id/imageSelection"

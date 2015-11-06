@@ -67,7 +67,7 @@ public class RecipeDataStore {
         void onDataUpdate(List<RecipeInfo> list);
     }
 
-    public static RecipeDataStore getsInstance(Context cntx) {
+    public synchronized  static RecipeDataStore getsInstance(Context cntx) {
         if (sInstance == null) {
             sInstance = new RecipeDataStore(cntx);
         }
@@ -619,6 +619,15 @@ public class RecipeDataStore {
                     return true;
                 }
             });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteDocument(String docId) {
+        try {
+            Document task = mDataBase.getDocument(docId);
+            task.delete();
         } catch (Exception e) {
             e.printStackTrace();
         }

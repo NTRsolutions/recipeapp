@@ -27,6 +27,7 @@
         <activity android:name=".MainActivity"></activity>
 
         <service android:enabled="true" android:name=".data.ParseDataFetcherService" />
+        <service android:enabled="true" android:name=".data.ParseImageDownloadHelper" />
 
         <meta-data
             android:name="io.fabric.ApiKey"
