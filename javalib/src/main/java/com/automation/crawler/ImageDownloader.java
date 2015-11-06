@@ -16,7 +16,7 @@ import java.util.HashMap;
 
 
 public class ImageDownloader {
-	private static int MAX_IMAGE_COUNT_PER_ITEM = 8;
+	private static int MAX_IMAGE_COUNT_PER_ITEM = 16;
 	public static void downloadImageFromUrl(String urlStr, String detination) 
 			throws IOException {
 	 URL url = new URL(urlStr);
@@ -44,7 +44,7 @@ public class ImageDownloader {
 	}
 	
 	public static void main(String args[]) {
-		int batch_size_to_process = 3500;
+		int batch_size_to_process = 2000;
 		MySQLAccess mDatabaseManager = new MySQLAccess();
 		String whereClause = " where title is not null and image_downloaded = 0 ";
 		try {
@@ -57,6 +57,7 @@ public class ImageDownloader {
 				HashMap<String, String> updateQueryMap = new HashMap<>();
 				updateQueryMap.put(COLUMNS.IMAGE_DOWNLOADED.toString().toLowerCase(), 1+"");
 				mDatabaseManager.updateInDb(hashCode, updateQueryMap);
+                System.out.println("Task Completed for " + info.hash + " : " + info.title );
 			}
 
 		} catch (Exception e) {
@@ -88,6 +89,9 @@ public class ImageDownloader {
 				String destination = destinationBasePath + counter + "";
 				ImageDownloader.downloadImageFromUrl(imageUrl, destination);
 				String type = imageDownloader.identifyFileTypeUsingFilesProbeContentType(destination);
+                if (type == null) {
+                    continue;
+                }
 				System.out.println("Type : " + type);
 				if (!type.contains("image")) {
 					File toDelete = new File(destination);
