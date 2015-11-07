@@ -19,13 +19,15 @@ import java.util.HashMap;
 
 public class ImageDownloader {
 	private static int MAX_IMAGE_COUNT_PER_ITEM = 12;
+    private static String sBasePath = "/home/rajnish/RecipeApp/file_server/";
+
 	public static void downloadImageFromUrl(String urlStr, String detination) 
 			throws IOException {
 	 URL url = new URL(urlStr);
 
         URLConnection connection = url.openConnection();
-        connection.setConnectTimeout(2000);
-        connection.setReadTimeout(4000);
+        connection.setConnectTimeout(1000);
+        connection.setReadTimeout(2500);
         System.out.println("Download start for : " + urlStr);
 	 InputStream in = new BufferedInputStream(connection.getInputStream());
 
@@ -52,28 +54,86 @@ public class ImageDownloader {
 	}
 	
 	public static void main(String args[]) {
-		int batch_size_to_process = 5000;
-		MySQLAccess mDatabaseManager = new MySQLAccess();
-		String whereClause = " where title is not null and image_downloaded = 0 ";
-		try {
-			ArrayList<RecipeInfo> list = mDatabaseManager.readDataBase(batch_size_to_process, whereClause);
-			for (RecipeInfo info : list) {
-				ImageDownloader imageDownloader = new ImageDownloader();
-				int hashCode = info.hash;
-				String query = info.title;
-				imageDownloader.downloadImageForItem(hashCode + "", query, imageDownloader);
-				HashMap<String, String> updateQueryMap = new HashMap<>();
-				updateQueryMap.put(COLUMNS.IMAGE_DOWNLOADED.toString().toLowerCase(), 1+"");
-				mDatabaseManager.updateInDb(hashCode, updateQueryMap);
-                System.out.println("Task Completed for " + info.hash + " : " + info.title );
-			}
+        // Start Downloading Processing
+        ImageDownloader.startImageDownloadingLogic();
 
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        // Start Downloaded Image Sanity process Processing
+        ImageDownloader.startImageCorrectionLogic();;
 	}
-	
+
+    public static void startImageCorrectionLogic() {
+        int batch_size_to_process = 10;
+        MySQLAccess mDatabaseManager = new MySQLAccess();
+        String whereClause = " where title is not null and image_downloaded = 1 ";
+        int errorCounter = 0;
+        int correctEntryCounter = 0;
+        try {
+            ArrayList<RecipeInfo> list = mDatabaseManager.readDataBase(batch_size_to_process, whereClause);
+            for (RecipeInfo info : list) {
+                ImageDownloader imageDownloader = new ImageDownloader();
+                int hashCode = info.hash;
+                String title = info.title;
+                String itemPath = sBasePath + hashCode;
+                File file = new File(itemPath);
+                if (!file.exists()) {
+                    System.out.println("Folder not found for " + + info.hash + " : " + info.title );
+                    errorCounter++;
+
+                    HashMap<String, String> updateQueryMap = new HashMap<>();
+                    updateQueryMap.put(COLUMNS.IMAGE_DOWNLOADED.toString().toLowerCase(), 0 + "");
+                    mDatabaseManager.updateInDb(hashCode, updateQueryMap);
+                    continue;
+                }
+
+                int childrenCount = file.listFiles().length;
+                if (childrenCount == 0){
+                    errorCounter++;
+                    System.out.println("empty file path : " + file.getPath());
+                    System.out.println("Folder Empty for "  + info.hash + " : " + info.title );
+                    file.deleteOnExit();
+
+                    HashMap<String, String> updateQueryMap = new HashMap<>();
+                    updateQueryMap.put(COLUMNS.IMAGE_DOWNLOADED.toString().toLowerCase(), 0 + "");
+                    mDatabaseManager.updateInDb(hashCode, updateQueryMap);
+                    continue;
+                }
+
+                correctEntryCounter++;
+
+            }
+
+            System.out.println("Total Error Cases found : " + errorCounter);
+            System.out.println("Total Correct Cases found : " + correctEntryCounter);
+
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public static void startImageDownloadingLogic() {
+        int batch_size_to_process = 10000;
+        MySQLAccess mDatabaseManager = new MySQLAccess();
+        String whereClause = " where title is not null and image_downloaded = 0 ";
+        try {
+            ArrayList<RecipeInfo> list = mDatabaseManager.readDataBase(batch_size_to_process, whereClause);
+            for (RecipeInfo info : list) {
+                ImageDownloader imageDownloader = new ImageDownloader();
+                int hashCode = info.hash;
+                String title = info.title;
+                imageDownloader.downloadImageForItem(hashCode + "", title, imageDownloader);
+                HashMap<String, String> updateQueryMap = new HashMap<>();
+                updateQueryMap.put(COLUMNS.IMAGE_DOWNLOADED.toString().toLowerCase(), 1+"");
+                mDatabaseManager.updateInDb(hashCode, updateQueryMap);
+                System.out.println("Task Completed for " + info.hash + " : " + info.title );
+            }
+
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
 	public void downloadImageForItem(String id, String query, ImageDownloader imageDownloader) {
 		String url = "http://www.bing.com/images/search?q=" + query;
 		ArrayList<String> imageUrlList = new ArrayList<>();
@@ -85,10 +145,11 @@ public class ImageDownloader {
 			}
 		}
 		
-		String destinationBasePath = "~/Desktop/file_server/" + id + "/";
+		String destinationBasePath = sBasePath + id + "/";
 		 File file = new File(destinationBasePath);
 		 if (!file.exists()) {
-			 file.mkdirs();
+			 boolean created = file.mkdirs();
+             System.out.println("created status : " + created);
 		 }
 		 
 		int counter = 0;

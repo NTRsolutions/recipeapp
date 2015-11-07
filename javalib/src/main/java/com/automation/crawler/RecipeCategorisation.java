@@ -10,8 +10,12 @@ import org.apache.commons.lang3.StringUtils;
 import com.automation.crawler.MySQLAccess.COLUMNS;
 import com.google.gson.Gson;
 
+import static com.automation.crawler.FoodCategoryList.FoodCategory.*;
+
 public class RecipeCategorisation {
 	private static String Seperator = "|";
+    private static String sDelimeterPipe = "\\|";
+    private static String sDelimeterSpace = " ";
 	RecipeCategorisation(){}
 	
 	public static void main(String args[]) {
@@ -38,8 +42,8 @@ public class RecipeCategorisation {
 				}
 				
 				String category = info.category;
-				category = recipeCategorisation.categoriseAsVeg(info, jsonStr, category);
-				category = recipeCategorisation.categoriseAsNonVeg(info, jsonStr, category);
+				category = recipeCategorisation.categoriseAsVeg(info, category);
+				category = recipeCategorisation.categoriseAsNonVeg(info, category);
 				
 				category = recipeCategorisation.categoriseAsChicken(info, jsonStr, category);
 				category = recipeCategorisation.categoriseAsFish(info, jsonStr, category);
@@ -47,30 +51,28 @@ public class RecipeCategorisation {
 				category = recipeCategorisation.categoriseAsEgg(info, jsonStr, category);
 				
 				category = recipeCategorisation.categoriseAsMutton(info, jsonStr, category);
-				category = recipeCategorisation.categoriseAsLamb(info, jsonStr, category);
-				category = recipeCategorisation.categoriseAsSalad(info, jsonStr, category);
-				category = recipeCategorisation.categoriseAsChutney(info, jsonStr, category);
+				category = recipeCategorisation.categoriseAsLamb(info, category);
+				category = recipeCategorisation.categoriseAsSalad(info, category);
+				category = recipeCategorisation.categoriseAsChutney(info, category);
 				
-				category = recipeCategorisation.categoriseAsBreakFast(info, jsonStr, category);
+				category = recipeCategorisation.categoriseAsBreakFast(info, category);
 				category = recipeCategorisation.categoriseAsRajasthani(info, jsonStr, category);
 				category = recipeCategorisation.categoriseAsPunjabi(info, jsonStr, category);
 				category = recipeCategorisation.categoriseAsGujrati(info, jsonStr, category);
 				
 				category = recipeCategorisation.categoriseAsBengali(info, jsonStr, category);
-				category = recipeCategorisation.categoriseAsParatha(info, jsonStr, category);
-				category = recipeCategorisation.categoriseAsDesserts(info, jsonStr, category);
-				category = recipeCategorisation.categoriseAsBeverage(info, jsonStr, category);
+				category = recipeCategorisation.categoriseAsParatha(info, category);
+				category = recipeCategorisation.categoriseAsDesserts(info, category);
+				category = recipeCategorisation.categoriseAsBeverage(info, category);
 				
-				category = recipeCategorisation.categoriseAsSoup(info, jsonStr, category);
-				category = recipeCategorisation.categoriseAsSauce(info, jsonStr, category);
+				category = recipeCategorisation.categoriseAsSoup(info, category);
+				category = recipeCategorisation.categoriseAsSauce(info, category);
 				category = recipeCategorisation.categoriseAsKerala(info, jsonStr, category);
-				category = recipeCategorisation.categoriseAsSouthIndian(info, jsonStr, category);
+				category = recipeCategorisation.categoriseAsSouthIndian(info, category);
 				
 				category = recipeCategorisation.categoriseAsBaked(info, jsonStr, category);
 				category = recipeCategorisation.categoriseAsHealty(info, jsonStr, category);
-				
-				
-				
+
 				if (!category.equalsIgnoreCase("default")) {
 					System.out.println(info.title + " : " + category);
 				}
@@ -90,8 +92,7 @@ public class RecipeCategorisation {
 	
 	// Rule's for categorization ....
 	/**************************************** Title Based Categorisation ******************************/
-	
-	String categoriseAsSouthIndian(RecipeInfo info, String jsonStr, String category) {
+	String categoriseAsSouthIndian(RecipeInfo info, String category) {
 		String sItem1 = "kerala";
 		String sItem2 = "dosa";
 		String sItem3 = "appam";
@@ -105,17 +106,17 @@ public class RecipeCategorisation {
 		
 		String southIndian = FoodCategoryList.FoodCategory.SOUTH_INDIAN.getValue();	
 		// use only title for segmentation
-		if (info.title.toLowerCase().contains(sItem1)
-				|| info.title.toLowerCase().contains(sItem1)
-				|| info.title.toLowerCase().contains(sItem2)
-				|| info.title.toLowerCase().contains(sItem3)
-				|| info.title.toLowerCase().contains(sItem4)
-				|| info.title.toLowerCase().contains(sItem5)
-				|| info.title.toLowerCase().contains(sItem6)
-				|| info.title.toLowerCase().contains(sItem7)
-				|| info.title.toLowerCase().contains(sItem8)
-				|| info.title.toLowerCase().contains(sItem9)
-				|| info.title.toLowerCase().contains(sItem10)) {
+		if (containedInString(info.title, sItem1, sDelimeterSpace)
+				|| containedInString(info.title, sItem1, sDelimeterSpace)
+				|| containedInString(info.title, sItem2, sDelimeterSpace)
+				|| containedInString(info.title, sItem3, sDelimeterSpace)
+				|| containedInString(info.title, sItem4, sDelimeterSpace)
+				|| containedInString(info.title, sItem5, sDelimeterSpace)
+				|| containedInString(info.title, sItem6, sDelimeterSpace)
+				|| containedInString(info.title, sItem7, sDelimeterSpace)
+				|| containedInString(info.title, sItem8, sDelimeterSpace)
+				|| containedInString(info.title, sItem9, sDelimeterSpace)
+				|| containedInString(info.title, sItem10, sDelimeterSpace)) {
 			category = appendCategory(category, southIndian);
 		}
 		
@@ -123,7 +124,7 @@ public class RecipeCategorisation {
 	}
 	
 	// tricky one
-	String categoriseAsVeg(RecipeInfo info, String jsonStr, String category) {
+	String categoriseAsVeg(RecipeInfo info, String category) {
 		String vegItem1 = "paneer";
 		String vegItem2 = "gobhi";
 		String vegItem3 = "sabji";
@@ -135,26 +136,26 @@ public class RecipeCategorisation {
 		String vegItem9 = "veggie";
 		String vegItem10 = "vegetable";
 		
-		String veg = FoodCategoryList.FoodCategory.VEGETARIAN.getValue();
+		String veg = VEGETARIAN.getValue();
 		
 		// use only title for segmentation
-		if (info.title.toLowerCase().contains(vegItem1)
-				|| info.title.toLowerCase().contains(vegItem2)
-				|| info.title.toLowerCase().contains(vegItem3)
-				|| info.title.toLowerCase().contains(vegItem4)
-				|| info.title.toLowerCase().contains(vegItem5)
-				|| info.title.toLowerCase().contains(vegItem6)
-				|| info.title.toLowerCase().contains(vegItem7)
-				|| info.title.toLowerCase().contains(vegItem8)
-				|| info.title.toLowerCase().contains(vegItem9)
-				|| info.title.toLowerCase().contains(vegItem10)) {
+		if (containedInString(info.title, vegItem1, sDelimeterSpace)
+                || containedInString(info.title, vegItem2, sDelimeterSpace)
+                || containedInString(info.title, vegItem3, sDelimeterSpace)
+                || containedInString(info.title, vegItem4, sDelimeterSpace)
+                || containedInString(info.title, vegItem5, sDelimeterSpace)
+                || containedInString(info.title, vegItem6, sDelimeterSpace)
+                || containedInString(info.title, vegItem7, sDelimeterSpace)
+                || containedInString(info.title, vegItem8, sDelimeterSpace)
+                || containedInString(info.title, vegItem9, sDelimeterSpace)
+                || containedInString(info.title, vegItem10, sDelimeterSpace)) {
 			category = appendCategory(category, veg);
 		}
 		
 		return category;
 	}
 	
-	String categoriseAsNonVeg(RecipeInfo info, String jsonStr, String category) {
+	String categoriseAsNonVeg(RecipeInfo info, String category) {
 		String nonVegItem1 = "chicken";
 		String nonVegItem2 = "fish";
 		String nonVegItem3 = "egg";
@@ -165,63 +166,69 @@ public class RecipeCategorisation {
 		String nonVegItem8 = "tuna";
 		String nonVegItem9 = "salmon";
 		
-		String nonVeg = FoodCategoryList.FoodCategory.NON_VEGETARIAN.getValue();
+		String nonVeg = NON_VEGETARIAN.getValue();
 		
 		// use only title for segmentation
-		if (info.title.toLowerCase().contains(nonVegItem1)
-				|| info.title.toLowerCase().contains(nonVegItem2)
-				|| info.title.toLowerCase().contains(nonVegItem3)
-				|| info.title.toLowerCase().contains(nonVegItem4)
-				|| info.title.toLowerCase().contains(nonVegItem5)
-				|| info.title.toLowerCase().contains(nonVegItem6)
-				|| info.title.toLowerCase().contains(nonVegItem7)
-				|| info.title.toLowerCase().contains(nonVegItem8)
-				|| info.title.toLowerCase().contains(nonVegItem9)) {
-			category = appendCategory(category, nonVeg);
+		if (containedInString(info.title, nonVegItem1, sDelimeterSpace)
+                || containedInString(info.title, nonVegItem2, sDelimeterSpace)
+                || containedInString(info.title, nonVegItem3, sDelimeterSpace)
+                || containedInString(info.title, nonVegItem4, sDelimeterSpace)
+                || containedInString(info.title, nonVegItem5, sDelimeterSpace)
+                || containedInString(info.title, nonVegItem6, sDelimeterSpace)
+                || containedInString(info.title, nonVegItem7, sDelimeterSpace)
+                || containedInString(info.title, nonVegItem8, sDelimeterSpace)
+                || containedInString(info.title, nonVegItem9, sDelimeterSpace)) {
+
+            String vegeterian = VEGETARIAN.getValue();
+            if (category.contains(vegeterian)) {
+                category = category.replace(vegeterian, nonVeg);
+            } else {
+                category = appendCategory(category, nonVeg);
+            }
 		}
 		
 		return category;
 	}
 	
-	String categoriseAsLamb(RecipeInfo info, String jsonStr, String category) {
-		String lamb = FoodCategoryList.FoodCategory.LAMB.getValue();
-		String nonVeg = FoodCategoryList.FoodCategory.NON_VEGETARIAN.getValue();
+	String categoriseAsLamb(RecipeInfo info, String category) {
+		String lamb = LAMB.getValue();
+		String nonVeg = NON_VEGETARIAN.getValue();
 		
 		// use only title for segmentation
-		if (info.title.toLowerCase().contains(lamb)) {
+		if (containedInString(info.title, lamb, sDelimeterSpace)) {
 			category = appendCategory(category, lamb);
 			category = appendCategory(category, nonVeg);
 		}
-		
+
 		return category;
 	}
 	
-	String categoriseAsSalad(RecipeInfo info, String jsonStr, String category) {
-		String salad = FoodCategoryList.FoodCategory.SALAD.getValue();		
+	String categoriseAsSalad(RecipeInfo info, String category) {
+		String salad = SALAD.getValue();
 		// use only title for segmentation
-		if (info.title.toLowerCase().contains(salad)) {
+		if (containedInString(info.title, salad, sDelimeterSpace)) {
 			category = appendCategory(category, salad);
 		}
 		
 		return category;
 	}
 	
-	String categoriseAsChutney(RecipeInfo info, String jsonStr, String category) {
-		String chutney = FoodCategoryList.FoodCategory.CHUTNEY.getValue();		
+	String categoriseAsChutney(RecipeInfo info, String category) {
+		String chutney = CHUTNEY.getValue();
 		// use only title for segmentation
-		if (info.title.toLowerCase().contains(chutney)) {
+		if (containedInString(info.title, chutney, sDelimeterSpace)) {
 			category = appendCategory(category, chutney);
 		}
 		
 		return category;
 	}
 	
-	String categoriseAsSoup(RecipeInfo info, String jsonStr, String category) {
+	String categoriseAsSoup(RecipeInfo info, String category) {
 		String soupItem1 = " soup"; // space is intentional
 		
-		String beverage = FoodCategoryList.FoodCategory.SOUP.getValue();	
+		String beverage = SOUP.getValue();
 		// use only title for segmentation
-		if (info.title.toLowerCase().contains(soupItem1)) {
+		if (containedInString(info.title, soupItem1, sDelimeterSpace)) {
 			category = appendCategory(category, beverage);
 		}
 		
@@ -229,12 +236,12 @@ public class RecipeCategorisation {
 	}
 	
 	
-	String categoriseAsSauce(RecipeInfo info, String jsonStr, String category) {
+	String categoriseAsSauce(RecipeInfo info, String category) {
 		String souceItem1 = " sauce"; // space is intentional
 		
-		String beverage = FoodCategoryList.FoodCategory.SAUCE.getValue();	
+		String beverage = SAUCE.getValue();
 		// use only title for segmentation
-		if (info.title.toLowerCase().contains(souceItem1)) {
+		if (containedInString(info.title, souceItem1, sDelimeterSpace)) {
 			category = appendCategory(category, beverage);
 		}
 		
@@ -242,60 +249,60 @@ public class RecipeCategorisation {
 	}
 	
 	
-	String categoriseAsBeverage(RecipeInfo info, String jsonStr, String category) {
+	String categoriseAsBeverage(RecipeInfo info, String category) {
 		String bevItem1 = " shake"; // space is intentional
 		String bevItem2 = "juice";
 		String bevItem3 = "smoothie";		
 		String bevItem4 = "drink";	
 		String bevItem5 = "lemonade";	
 		
-		String beverage = FoodCategoryList.FoodCategory.BEVERAGE.getValue();	
+		String beverage = BEVERAGE.getValue();
 		// use only title for segmentation
-		if (info.title.toLowerCase().contains(bevItem1) 
-				|| info.title.toLowerCase().contains(bevItem2)
-				|| info.title.toLowerCase().contains(bevItem3)
-				|| info.title.toLowerCase().contains(bevItem4)
-				|| info.title.toLowerCase().contains(bevItem5)) {
+		if (containedInString(info.title, bevItem1, sDelimeterSpace)
+				|| containedInString(info.title, bevItem2, sDelimeterSpace)
+                || containedInString(info.title, bevItem3, sDelimeterSpace)
+                || containedInString(info.title, bevItem4, sDelimeterSpace)
+                || containedInString(info.title, bevItem5, sDelimeterSpace) ) {
 			category = appendCategory(category, beverage);
 		}
 		
 		return category;
 	}
 	
-	String categoriseAsBreakFast(RecipeInfo info, String jsonStr, String category) {
-		String sandwhich = FoodCategoryList.FoodCategory.SANDWHICH.getValue();	
+	String categoriseAsBreakFast(RecipeInfo info, String category) {
+		String sandwhich = SANDWHICH.getValue();
 		String breakfastItem1 = " shake"; // space is intentional
 		String breakfastItem2 = "juice";
 		String breakfastItem3 = "smoothie";
 		String breakfastItem4 = "pancake";
 		
 		
-		String breakfast = FoodCategoryList.FoodCategory.BREAKFAST.getValue();	
+		String breakfast = BREAKFAST.getValue();
 		// use only title for segmentation
-		if (info.title.toLowerCase().contains(sandwhich) 
-				|| info.title.toLowerCase().contains(breakfastItem1)
-				|| info.title.toLowerCase().contains(breakfastItem2)
-				|| info.title.toLowerCase().contains(breakfastItem3)
-				|| info.title.toLowerCase().contains(breakfastItem4)) {
+		if (containedInString(info.title, sandwhich, sDelimeterSpace)
+				|| containedInString(info.title, breakfastItem1, sDelimeterSpace)
+				|| containedInString(info.title, breakfastItem2, sDelimeterSpace)
+				|| containedInString(info.title, breakfastItem3, sDelimeterSpace)
+				|| containedInString(info.title, breakfastItem4, sDelimeterSpace)) {
 			category = appendCategory(category, breakfast);
 		}
 		
 		return category;
 	}
 		
-	String categoriseAsParatha(RecipeInfo info, String jsonStr, String category) {
-		String paratah = FoodCategoryList.FoodCategory.PARATHA.getValue();		
+	String categoriseAsParatha(RecipeInfo info, String category) {
+		String paratah = PARATHA.getValue();
 		// use only title for segmentation
-		if (info.title.toLowerCase().contains(paratah)) {
-			category = appendCategory(category, paratah);
+		if (containedInString(info.title, paratah, sDelimeterSpace)) {
+            category = appendCategory(category, paratah);
 			category = appendCategory(category, paratah);
 		}
 		
 		return category;
 	}
 		
-	String categoriseAsDesserts(RecipeInfo info, String jsonStr, String category) {
-		String desserts = FoodCategoryList.FoodCategory.DESSERTS.getValue();	
+	String categoriseAsDesserts(RecipeInfo info, String category) {
+		String desserts = DESSERTS.getValue();
 		
 		String sweetItem1 =  "kheer";
 		String sweetItem2 =  "lassi";
@@ -329,8 +336,8 @@ public class RecipeCategorisation {
 		
 	/**************************************** Content Based Categorisation ******************************/	
 	String categoriseAsChicken(RecipeInfo info, String jsonStr, String category) {
-		String chicken = FoodCategoryList.FoodCategory.CHICKEN.getValue();
-		String nonVeg = FoodCategoryList.FoodCategory.NON_VEGETARIAN.getValue();
+		String chicken = CHICKEN.getValue();
+		String nonVeg = NON_VEGETARIAN.getValue();
 		if (jsonStr.toLowerCase().contains(chicken)) {
 			category = appendCategory(category, chicken);
 			category = appendCategory(category, nonVeg);
@@ -341,10 +348,10 @@ public class RecipeCategorisation {
 	
 	// Rule's for categorization ....
 	String categoriseAsFish(RecipeInfo info, String jsonStr, String category) {
-		String fish = FoodCategoryList.FoodCategory.FISH.getValue();
+		String fish = FISH.getValue();
 		String fishType1 = "salmon";
 		
-		String nonVeg = FoodCategoryList.FoodCategory.NON_VEGETARIAN.getValue();
+		String nonVeg = NON_VEGETARIAN.getValue();
 		if (jsonStr.toLowerCase().contains(fish)
 				|| jsonStr.toLowerCase().contains(fishType1)) {
 			category = appendCategory(category, fish);
@@ -355,8 +362,8 @@ public class RecipeCategorisation {
 	}
 	
 	String categoriseAsPrawn(RecipeInfo info, String jsonStr, String category) {
-		String prawn = FoodCategoryList.FoodCategory.PRAWN.getValue();
-		String nonVeg = FoodCategoryList.FoodCategory.NON_VEGETARIAN.getValue();
+		String prawn = PRAWN.getValue();
+		String nonVeg = NON_VEGETARIAN.getValue();
 		if (jsonStr.toLowerCase().contains(prawn)) {
 			category = appendCategory(category, prawn);
 			category = appendCategory(category, nonVeg);
@@ -366,7 +373,7 @@ public class RecipeCategorisation {
 	}
 	
 	String categoriseAsEgg(RecipeInfo info, String jsonStr, String category) {
-		String egg = FoodCategoryList.FoodCategory.EGG.getValue();
+		String egg = EGG.getValue();
 		
 		// exception as few recipe has eggless item
 		String eggless = "eggless";
@@ -378,9 +385,9 @@ public class RecipeCategorisation {
 		for(String s : info.getIngredients()) {
 		    builder.append(s);
 		}
-		String flattenedIngredients =  builder.toString();
+		String flattenedIngredients = builder.toString();
 		
-		String nonVeg = FoodCategoryList.FoodCategory.NON_VEGETARIAN.getValue();
+		String nonVeg = NON_VEGETARIAN.getValue();
 		if (flattenedIngredients.toLowerCase().contains(egg)) {
 			category = appendCategory(category, egg);
 			category = appendCategory(category, nonVeg);
@@ -390,8 +397,8 @@ public class RecipeCategorisation {
 	}
 	
 	String categoriseAsMutton(RecipeInfo info, String jsonStr, String category) {
-		String mutton = FoodCategoryList.FoodCategory.MUTTON.getValue();
-		String nonVeg = FoodCategoryList.FoodCategory.NON_VEGETARIAN.getValue();
+		String mutton = MUTTON.getValue();
+		String nonVeg = NON_VEGETARIAN.getValue();
 		if (jsonStr.toLowerCase().contains(mutton)) {
 			category = appendCategory(category, mutton);
 			category = appendCategory(category, nonVeg);
@@ -401,7 +408,7 @@ public class RecipeCategorisation {
 	}
 	
 	String categoriseAsRajasthani(RecipeInfo info, String jsonStr, String category) {
-		String rajasthani = FoodCategoryList.FoodCategory.RAJASTHANI.getValue();		
+		String rajasthani = RAJASTHANI.getValue();
 		// use only title for segmentation
 		if (jsonStr.toLowerCase().contains(rajasthani)) {
 			category = appendCategory(category, rajasthani);
@@ -411,7 +418,7 @@ public class RecipeCategorisation {
 	}
 	
 	String categoriseAsPunjabi(RecipeInfo info, String jsonStr, String category) {
-		String punjabi = FoodCategoryList.FoodCategory.PUNJABI.getValue();		
+		String punjabi = PUNJABI.getValue();
 		// use only title for segmentation
 		if (jsonStr.toLowerCase().contains(punjabi)) {
 			category = appendCategory(category, punjabi);
@@ -421,7 +428,7 @@ public class RecipeCategorisation {
 	}
 	
 	String categoriseAsGujrati(RecipeInfo info, String jsonStr, String category) {
-		String gujrati = FoodCategoryList.FoodCategory.GUJRATI.getValue();	
+		String gujrati = GUJRATI.getValue();
 		String gujratiItem1 = "dhokla";
 		String gujratiItem2 = "basundi";
 		// use only title for segmentation
@@ -435,7 +442,7 @@ public class RecipeCategorisation {
 	}
 	
 	String categoriseAsBengali(RecipeInfo info, String jsonStr, String category) {
-		String bengali = FoodCategoryList.FoodCategory.BENGALI.getValue();		
+		String bengali = BENGALI.getValue();
 		// use only title for segmentation
 		if (jsonStr.toLowerCase().contains(bengali)) {
 			category = appendCategory(category, bengali);
@@ -445,7 +452,7 @@ public class RecipeCategorisation {
 	}
 	
 	String categoriseAsKerala(RecipeInfo info, String jsonStr, String category) {
-		String keralaString = FoodCategoryList.FoodCategory.KERALA.getValue();		
+		String keralaString = KERALA.getValue();
 		// use only title for segmentation
 		if (jsonStr.toLowerCase().contains(keralaString)) {
 			category = appendCategory(category, keralaString);
@@ -455,7 +462,7 @@ public class RecipeCategorisation {
 	}
 	
 	String categoriseAsBaked(RecipeInfo info, String jsonStr, String category) {
-		String bakedStr = FoodCategoryList.FoodCategory.BAKED.getValue();	
+		String bakedStr = BAKED.getValue();
 		String ovenStr = "oven";
 		// use only title for segmentation
 		if (jsonStr.toLowerCase().contains(bakedStr) 
@@ -467,7 +474,7 @@ public class RecipeCategorisation {
 	}
 	
 	String categoriseAsHealty(RecipeInfo info, String jsonStr, String category) {
-		String HealthyStr = FoodCategoryList.FoodCategory.HEALTHY.getValue();	
+		String HealthyStr = HEALTHY.getValue();
 		String ovenStr = "oven";
 		// use only title for segmentation
 		List<String> list = info.nutritionList;
@@ -495,8 +502,10 @@ public class RecipeCategorisation {
 	}
 	/************************************************ Utility Functions *************************************/
 	
-	boolean containedInList(String originalCategoryList, String newEntry) {
-		String[] splitCategory = originalCategoryList.split("\\|");
+	boolean containedInString(String originalCategoryList, String newEntry, String delimeter) {
+        originalCategoryList = originalCategoryList.trim().toLowerCase();
+        newEntry = newEntry.trim().toLowerCase();
+		String[] splitCategory = originalCategoryList.split(delimeter);
 		for (String category : splitCategory) {
 			if (category.equalsIgnoreCase(newEntry)) {
 				return true;
@@ -508,17 +517,16 @@ public class RecipeCategorisation {
 	
 	String appendCategory(String originalCategoryList, String newEntry) {
 		String finalAppendedCategory = originalCategoryList;
-		if (originalCategoryList.equals(FoodCategoryList.FoodCategory.DEFAULT.getValue())) {
+		if (originalCategoryList.equals(DEFAULT.getValue())) {
 			return newEntry;
 		}
 	
 		
-		if (containedInList(originalCategoryList, newEntry)) {
+		if (containedInString(originalCategoryList, newEntry, sDelimeterPipe)) {
 			return originalCategoryList;
 		}
 	
 		finalAppendedCategory += ( Seperator + newEntry);
 		return finalAppendedCategory;
 	}
-
 }
