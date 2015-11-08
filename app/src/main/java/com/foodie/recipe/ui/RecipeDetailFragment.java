@@ -488,18 +488,15 @@ public class RecipeDetailFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                Intent shareIntent = new Intent(Intent.ACTION_SEND);
-//                File file = new File(Environment.getExternalStorageDirectory(),
-//                        "PicsArt_1402676920928.jpg");
-                shareIntent.setType("image/*");
-                String imagePath = Environment.getExternalStorageDirectory()
-                        + "PicsArt_1402676920928.jpg";
-//                Uri outputFileUri = Uri.parse(file.getAbsolutePath());
-                File imageFileToShare = new File(imagePath);
-                Uri uri = Uri.fromFile(imageFileToShare);
-                shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                Intent share = new Intent(android.content.Intent.ACTION_SEND);
+                share.setType("text/plain");
 
-                getActivity().startActivity(Intent.createChooser(shareIntent, "SEND"));
+                // Add data to the intent, the receiving app will decide
+                // what to do with it.
+                share.putExtra(Intent.EXTRA_SUBJECT, "Recipe @ your finger tips");
+                share.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=com.pickart.android&hl=en");
+
+                startActivity(Intent.createChooser(share, "Share link!"));
             }
         });
     }
