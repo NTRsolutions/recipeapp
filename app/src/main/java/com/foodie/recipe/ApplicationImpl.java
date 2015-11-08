@@ -30,8 +30,16 @@ public class ApplicationImpl extends Application {
         // Enable Local Datastore.
         Parse.enableLocalDatastore(this);
         ParseCrashReporting.enable(this);
-        Parse.initialize(this, "BjPG9N2ZepJL2at4Y8267mB5h593H5A89Ianq1T0",
-                "o1C6ZL7kUZkGF0zjuztg9Qz75sSfxx7eWiHjnCRv");
+
+        if (BuildConfig.DEBUG) {
+            // Development Config's
+            Parse.initialize(this, "ImCRjnmaKzEl3NXutGNMPc808eYXUbsbH6E1rvN1",
+                    "0RwNgszMvs5bCnvkgRi3gXrbXAhVwUvUtrtCfQez");
+        } else {
+            // Production Configs
+            Parse.initialize(this, "BjPG9N2ZepJL2at4Y8267mB5h593H5A89Ianq1T0",
+                    "o1C6ZL7kUZkGF0zjuztg9Qz75sSfxx7eWiHjnCRv");
+        }
 
         Config.initialize(this.getApplicationContext());
 
