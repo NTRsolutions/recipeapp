@@ -11,6 +11,8 @@ import com.foodie.recipe.R;
 import com.foodie.recipe.data.RecipeDataStore;
 import com.foodie.recipe.data.RecipeInfo;
 
+import junit.framework.Assert;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +48,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
     public void onBindViewHolder(RecipeViewHolder myViewHolder, int i) {
         Log.d(TAG, "onBindViewHolder ");
         RecipeInfo dataItem = mDataItems.get(i);
+        Assert.assertNotNull(dataItem);
         myViewHolder.onBindView(dataItem, i);
     }
 

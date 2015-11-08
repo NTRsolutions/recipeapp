@@ -51,9 +51,8 @@ public class RecipeCategorisation {
                 }
 
                 String category = info.category;
-                category = recipeCategorisation.categoriseAsVeg(info, category);
-                category = recipeCategorisation.categoriseAsNonVeg(info, category);
 
+                category = recipeCategorisation.categoriseAsVeg(info, category);
                 category = recipeCategorisation.categoriseAsChicken(info, jsonStr, category);
                 category = recipeCategorisation.categoriseAsFish(info, jsonStr, category);
                 category = recipeCategorisation.categoriseAsPrawn(info, jsonStr, category);
@@ -87,6 +86,8 @@ public class RecipeCategorisation {
                 } catch (Throwable throwable) {
                     throwable.printStackTrace();
                 }
+
+                category = recipeCategorisation.categoriseAsNonVeg(info, category);
 
                 if (!category.equalsIgnoreCase("default")) {
                     System.out.println(info.title + " : " + category);
