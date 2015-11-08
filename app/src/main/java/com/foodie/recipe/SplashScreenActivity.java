@@ -40,9 +40,6 @@ public class SplashScreenActivity extends AppCompatActivity {
     }
 
     void onDataFetchComplete() {
-        Intent backgroundDataFetcherIntent = new Intent(this, ParseDataFetcherService.class);
-        startService(backgroundDataFetcherIntent);
-
         AppPreference.getInstance(this).putBoolean(UserInfo.IS_RETURNING_USER_KEY, true);
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
@@ -90,10 +87,10 @@ public class SplashScreenActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(String... params) {
+            boolean isReturningUser = AppPreference.getInstance(mContext).getBoolean(
+                    UserInfo.IS_RETURNING_USER_KEY, false);
 
-            // first hit Db and chk data is available
-            int totalDocumentCount =  RecipeDataStore.getsInstance(mContext).getAllRecipeInfoCount();
-            if (totalDocumentCount > 0) {
+            if (isReturningUser) {
                 dataFetchComplete = true;
             } else {
                 //TODO to remove and implement sequential download's
