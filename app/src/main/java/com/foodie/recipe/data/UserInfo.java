@@ -191,7 +191,7 @@ public class UserInfo {
                 UserInfo.GEO_ADMIN_AREA, "");
 
         // Location already set
-        if (currentLocation != null && currentLocation.equalsIgnoreCase("")) {
+        if (currentLocation != null && !currentLocation.equalsIgnoreCase("")) {
             return true;
         }
 
