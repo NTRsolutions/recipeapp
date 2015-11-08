@@ -1,6 +1,8 @@
 package com.automation.crawler;
 
 
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,88 +12,109 @@ import org.apache.commons.lang3.StringUtils;
 import com.automation.crawler.MySQLAccess.COLUMNS;
 import com.google.gson.Gson;
 
+import au.com.bytecode.opencsv.CSVReader;
+
 import static com.automation.crawler.FoodCategoryList.FoodCategory.*;
 
 public class RecipeCategorisation {
 	private static String Seperator = "|";
     private static String sDelimeterPipe = "\\|";
     private static String sDelimeterSpace = " ";
+    private static HashMap<String,String> sItemToTagMap;
 	RecipeCategorisation(){}
 	
 	public static void main(String args[]) {
-		RecipeCategorisation recipeCategorisation = new RecipeCategorisation();
-		
-		int batch_size_to_process = 15000;
-		MySQLAccess mDatabaseManager = new MySQLAccess();
-		String whereClause = " where title is not null";
-		try {
-			ArrayList<RecipeInfo> list = mDatabaseManager.readDataBase(batch_size_to_process, whereClause);
+        RecipeCategorisation.startCategorisation();
+    }
 
-			// RecipeInfo in info contain's only few data set
-			for (RecipeInfo shallowInfo : list) {
-				int hashCode = shallowInfo.hash;
-				String filePath = CrawlerConfig.BASE_PATH_TO_SAVE_JSON + hashCode + ".json";
-				String jsonStr = CrawlerUtility.loadJSONFromFile(filePath);
-				
-				Gson gson = new Gson();
-				// update info with full data loaded
-				RecipeInfo info = gson.fromJson(jsonStr, RecipeInfo.class);
-				
-				if (info.category == null || info.category.isEmpty()) { // can be null, as read from json
-					info.category = shallowInfo.category; //replace with DB value's
-				}
-				
-				String category = info.category;
-				category = recipeCategorisation.categoriseAsVeg(info, category);
-				category = recipeCategorisation.categoriseAsNonVeg(info, category);
-				
-				category = recipeCategorisation.categoriseAsChicken(info, jsonStr, category);
-				category = recipeCategorisation.categoriseAsFish(info, jsonStr, category);
-				category = recipeCategorisation.categoriseAsPrawn(info, jsonStr, category);
-				category = recipeCategorisation.categoriseAsEgg(info, jsonStr, category);
-				
-				category = recipeCategorisation.categoriseAsMutton(info, jsonStr, category);
-				category = recipeCategorisation.categoriseAsLamb(info, category);
-				category = recipeCategorisation.categoriseAsSalad(info, category);
-				category = recipeCategorisation.categoriseAsChutney(info, category);
-				
-				category = recipeCategorisation.categoriseAsBreakFast(info, category);
-				category = recipeCategorisation.categoriseAsRajasthani(info, jsonStr, category);
-				category = recipeCategorisation.categoriseAsPunjabi(info, jsonStr, category);
-				category = recipeCategorisation.categoriseAsGujrati(info, jsonStr, category);
-				
-				category = recipeCategorisation.categoriseAsBengali(info, jsonStr, category);
-				category = recipeCategorisation.categoriseAsParatha(info, category);
-				category = recipeCategorisation.categoriseAsDesserts(info, category);
-				category = recipeCategorisation.categoriseAsBeverage(info, category);
-				
-				category = recipeCategorisation.categoriseAsSoup(info, category);
-				category = recipeCategorisation.categoriseAsSauce(info, category);
-				category = recipeCategorisation.categoriseAsKerala(info, jsonStr, category);
-				category = recipeCategorisation.categoriseAsSouthIndian(info, category);
-				
-				category = recipeCategorisation.categoriseAsBaked(info, jsonStr, category);
-				category = recipeCategorisation.categoriseAsHealty(info, jsonStr, category);
+    public static void startCategorisation() {
+        RecipeCategorisation recipeCategorisation = new RecipeCategorisation();
 
-				if (!category.equalsIgnoreCase("default")) {
-					System.out.println(info.title + " : " + category);
-				}
+        int batch_size_to_process = 15000;
+        MySQLAccess mDatabaseManager = new MySQLAccess();
+        String whereClause = " where title is not null";
+        try {
+            ArrayList<RecipeInfo> list = mDatabaseManager.readDataBase(batch_size_to_process, whereClause);
 
-				HashMap<String, String> updateQueryMap = new HashMap<>();
-				updateQueryMap.put(COLUMNS.CATEGORY.toString().toLowerCase(), category);
-				mDatabaseManager.updateInDb(hashCode, updateQueryMap);
-			}
+            // RecipeInfo in info contain's only few data set
+            for (RecipeInfo shallowInfo : list) {
+                int hashCode = shallowInfo.hash;
+                String filePath = CrawlerConfig.BASE_PATH_TO_SAVE_JSON + hashCode + ".json";
+                String jsonStr = CrawlerUtility.loadJSONFromFile(filePath);
 
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
+                Gson gson = new Gson();
+                // update info with full data loaded
+                RecipeInfo info = gson.fromJson(jsonStr, RecipeInfo.class);
 
-	
-	// Rule's for categorization ....
+                if (info.category == null || info.category.isEmpty()) { // can be null, as read from json
+                    info.category = shallowInfo.category; //replace with DB value's
+                }
+
+                String category = info.category;
+                category = recipeCategorisation.categoriseAsVeg(info, category);
+                category = recipeCategorisation.categoriseAsNonVeg(info, category);
+
+                category = recipeCategorisation.categoriseAsChicken(info, jsonStr, category);
+                category = recipeCategorisation.categoriseAsFish(info, jsonStr, category);
+                category = recipeCategorisation.categoriseAsPrawn(info, jsonStr, category);
+                category = recipeCategorisation.categoriseAsEgg(info, jsonStr, category);
+
+                category = recipeCategorisation.categoriseAsMutton(info, jsonStr, category);
+                category = recipeCategorisation.categoriseAsLamb(info, category);
+                category = recipeCategorisation.categoriseAsSalad(info, category);
+                category = recipeCategorisation.categoriseAsChutney(info, category);
+
+                category = recipeCategorisation.categoriseAsBreakFast(info, category);
+                category = recipeCategorisation.categoriseAsRajasthani(info, jsonStr, category);
+                category = recipeCategorisation.categoriseAsPunjabi(info, jsonStr, category);
+                category = recipeCategorisation.categoriseAsGujrati(info, jsonStr, category);
+
+                category = recipeCategorisation.categoriseAsBengali(info, jsonStr, category);
+                category = recipeCategorisation.categoriseAsParatha(info, category);
+                category = recipeCategorisation.categoriseAsDesserts(info, category);
+                category = recipeCategorisation.categoriseAsBeverage(info, category);
+
+                category = recipeCategorisation.categoriseAsSoup(info, category);
+                category = recipeCategorisation.categoriseAsSauce(info, category);
+                category = recipeCategorisation.categoriseAsKerala(info, jsonStr, category);
+                category = recipeCategorisation.categoriseAsSouthIndian(info, category);
+
+                category = recipeCategorisation.categoriseAsBaked(info, jsonStr, category);
+                category = recipeCategorisation.categoriseAsHealty(info, jsonStr, category);
+
+                try {
+                    category = recipeCategorisation.categoriseBasedOnCsv(info, category, getCSVFileData());
+                } catch (Throwable throwable) {
+                    throwable.printStackTrace();
+                }
+
+                if (!category.equalsIgnoreCase("default")) {
+                    System.out.println(info.title + " : " + category);
+                }
+
+                HashMap<String, String> updateQueryMap = new HashMap<>();
+                updateQueryMap.put(COLUMNS.CATEGORY.toString().toLowerCase(), category);
+                mDatabaseManager.updateInDb(hashCode, updateQueryMap);
+            }
+
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    // Rule's for categorization ....
 	/**************************************** Title Based Categorisation ******************************/
+    String categoriseBasedOnCsv(RecipeInfo info, String category, HashMap<String, String> csvMap) {
+        for (String csvItems : csvMap.keySet()) {
+            if (containedInString(info.title, csvItems, sDelimeterSpace)) {
+                category = appendCategory(category, csvMap.get(csvItems));
+            }
+        }
+
+        return category;
+    }
+
 	String categoriseAsSouthIndian(RecipeInfo info, String category) {
 		String sItem1 = "kerala";
 		String sItem2 = "dosa";
@@ -180,7 +203,7 @@ public class RecipeCategorisation {
                 || containedInString(info.title, nonVegItem9, sDelimeterSpace)) {
 
             String vegeterian = VEGETARIAN.getValue();
-            if (category.contains(vegeterian)) {
+            if (containedInString(category, vegeterian, sDelimeterPipe)) {
                 category = category.replace(vegeterian, nonVeg);
             } else {
                 category = appendCategory(category, nonVeg);
@@ -529,4 +552,39 @@ public class RecipeCategorisation {
 		finalAppendedCategory += ( Seperator + newEntry);
 		return finalAppendedCategory;
 	}
+
+    // CSV Based Parsing
+    private static HashMap<String, String> getCSVFileData() throws Throwable {
+        File file = new File("/home/rajnish/auto_tags.csv");
+        if (!file.exists()) {
+            return null;
+        }
+
+        if (sItemToTagMap == null) {
+            sItemToTagMap = new HashMap<>();
+        } else {
+            return sItemToTagMap;
+        }
+
+        //create CSVReader object
+        CSVReader reader = new CSVReader(new FileReader(file.getPath()), ',');
+        //read line by line
+        String[] record = null;
+
+        while((record = reader.readNext()) != null){
+            String tag = record[0].toLowerCase().trim();
+            String items = record[1].toLowerCase().trim();
+
+            String[] split = items.split(",");
+            for (String item : split) {
+                item = item.trim();
+                sItemToTagMap.put(item, tag);
+                System.out.println(item + " : " + tag);
+            }
+        }
+
+        reader.close();
+
+        return sItemToTagMap;
+    }
 }

@@ -22,8 +22,8 @@ import java.util.concurrent.Executors;
 public class ImageDownloader {
     private static int MAX_IMAGE_COUNT_PER_ITEM = 12;
     private static String sBasePath = "/home/rajnish/RecipeApp/file_server/";
-    private static int threadPoolCount = 50;
-    private static int batch_size_to_process = 10000;
+    private static int threadPoolCount = 10;
+    private static int batch_size_to_process = 15000;
 
     public static void main(String args[]) {
         ExecutorService executor = Executors.newFixedThreadPool(threadPoolCount);
@@ -34,10 +34,16 @@ public class ImageDownloader {
         try {
             ArrayList<RecipeInfo> list = mDatabaseManager.readDataBase(batch_size_to_process, whereClause);
             int totalTask = list.size();
+            if (totalTask == 0) {
+                System.out.println("All Task alreadyfinished");
+                return;
+            }
             int individualWorkerTaskCount = totalTask / threadPoolCount;
 
             for (int i = 0; i < threadPoolCount; i++) {
-                ArrayList<RecipeInfo> subList = new ArrayList<RecipeInfo>(list.subList(i * individualWorkerTaskCount, (i + 1) * individualWorkerTaskCount - 1));
+                ArrayList<RecipeInfo> subList = new ArrayList<RecipeInfo>(
+                        list.subList(i * individualWorkerTaskCount, (i + 1)
+                                * individualWorkerTaskCount - 1));
                 Runnable worker = new WorkerThread(subList, mDatabaseManager);
                 executor.execute(worker);
             }
