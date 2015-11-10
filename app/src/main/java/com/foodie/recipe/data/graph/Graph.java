@@ -527,6 +527,11 @@ public class Graph {
         ArrayList<Vertex> resultVertext = new ArrayList<>();
 
         Vertex startVertext = (Vertex) vertexMap.get(startNode);
+        if (startVertext == null) {
+            addEdge(FoodCategory.NON_VEGETARIAN.getValue(), startNode, 1000);
+            addEdge(FoodCategory.VEGETARIAN.getValue(), startNode, 1000);
+            startVertext = (Vertex) vertexMap.get(startNode);
+        }
         Queue<Vertex> queue = new LinkedList<>();
         Set<Vertex> processed = new HashSet<>();
         queue.add(startVertext);
@@ -556,7 +561,9 @@ public class Graph {
             resultList.add(vertx.name);
         }
 
-        resultList.remove(startNode);
+        if (resultList.contains(startNode)) {
+            resultList.remove(startNode);
+        }
         return resultList;
     }
 }
