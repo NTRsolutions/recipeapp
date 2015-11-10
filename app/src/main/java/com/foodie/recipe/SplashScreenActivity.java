@@ -35,6 +35,7 @@ public class SplashScreenActivity extends AppCompatActivity {
             UserInfo.getInstance(this).getUserLocation();
         }
 
+        Utility.getInstance(this).init();
         SplashAsyncTask task = new SplashAsyncTask(this);
         task.execute("SplashAsyncTask");
     }

@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.foodie.recipe.MainActivity;
@@ -36,7 +37,6 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
     private Uri mImageUri;
     private TextView mTitle;
     private RecipeViewHolderListener mListener;
-    private ImageView mFavouriteImage;
     private RecipeInfo mRecipeInfo;
     private FlowLayout mFlowLayout;
 
@@ -54,11 +54,10 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         mTitle = (TextView) view.findViewById(R.id.firstLine);
         mReciepeImageView = (ImageView) view.findViewById(R.id.icon);
         mFlowLayout = (FlowLayout) view.findViewById(R.id.tags);
-        mFavouriteImage = (ImageView) view.findViewById(R.id.favourite);
-        mFavouriteImage.setVisibility(View.GONE);
-
+        ProgressBar spinner = (ProgressBar)view.findViewById(R.id.progressBar);
+        spinner.getIndeterminateDrawable().setColorFilter(0XFFCDDC39, android.graphics.PorterDuff.Mode.MULTIPLY);
         mListener = lstr;
-        ViewGroup.LayoutParams layoutParams = mReciepeImageView.getLayoutParams();
+        ViewGroup.LayoutParams layoutParams = view.findViewById(R.id.image_container).getLayoutParams();
         layoutParams.height = (int) (Config.SCREEN_SIZE.y
                 * Config.MAX_CATEGORY_CARD_HEIGHT_PECENTAGE);
         mReciepeImageView.setLayoutParams(layoutParams);
@@ -77,21 +76,6 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         Resources res = rootView.getContext().getResources();
         final int selectedColor = res.getColor(R.color.blue);
         final int unSelectedColor = res.getColor(R.color.orange);
-        mFavouriteImage.setSelected(false);
-        mFavouriteImage.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                mFavouriteImage.setSelected(!mFavouriteImage.isSelected());
-                if (mFavouriteImage.isSelected()) {
-                    mFavouriteImage.setColorFilter(selectedColor);
-                } else {
-                    mFavouriteImage.setColorFilter(unSelectedColor);
-                }
-
-            }
-        });
-
     }
 
     public void onBindView(RecipeInfo dataItem) {
@@ -112,7 +96,7 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
             String cloudImagePath = Config.sRecipeStorageCloudBaseUrl + "/images/"
                     + mRecipeInfo.getRecipeinfoId() + ".jpg";
 
-            Picasso.with(mContext).load(cloudImagePath).error(R.mipmap.ic_launcher).into(mReciepeImageView);
+            Picasso.with(mContext).load(cloudImagePath).into(mReciepeImageView);
             downloadRecipeImage(cloudImagePath);
 //            mCardView.setCardBackgroundColor(resources.getColor(R.color.lightred));
         }

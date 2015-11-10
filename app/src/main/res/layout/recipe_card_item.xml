@@ -1,47 +1,60 @@
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/rootView"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    card_view:cardCornerRadius="3dp"
-    card_view:cardElevation="4dp"
-    card_view:cardUseCompatPadding="true">
+<android.support.v7.widget.CardView android:id="@+id/rootView"
+                                    xmlns:android="http://schemas.android.com/apk/res/android"
+                                    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    card_view:cardCornerRadius="3dp"
+                                    card_view:cardElevation="4dp"
+                                    card_view:cardUseCompatPadding="true">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/icon"
+        <RelativeLayout
+            android:id="@+id/image_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scaleType="centerCrop" />
+            android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/favourite"
-            android:layout_alignParentRight="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/favourite"
-            />
+            <ImageView
+                android:id="@+id/backGround"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerInside"
+                android:src="@drawable/app_icon"/>
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"/>
+
+            <ImageView
+                android:id="@+id/icon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"/>
+
+        </RelativeLayout>
+
 
         <TextView
             android:id="@+id/firstLine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/icon"
+            android:layout_below="@id/image_container"
             android:padding="10dp"
             android:text="Example application"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:typeface="normal" />
+            android:typeface="normal"/>
 
         <com.foodie.recipe.widgets.FlowLayout
             android:id="@+id/tags"
-            android:layout_below="@+id/firstLine"
-            android:padding="10dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/firstLine"
+            android:padding="10dp">
         </com.foodie.recipe.widgets.FlowLayout>
 
     </RelativeLayout>

@@ -205,6 +205,10 @@ public class RecipeDetailFragment extends Fragment {
             audioFile.delete();
         }
 
+        if (Utility.getInstance(getActivity()).getTextToSpeech() == null) {
+            return;
+        }
+
         Utility.getInstance(getActivity()).getTextToSpeech().setOnUtteranceProgressListener(
                 new UtteranceProgressListener() {
                     @Override
