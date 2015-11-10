@@ -3,10 +3,12 @@ package com.foodie.recipe;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
+import com.foodie.recipe.data.ParseDataFetcherService;
 import com.foodie.recipe.utility.Config;
 import com.foodie.recipe.utility.Utility;
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -30,8 +32,16 @@ public class ApplicationImpl extends Application {
         // Enable Local Datastore.
         Parse.enableLocalDatastore(this);
         ParseCrashReporting.enable(this);
-        Parse.initialize(this, "BjPG9N2ZepJL2at4Y8267mB5h593H5A89Ianq1T0",
-                "o1C6ZL7kUZkGF0zjuztg9Qz75sSfxx7eWiHjnCRv");
+
+        if (BuildConfig.DEBUG) {
+            // Development Config's
+            Parse.initialize(this, "ImCRjnmaKzEl3NXutGNMPc808eYXUbsbH6E1rvN1",
+                    "0RwNgszMvs5bCnvkgRi3gXrbXAhVwUvUtrtCfQez");
+        } else {
+            // Production Configs
+            Parse.initialize(this, "BjPG9N2ZepJL2at4Y8267mB5h593H5A89Ianq1T0",
+                    "o1C6ZL7kUZkGF0zjuztg9Qz75sSfxx7eWiHjnCRv");
+        }
 
         Config.initialize(this.getApplicationContext());
 
@@ -72,7 +82,7 @@ public class ApplicationImpl extends Application {
         @Override
         public void onActivityStarted(Activity activity) {
             Log.i(TAG, activity.getClass().getSimpleName() + " onStart()");
-            Log.i(TAG, "activityStateCounter : " + activityStateCounter);
+            Log.i(TAG, "onStart activityStateCounter : " + activityStateCounter);
             // Application was in background.
             if (activityStateCounter == 0) {
                 Utility.getInstance(mContext).init();
@@ -98,6 +108,7 @@ public class ApplicationImpl extends Application {
         @Override
         public void onActivityStopped(Activity activity) {
             Log.i(TAG, activity.getClass().getSimpleName() + "onStop()");
+            Log.i(TAG, "Stop activityStateCounter : " + activityStateCounter);
             mLastAppStoppedTime = System.currentTimeMillis();
             activityStateCounter--;
         }
@@ -105,8 +116,12 @@ public class ApplicationImpl extends Application {
         @Override
         public void onActivityDestroyed(Activity activity) {
             Log.i(TAG, activity.getClass().getSimpleName() + "onDestroy()");
-
+            Log.i(TAG, "Destroyed activityStateCounter : " + activityStateCounter);
             if (activityStateCounter == 0) {
+                Intent backgroundDataFetcherIntent = new Intent(
+                        mContext, ParseDataFetcherService.class);
+                mContext.startService(backgroundDataFetcherIntent);
+
                 Utility.getInstance(mContext).onDestroy();
             }
         }

@@ -18,6 +18,7 @@ import java.util.List;
  * Created by rajnish on 1/11/15.
  */
 public class ParseDataFetcherService extends IntentService {
+    public static final String TAG = ParseDataFetcherService.class.getSimpleName();
     public static final int sSingleBatchLimit = 1000;
     public static final String LAST_DATA_FETCHED_UPTO_KEY = "LAST_DATA_FETCHED_UPTO_KEY";
 
@@ -27,13 +28,21 @@ public class ParseDataFetcherService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        Log.d(TAG, "Starting Parse Data Fetcher Service");
         startIncrementalDataFetch();
+        Log.d(TAG, "Finished Parse Data Fetcher Service");
     }
 
     void startIncrementalDataFetch() {
         int resultCount = fetchAllInfoData();
+        Log.d(TAG, "resultCount " + resultCount);
         while (resultCount > 0) {
             resultCount = fetchAllInfoData();
+
+            // TODO for indexing
+            RecipeDataStore.getsInstance(this).
+                    searchDocumentBasedOnTitle("test query", 10);
+            Log.d(TAG, "resultCount " + resultCount);
         }
     }
 
