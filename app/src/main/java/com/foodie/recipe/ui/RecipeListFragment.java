@@ -67,7 +67,7 @@ public class RecipeListFragment extends Fragment {
 
         RecipeDataStore.RecipeDataType recipeDataType = null;
         switch (mPage) {
-            case FEED:
+            case RECOMMENDED:
                 recipeDataType =  RecipeDataStore.RecipeDataType.FEED;
                 break;
             case RECENT:
@@ -99,7 +99,7 @@ public class RecipeListFragment extends Fragment {
         });
 
         switch (mPage) {
-            case FEED:
+            case RECOMMENDED:
             case CATEGORIES:
                 headerBar.setVisibility(View.GONE);
                 break;

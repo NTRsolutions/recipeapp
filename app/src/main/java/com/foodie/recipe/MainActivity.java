@@ -24,7 +24,6 @@ import android.widget.Button;
 import com.foodie.recipe.data.AnalyticsHandler;
 import com.foodie.recipe.data.RecipeDataStore;
 import com.foodie.recipe.data.ShoppingListDataStore;
-import com.foodie.recipe.data.UserInfo;
 import com.foodie.recipe.rateus.AppRate;
 import com.foodie.recipe.ui.BrowseFragment;
 import com.foodie.recipe.ui.CategoryFragment;
@@ -44,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
     ScreenSlidePagerAdapter mPagerAdapter;
     private Button mButton ;
     public enum Pages {
-        FEED,
+        RECOMMENDED,
         CATEGORIES,
         FAVOURITE,
         RECENT,
@@ -310,7 +309,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
                 case CATEGORIES:
                     fragment = new CategoryFragment();
                     break;
-                case FEED:
+                case RECOMMENDED:
                 case FAVOURITE:
                 case RECENT:
                     fragment = RecipeListFragment.getInstance(page);
