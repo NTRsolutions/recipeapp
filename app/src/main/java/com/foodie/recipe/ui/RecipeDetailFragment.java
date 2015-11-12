@@ -367,6 +367,7 @@ public class RecipeDetailFragment extends Fragment {
         List<String> listNutrition = mRecipeInfo.getNutritionList();
 
         if (listNutrition == null) {
+            rootView.findViewById(R.id.nutrition).setVisibility(View.GONE);
             return;
         }
 
