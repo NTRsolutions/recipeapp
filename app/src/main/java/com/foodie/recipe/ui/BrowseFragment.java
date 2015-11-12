@@ -99,6 +99,7 @@ public class BrowseFragment extends Fragment {
             return;
         }
 
+        metaData = metaData.toLowerCase();
         RecipeDataType recipeDataType = null;
         CategoryType type = CategoryType.getTypeFromString(categoryType);
         switch (type) {

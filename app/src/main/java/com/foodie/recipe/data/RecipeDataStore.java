@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by rajnish on 6/8/15.
@@ -519,7 +520,8 @@ public class RecipeDataStore {
             return;
         }
 
-        sRecipeFeedList = FeedDataGenerator.getInstance(mContext).getFeedData();
+        Set<RecipeInfo> uniqueFeedList = FeedDataGenerator.getInstance(mContext).getFeedData();
+        sRecipeFeedList = new ArrayList<RecipeInfo>(uniqueFeedList);;
 
         if (listener != null && sRecipeFeedList.size() > 0) {
             listener.onDataFetchComplete(sRecipeFeedList);

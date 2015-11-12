@@ -6,9 +6,11 @@ import com.foodie.recipe.utility.Config;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -31,7 +33,7 @@ public class FeedDataGenerator {
         return sInstance;
     }
 
-    public List<RecipeInfo>  getFeedData() {
+    public Set<RecipeInfo>  getFeedData() {
         TreeMap<String, Integer> map = UserInfo.getInstance(mContext).fetchDataForFeed();
         List<RecipeInfo> finalList = new ArrayList<>();
         TreeMap<Integer, Queue<RecipeInfo>> distribution = new TreeMap<>();
@@ -87,6 +89,7 @@ public class FeedDataGenerator {
             }
         }
 
-        return finalList;
+        Set<RecipeInfo> uniqueRecipeInfoList = new HashSet<>(finalList);
+        return uniqueRecipeInfoList;
     }
 }
