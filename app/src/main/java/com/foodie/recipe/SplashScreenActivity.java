@@ -10,7 +10,6 @@ import android.view.MenuItem;
 
 import com.foodie.recipe.data.LocationMapper;
 import com.foodie.recipe.data.LocationMapper.LocationMapperUpdate;
-import com.foodie.recipe.data.ParseDataFetcherService;
 import com.foodie.recipe.data.RecipeDataStore;
 import com.foodie.recipe.data.RecipeDataStore.RecipeDataStoreListener;
 import com.foodie.recipe.data.RecipeInfo;
@@ -38,6 +37,8 @@ public class SplashScreenActivity extends AppCompatActivity {
         Utility.getInstance(this).init();
         SplashAsyncTask task = new SplashAsyncTask(this);
         task.execute("SplashAsyncTask");
+
+        RecipeDataStore.getsInstance(this).checkAndUnZipJsonData();
     }
 
     void onDataFetchComplete() {

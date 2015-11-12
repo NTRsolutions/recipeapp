@@ -83,7 +83,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         Log.d(TAG, "onCreate ");
         setUpRateAppPopUp();
 
-//        RecipeDataStore.getsInstance(this).checkAndDownloadJsonData();
     }
 
     void setUpRateAppPopUp() {

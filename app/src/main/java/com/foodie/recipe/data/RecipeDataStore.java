@@ -1,6 +1,7 @@
 package com.foodie.recipe.data;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import com.couchbase.lite.CouchbaseLiteException;
@@ -31,7 +32,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Created by rajnish on 6/8/15.
@@ -41,7 +41,7 @@ public class RecipeDataStore {
     public static final String kRecipeInfoTimeLapseView = "kRecipeInfoTimeLapseView";
     public static final String kRecipeInfoView = "kRecipeInfoView";
     public static final String kSearchTagsView = "kSearchTagsView";
-    public static final String kJsonDownloadedKey = "kJsonDownloadedKey";
+    public static final String kJsonDownloadedKey = "kJsonDownloadedKey_v5";
     public  static final String kSearchTitleRecipeView = "kSearchTitleRecipeView";
     private boolean isJsonZipDownloaded;
     private static RecipeDataStore sInstance;
@@ -644,24 +644,16 @@ public class RecipeDataStore {
         });
     }
 
-    public void checkAndDownloadJsonData() {
+    public void checkAndUnZipJsonData() {
         isJsonZipDownloaded = AppPreference.getInstance(mContext)
                 .getBoolean(kJsonDownloadedKey, false);
 
         if (!isJsonZipDownloaded) {
-            String url = "http://virtualcook.parseapp.com/json/json.zip";
-            String tempPath = DataUtility.getInstance(mContext).getExternalFilesDirPath()
-                    + "/json.zip";
-            String finalPath =  DataUtility.getInstance(mContext).getExternalFilesDirPath()
-                    + "/" + "json/";
-            DownloadAndUnzipFile downloadAndUnzipFile = new DownloadAndUnzipFile(
-                    url, tempPath, finalPath);
-            downloadAndUnzipFile.execute("DownloadAndUnzipFile");
-
-            AppPreference.getInstance(mContext)
-                    .putBoolean(kJsonDownloadedKey, true);
+            Intent intent = new Intent(mContext, AssetDataCopyService.class);
+            mContext.startService(intent);
         }
     }
+
     public Map<String, Object> jsonMapFromRecipeInfo(RecipeInfo info) {
         String jsonStr = mGson.toJson(info);
         Map<String, Object> jsonMap = new HashMap<String, Object>();

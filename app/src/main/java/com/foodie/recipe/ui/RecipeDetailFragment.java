@@ -76,6 +76,8 @@ public class RecipeDetailFragment extends Fragment {
     private MediaPlayer mMediaPlayer;
     private boolean mAudioCreated;
     private boolean mPlayRequested;
+    DownloadDescFromUrl mDownloadDescFromUrlTask;
+    TaskCompletion mTaskCompletionListener;
 
     public RecipeDetailFragment() {
         // Required empty public constructor
@@ -163,9 +165,10 @@ public class RecipeDetailFragment extends Fragment {
     public void downloadRecipeDescription(String url) {
         String descriptionPath = DataUtility.getInstance(getActivity()).getExternalFilesDirPath()
                 + "/json/" + mRecipeInfo.getRecipeinfoId() + ".json";
-        DownloadDescFromUrl downloadDescFromURL = new DownloadDescFromUrl(new TaskCompletionImpl(),
+        mTaskCompletionListener = new TaskCompletionImpl();
+        mDownloadDescFromUrlTask = new DownloadDescFromUrl(mTaskCompletionListener,
                 url, descriptionPath);
-        downloadDescFromURL.execute("DownloadFileFromURL Task");
+        mDownloadDescFromUrlTask.execute("DownloadFileFromURL Task");
     }
 
     private class TaskCompletionImpl implements TaskCompletion {
@@ -523,6 +526,11 @@ public class RecipeDetailFragment extends Fragment {
                 audioFile.delete();
             }
         }
+
+        if (mDownloadDescFromUrlTask != null) {
+            mDownloadDescFromUrlTask.updateListener(null);
+        }
+
     }
 
     @Override

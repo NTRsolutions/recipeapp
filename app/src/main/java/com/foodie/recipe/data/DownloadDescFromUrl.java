@@ -19,13 +19,13 @@ import java.net.URLConnection;
  */
 public class DownloadDescFromUrl extends AsyncTask<String,String,Boolean> {
     public static final String TAG = "DownloadDescFromUrl";
-    WeakReference<TaskCompletion> mContextWeakReference;
+    TaskCompletion mTaskCompletionListener;
 
     String mUrl = "";
     String mFinalePath;
 
     public DownloadDescFromUrl(TaskCompletion holder, String url, String finalPath) {
-        mContextWeakReference = new WeakReference<>(holder);
+        mTaskCompletionListener = holder;
         mUrl = url;
         mFinalePath = finalPath;
     }
@@ -53,7 +53,7 @@ public class DownloadDescFromUrl extends AsyncTask<String,String,Boolean> {
             // Output stream to write file
             OutputStream output = new FileOutputStream(mFinalePath);
 
-            byte data[] = new byte[1024];
+            byte data[] = new byte[4024];
 
             long total = 0;
 
@@ -81,18 +81,19 @@ public class DownloadDescFromUrl extends AsyncTask<String,String,Boolean> {
         // setting progress percentage
     }
 
+    public void updateListener(TaskCompletion listener) {
+        mTaskCompletionListener = listener;
+    }
+
     @Override
     protected void onPostExecute(Boolean result) {
-        TaskCompletion holder = mContextWeakReference.get();
-
         if (result == null || result == false) {
             Log.d(TAG, "Download Failed for : " + mFinalePath);
         } else {
             Log.d(TAG, "Download complete for : " + mFinalePath);
-        }
-
-        if (holder != null) {
-            holder.onTaskCompletionResult(result, mFinalePath);
+            if (mTaskCompletionListener != null) {
+                mTaskCompletionListener.onTaskCompletionResult(result, mFinalePath);
+            }
         }
     }
 }
