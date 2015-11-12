@@ -502,7 +502,7 @@ public class RecipeDetailFragment extends Fragment {
                 // Add data to the intent, the receiving app will decide
                 // what to do with it.
                 share.putExtra(Intent.EXTRA_SUBJECT, "Recipe @ your finger tips");
-                share.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=com.pickart.android&hl=en");
+                share.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=com.foodie.recipe&hl=en");
 
                 startActivity(Intent.createChooser(share, "Share link!"));
             }

@@ -170,9 +170,9 @@ public class ShoppingListFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            RecipeInfo recipeDesc = mInfoViewRecipe.getRecipeInfo();
+            RecipeInfo recipeInfo = mInfoViewRecipe.getRecipeInfo();
             Bundle bundle = new Bundle();
-            bundle.putSerializable(RecipeDetailFragment.RECIPE_DETAIL_KEY, recipeDesc);
+            bundle.putSerializable(RecipeDetailFragment.RECIPE_DETAIL_KEY, Integer.parseInt(recipeInfo.getDocId()));
             RecipeDetailFragment rFrag = new RecipeDetailFragment();
             rFrag.setArguments(bundle);
 
