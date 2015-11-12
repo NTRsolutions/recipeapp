@@ -37,16 +37,20 @@ public class FeedDataGenerator {
         TreeMap<Integer, Queue<RecipeInfo>> distribution = new TreeMap<>();
         int seedPoint =  Config.TOTAL_FEED_SEED_COUNT;;
         int index = 0 ;
+
+        int maxTagsToConsider = 4;
+        int tagCounter = 0;
         for (String tag : map.keySet()) {
             index ++;
             double decayFunction = seedPoint * Math.pow(0.5f, index);
-            if (decayFunction <= 1) {
+            if (decayFunction <= 1 || tagCounter > maxTagsToConsider) {
                 break;
             }
             List<RecipeInfo>  infos = RecipeDataStore.getsInstance(mContext).searchDocuments(
                     tag, (int)decayFunction);
 
             distribution.put((int) decayFunction, new LinkedList<>(infos));
+            tagCounter++;
         }
 
         // Trying to do y = a * (x - x0) ^ 2;

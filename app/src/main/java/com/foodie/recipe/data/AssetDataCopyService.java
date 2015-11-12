@@ -28,7 +28,8 @@ public class AssetDataCopyService extends Service {
      * @see IntentService
      */
 
-    private boolean mTaskComplete;
+    public static final String ASSET_COPY_KEY = "ASSET_COPY_KEY";
+    private boolean mInprogress;
 
     public AssetDataCopyService() {
 
@@ -37,14 +38,32 @@ public class AssetDataCopyService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-            Utility.copyAssets(this);
-            String tempPath = DataUtility.getInstance(this).getExternalFilesDirPath()
-                    + "/json.zip";
-            String finalPath =  DataUtility.getInstance(this).getExternalFilesDirPath()
-                    + "/" ;
-            UnzipFiles downloadAndUnzipFile = new UnzipFiles(tempPath, finalPath, new UnzipFilesListenerImpl());
-            downloadAndUnzipFile.execute("UnzipFiles");
+        if (mInprogress) {
+            return super.onStartCommand(intent, flags, startId);
+        }
+
+        handleCopyAssetsContent();
+
+        String tempPath = DataUtility.getInstance(this).getExternalFilesDirPath()
+                + "/json.zip";
+        String finalPath =  DataUtility.getInstance(this).getExternalFilesDirPath()
+                + "/" ;
+        UnzipFiles downloadAndUnzipFile = new UnzipFiles(tempPath, finalPath, new UnzipFilesListenerImpl());
+        downloadAndUnzipFile.execute("UnzipFiles");
+        mInprogress = true;
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    public void handleCopyAssetsContent() {
+        boolean isAssetsCopied = AppPreference.getInstance(AssetDataCopyService.this)
+                .getBoolean(ASSET_COPY_KEY, false);
+
+        if (!isAssetsCopied) {
+            Utility.copyAssets(this);
+            AppPreference.getInstance(AssetDataCopyService.this)
+                    .putBoolean(ASSET_COPY_KEY, true);
+        }
+
     }
 
     @Override
@@ -59,6 +78,7 @@ public class AssetDataCopyService extends Service {
         public void onUnzipComplete() {
             AppPreference.getInstance(AssetDataCopyService.this)
                     .putBoolean(RecipeDataStore.kJsonDownloadedKey, true);
+            mInprogress = false;
            stopSelf();
         }
     }
