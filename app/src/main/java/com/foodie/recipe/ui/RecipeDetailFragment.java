@@ -520,7 +520,10 @@ public class RecipeDetailFragment extends Fragment {
             mMediaPlayer = null;
         }
 
-        Utility.getInstance(getActivity()).getTextToSpeech().stop();
+        if(Utility.getInstance(getActivity()).getTextToSpeech() != null) {
+            Utility.getInstance(getActivity()).getTextToSpeech().stop();
+        }
+
         if (mAudioFilePathName != null) {
             File audioFile = new File(mAudioFilePathName);
             if (audioFile.exists()) {
