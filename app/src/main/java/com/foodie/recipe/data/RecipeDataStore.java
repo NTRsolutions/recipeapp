@@ -68,7 +68,7 @@ public class RecipeDataStore {
         void onDataUpdate(List<RecipeInfo> list);
     }
 
-    public static RecipeDataStore getsInstance(Context cntx) {
+    public static synchronized RecipeDataStore getsInstance(Context cntx) {
         if (sInstance == null) {
             sInstance = new RecipeDataStore(cntx);
         }
