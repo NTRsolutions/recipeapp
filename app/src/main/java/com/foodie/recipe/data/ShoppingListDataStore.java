@@ -186,7 +186,7 @@ public class ShoppingListDataStore implements Serializable {
     }
 
 
-    public static class ShoppingItemInfo {
+    public static class ShoppingItemInfo implements Serializable{
         RecipeInfo recipeInfo;
         String recipeName;
         List<String> recipeContentList = new ArrayList<>();
