@@ -53,6 +53,10 @@ public class ApplicationImpl extends Application {
     synchronized public Tracker getDefaultTracker() {
         if (mTracker == null) {
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+            if (BuildConfig.DEBUG) {
+                analytics.setDryRun(true);
+            }
+
             // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
             mTracker = analytics.newTracker(PROPERTY_ID);
         }

@@ -22,5 +22,6 @@
     <item name="black" type="color">#AA000000</item>
     <item name="lightgrey" type="color">#FFEEEEEE</item>
     <item name="category_text" type="color">#11222222</item>
+    <item name="tags_color" type="color">#2d6995</item>
 
 </resources>

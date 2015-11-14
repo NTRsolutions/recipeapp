@@ -133,11 +133,12 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
             tv.setText(tagItem);
             tv.setOnClickListener(new TagsClickListenerImpl(tagItem));
             tv.setTextSize(15);
-            tv.setPadding(3, 3, 3, 3);
+            tv.setPadding(10, 10, 10, 10);
             tv.setSingleLine();
             tv.setMaxLines(1);
-            tv.setTextColor(mContext.getResources().getColor(R.color.blue));
+            tv.setTextColor(mContext.getResources().getColor(R.color.tags_color));
             tv.setEllipsize(TextUtils.TruncateAt.END);
+            tv.setBackgroundResource(R.drawable.round_corner_tags);
             mFlowLayout.addView(tv);
         }
     }
