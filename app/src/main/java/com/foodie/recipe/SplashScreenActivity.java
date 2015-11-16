@@ -44,8 +44,6 @@ public class SplashScreenActivity extends AppCompatActivity {
         Utility.getInstance(this).init();
         SplashAsyncTask task = new SplashAsyncTask(this);
         task.execute("SplashAsyncTask");
-
-        RecipeDataStore.getsInstance(this).checkAndUnZipJsonData();
     }
 
     void onDataFetchComplete() {
@@ -104,7 +102,7 @@ public class SplashScreenActivity extends AppCompatActivity {
             } else {
                 //TODO to remove and implement sequential download's
                 RecipeDataStore.getsInstance(mContext).fetchAllInfoData(
-                        new RecipeDataStoreListenerImpl(this), 500);
+                        new RecipeDataStoreListenerImpl(this), 200);
             }
 
             LocationMapper.getInstance(mContext).fetchLocationMapperData(

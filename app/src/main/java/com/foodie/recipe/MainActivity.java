@@ -83,6 +83,14 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         Log.d(TAG, "onCreate ");
         setUpRateAppPopUp();
 
+        mTabLayout.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                RecipeDataStore.getsInstance(MainActivity.this).checkAndUnZipJsonData();
+            }
+        }, 2000);
+
+
     }
 
     void setUpRateAppPopUp() {

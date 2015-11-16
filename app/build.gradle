@@ -30,7 +30,7 @@ android {
         applicationId "com.foodie.recipe"
         minSdkVersion 15
         targetSdkVersion 22
-        versionCode 7
+        versionCode 8
         versionName "1.0.0"
     }
     buildTypes {
