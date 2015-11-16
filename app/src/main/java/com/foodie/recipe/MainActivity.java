@@ -88,8 +88,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
     void setUpRateAppPopUp() {
         new AppRate(this)
                 .setShowIfAppHasCrashed(false)
-                .setMinDaysUntilPrompt(4)
-                .setMinLaunchesUntilPrompt(8)
+                .setMinDaysUntilPrompt(1)
+                .setMinLaunchesUntilPrompt(4)
                 .init();
     }
 
