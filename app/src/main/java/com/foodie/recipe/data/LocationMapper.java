@@ -1,6 +1,7 @@
 package com.foodie.recipe.data;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.foodie.recipe.utility.AppPreference;
 import com.parse.FindCallback;
@@ -17,6 +18,7 @@ import java.util.TreeMap;
  */
 
 public class LocationMapper {
+    public static final String TAG = LocationMapper.class.getSimpleName();
     public static final String DEFAULT_KEY = "default";
 
     public interface LocationMapperUpdate {
@@ -45,8 +47,11 @@ public class LocationMapper {
     public void fetchLocationMapperData(final LocationMapperUpdate listener) {
         ParseQuery<ParseObject> category = ParseQuery.getQuery(LocationMapper.class.getSimpleName());
         category.findInBackground(new FindCallback<ParseObject>() {
-            public void done(List<ParseObject> results, ParseException e) {
-
+            public void done(List<ParseObject> results, ParseException exception) {
+                if (exception != null  || results == null) {
+                    Log.d(TAG, exception.getCause().toString());
+                    return;
+                }
                 // Boiler Plate Code
                 try {
                     fillLocationMapper(results);

@@ -632,6 +632,10 @@ public class RecipeDataStore {
         category.setLimit(size);
         category.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> results, ParseException e) {
+                if (e != null || results == null) {
+                    return;
+                }
+
                 List<RecipeInfo> list = new ArrayList<>();
                 for (ParseObject object : results) {
                     RecipeInfo info = RecipeInfo.getRecipeInfo(object);

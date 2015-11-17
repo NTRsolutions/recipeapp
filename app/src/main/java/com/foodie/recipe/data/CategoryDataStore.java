@@ -59,7 +59,7 @@ public class CategoryDataStore {
         ParseQuery<ParseObject> category = ParseQuery.getQuery(Category.class.getSimpleName());
         category.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> results, ParseException exception) {
-                if (exception != null) {
+                if (exception != null  || results == null) {
                     Log.d(TAG, exception.getCause().toString());
                     return;
                 }

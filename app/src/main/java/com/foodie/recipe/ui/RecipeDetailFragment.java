@@ -91,6 +91,12 @@ public class RecipeDetailFragment extends Fragment {
         mRootView = inflater.inflate(R.layout.fragment_recipe2, null, false);
         int recipeInfoId = getArguments().getInt(RECIPE_DETAIL_KEY, -1);
         mRecipeInfo = RecipeDataStore.getsInstance(getActivity()).getRecipeInfo(recipeInfoId);
+
+        //TODO fix crash, mRecipeInfo is null
+        if (mRecipeInfo == null) {
+            return mRootView;
+        }
+
         mRecipeInfo.updateLastViewedTime();
         UserInfo.getInstance(getActivity()).logRecipeViewedInfo(mRecipeInfo);
         mRecipeImageView = (ImageView) mRootView.findViewById(R.id.recipe_image);
