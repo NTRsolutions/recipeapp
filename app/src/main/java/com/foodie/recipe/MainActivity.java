@@ -31,6 +31,7 @@ import com.foodie.recipe.ui.RecipeDetailFragment;
 import com.foodie.recipe.ui.RecipeListFragment;
 import com.foodie.recipe.ui.ShoppingListFragment;
 import com.foodie.recipe.utility.AppPreference;
+import com.tapjoy.Tapjoy;
 
 
 public class MainActivity extends AppCompatActivity implements MainActivityListener {
@@ -155,6 +156,20 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    //session start
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Tapjoy.onActivityStart(this);
+    }
+
+    //session end
+    @Override
+    protected void onStop() {
+        Tapjoy.onActivityStop(this);
+        super.onStop();
     }
 
     @Override

@@ -169,7 +169,7 @@ public class AppRate implements OnClickListener, OnCancelListener {
 		String title = "Rate " + getApplicationName(hostActivity.getApplicationContext());
 		String message = "If you enjoy using " + getApplicationName(hostActivity.getApplicationContext()) + ", please take a moment to rate it. Thanks for your support!";
 		String rate = "Rate it !";
-		String remindLater = "Remind me later";
+		String remindLater = "Later";
 		String dismiss = "No thanks";
 
 		new AlertDialog.Builder(hostActivity)

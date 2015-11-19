@@ -15,6 +15,12 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.parse.Parse;
 import com.parse.ParseCrashReporting;
+import com.tapjoy.TJConnectListener;
+import com.tapjoy.Tapjoy;
+import com.tapjoy.TapjoyConnectFlag;
+
+import java.util.Hashtable;
+
 import io.fabric.sdk.android.Fabric;
 
 
@@ -44,12 +50,30 @@ public class ApplicationImpl extends Application {
         }
 
         Config.initialize(this.getApplicationContext());
+        Hashtable<String, String> flags = new Hashtable<>();
+        flags.put(TapjoyConnectFlag.ENABLE_LOGGING, "true");
+
+        Tapjoy.connect(this.getApplicationContext(),
+                "23w-vuPKQt-pjN4GAigf4gECth5TA8U4YdXRpjp4vrfpHyR1KkDPf0F6V-hk",
+                flags, new TJConnectListenerImpl());
 
         mCallbacks = new MyActivityLifecycleCallbacks(this);
         registerActivityLifecycleCallbacks(mCallbacks);
 
     }
 
+    private class TJConnectListenerImpl implements TJConnectListener {
+
+        @Override
+        public void onConnectSuccess() {
+            Log.d(TAG, "Tapjoy connect Succeeded");
+        }
+
+        @Override
+        public void onConnectFailure() {
+            Log.d(TAG, "Tapjoy connect Failed");
+        }
+    }
     synchronized public Tracker getDefaultTracker() {
         if (mTracker == null) {
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
