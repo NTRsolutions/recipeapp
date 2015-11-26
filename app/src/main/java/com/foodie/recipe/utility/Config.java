@@ -16,7 +16,7 @@ public class Config {
     public static float MAX_CATEGORY_CARD_HEIGHT_PECENTAGE = 0.40f;
     public static Context APPLICATION_CONTEXT = null;
     public static final int TEXT_SIZE_CONTENT = 18;
-    public static String sRecipeStorageCloudBaseUrl = "https://storage.googleapis.com/recipeapp";
+    public static String sRecipeStorageCloudBaseUrl = "https://storage.googleapis.com/recipeapp1";
     public static int TOTAL_FEED_SEED_COUNT = 500;
     public static String sFavouriteTag = "favourite";
 

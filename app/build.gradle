@@ -28,9 +28,9 @@ android {
 
     defaultConfig {
         applicationId "com.foodie.recipe"
-        minSdkVersion 15
+        minSdkVersion 11
         targetSdkVersion 22
-        versionCode 11
+        versionCode 13
         versionName "1.0.0"
     }
     buildTypes {
